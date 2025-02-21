@@ -83,7 +83,7 @@ public class RegController {
             System.err.println("Failed to connect to the database: " + Arrays.toString(e.getStackTrace()));
             // Handle the error appropriately (e.g., exit the application)
             System.exit(1); // Example: Exit if the connection fails
-        };
+        }
 
         return ResponseEntity.ok("Received Data");
     }
