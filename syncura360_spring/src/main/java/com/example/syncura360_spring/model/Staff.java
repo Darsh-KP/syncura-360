@@ -1,0 +1,74 @@
+package com.example.syncura360_spring.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "Staff", schema = "syncura360")
+public class Staff {
+    @EmbeddedId
+    private StaffId id;
+
+    @MapsId("worksAt")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "works_at", nullable = false)
+    private Hospital worksAt;
+
+    @Column(name = "username", nullable = false, length = 20)
+    private String username;
+
+    @Column(name = "password_hash", nullable = false, length = 70)
+    private String passwordHash;
+
+    @Column(name = "password_salt", nullable = false, length = 40)
+    private String passwordSalt;
+
+    @Lob
+    @Column(name = "role", nullable = false)
+    private String role;
+
+    @Column(name = "first_name", nullable = false, length = 50)
+    private String firstName;
+
+    @Column(name = "last_name", nullable = false, length = 50)
+    private String lastName;
+
+    @Column(name = "email", nullable = false, length = 100)
+    private String email;
+
+    @Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
+
+    @Column(name = "phone", length = 15)
+    private String phone;
+
+    @Column(name = "address_line_1", nullable = false)
+    private String addressLine1;
+
+    @Column(name = "address_line_2")
+    private String addressLine2;
+
+    @Column(name = "city", nullable = false, length = 100)
+    private String city;
+
+    @Column(name = "state", nullable = false, length = 100)
+    private String state;
+
+    @Column(name = "postal", nullable = false, length = 20)
+    private String postal;
+
+    @Column(name = "country", nullable = false, length = 100)
+    private String country;
+
+    @Column(name = "specialty", length = 100)
+    private String specialty;
+
+    @Column(name = "years_experience")
+    private Integer yearsExperience;
+
+}
