@@ -1,14 +1,11 @@
 package com.example.syncura360_spring.restservice;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Arrays;
-
 import javax.sql.DataSource;
 import javax.validation.Valid;
 
@@ -20,7 +17,6 @@ public class RegController {
 
     HospitalRepository hospitalRepository;
     StaffRepository staffRepository;
-    UserRepository userRepository;
     DataSource dataSource;
 
     @PostMapping("/hospital")
@@ -81,23 +77,13 @@ public class RegController {
     public ResponseEntity<String> test(@RequestBody TestRequest testRequest) {
         System.out.println("Received request \n" + testRequest.text);
 
-        /*
-        try {
-            System.out.println(hospitalRepository.findAll());
-            System.out.println(staffRepository.findAll());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } */
-
         try (Connection connection = dataSource.getConnection()) {
             System.out.println("Successfully connected to the database!");
         } catch (Exception e) {
             System.err.println("Failed to connect to the database: " + Arrays.toString(e.getStackTrace()));
             // Handle the error appropriately (e.g., exit the application)
             System.exit(1); // Example: Exit if the connection fails
-        }
-
-        System.out.println(userRepository.findAll());
+        };
 
         return ResponseEntity.ok("Received Data");
     }
