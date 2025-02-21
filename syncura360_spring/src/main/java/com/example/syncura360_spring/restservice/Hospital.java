@@ -7,7 +7,15 @@ import javax.validation.constraints.NotNull;
 @Data
 public class Hospital {
 
-    private long hospitalId;
+    /*
+    Hospital (hospitalId: int primary key, name: varchar(255),
+    address: varchar(255), city: varchar(100), state: varchar(100),
+    postal: varchar(20), telephone: varchar(15), type: varchar(50),
+    traumaLevel: enum(‘Level  I’, ‘Level II’, ‘Level III’, ‘Level IV’),
+    hasHelipad: boolean))
+    */
+
+    private int hospitalId;
 
     @NotBlank(message = "Name is required")
     private String name;
@@ -18,10 +26,15 @@ public class Hospital {
     @NotBlank(message = "Address is required")
     private String address;
 
-    @NotNull(message = "Type is required")
-    private HospitalType type;
+    private String address2;
 
-    @NotNull(message = "Type is required")
+    @NotBlank(message = "City is required")
+    private String city;
+
+    @NotBlank(message = "State is required")
+    private String state;
+
+    @NotNull(message = "Trauma Level is required")
     private TraumaLevel traumaLevel;
 
     @NotNull(message = "Helipad status is required")

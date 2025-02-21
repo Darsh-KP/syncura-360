@@ -4,6 +4,5 @@ public enum Role {
     NURSE,
     ADMIN,
     DOCTOR,
-    HEAD_ADMIN,
     SUPER_ADMIN,
 }

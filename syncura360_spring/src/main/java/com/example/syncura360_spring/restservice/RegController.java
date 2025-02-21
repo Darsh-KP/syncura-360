@@ -1,29 +1,33 @@
 package com.example.syncura360_spring.restservice;
 
+import lombok.Data;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
+@CrossOrigin(origins = "*")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200") // ALLOW REQUESTS FROM LOCAL ANGULAR ENVIRONMENT DURING DEVELOPMENT
 @RequestMapping("/register")
 public class RegController {
 
     @PostMapping("/hospital")
-    public ResponseEntity<String> registerHospital(@Valid @RequestBody Hospital regData) {
-        System.out.println("Received hospital registration data: \n" + regData.toString());
+    public ResponseEntity<String> registerHospital(@Valid @RequestBody RegistrationInfo regInfo) {
 
-        // CALL HOSPITAL SERVICE FOR INTERACTING WITH HOSPITAL ENTITIES IN DATABASE
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 
-        return ResponseEntity.ok("Received Data");
-    }
+        // Prepare Data for insertion:
 
-    @PostMapping("/staff")
-    public ResponseEntity<String> registerStaff(@Valid @RequestBody Staff regData) {
-        System.out.println("Received staff registration data: \n" + regData.toString());
-
-        // CALL USER SERVICE FOR INTERACTING WITH USER ENTITIES IN DATABASE
 
         return ResponseEntity.ok("Received Data");
     }
+
+    @PostMapping("/test")
+    public ResponseEntity<String> test(@RequestBody TestRequest testRequest) {
+        System.out.println("Received request \n" + testRequest.text);
+
+        return ResponseEntity.ok("Received Data");
+    }
+    public record TestRequest(String text) {}
+
 }

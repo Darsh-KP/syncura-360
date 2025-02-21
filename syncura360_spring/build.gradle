@@ -24,6 +24,8 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
+	implementation "org.springframework.boot:spring-boot-starter-security"
+
 }
 
 tasks.named('test') {
