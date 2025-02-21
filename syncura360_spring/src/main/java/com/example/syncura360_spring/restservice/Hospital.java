@@ -1,10 +1,13 @@
 package com.example.syncura360_spring.restservice;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
+@Entity(name="Hospital")
 public class Hospital {
 
     /*
@@ -15,6 +18,7 @@ public class Hospital {
     hasHelipad: boolean))
     */
 
+    @Id
     private int hospitalId;
 
     @NotBlank(message = "Name is required")

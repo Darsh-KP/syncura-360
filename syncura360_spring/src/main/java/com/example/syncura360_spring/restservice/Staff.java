@@ -1,5 +1,7 @@
 package com.example.syncura360_spring.restservice;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,8 +16,10 @@ Staff (staffId: int, worksAt: int, username: varchar(20) primary key,
 */
 
 @Data
+@Entity(name="staff")
 public class Staff {
 
+    @Id
     private int staffId;
 
     private int worksAt;
