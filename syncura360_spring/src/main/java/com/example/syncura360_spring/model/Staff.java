@@ -1,15 +1,12 @@
 package com.example.syncura360_spring.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "Staff", schema = "syncura360")
+@Table(name = "Staff")
 public class Staff {
     @EmbeddedId
     private StaffId id;
@@ -28,7 +25,6 @@ public class Staff {
     @Column(name = "password_salt", nullable = false, length = 40)
     private String passwordSalt;
 
-    @Lob
     @Column(name = "role", nullable = false)
     private String role;
 

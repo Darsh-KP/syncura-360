@@ -1,6 +1,9 @@
 package com.example.syncura360_spring.restservice;
 
+import com.example.syncura360_spring.model.Hospital;
+import com.example.syncura360_spring.model.Staff;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +15,12 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/register")
-@RequiredArgsConstructor
 public class RegController {
 
+    @Autowired
     HospitalRepository hospitalRepository;
+    @Autowired
     StaffRepository staffRepository;
-    DataSource dataSource;
 
     @PostMapping("/hospital")
     public ResponseEntity<String> registerHospital(@Valid @RequestBody RegistrationInfo regInfo) {
@@ -29,13 +32,13 @@ public class RegController {
 
         // Check for unique values.
 
-        if (!hospitalRepository.findByName(hospital.getName()).isEmpty()) {
+        if (!hospitalRepository.findByHospitalName(hospital.getHospitalName()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital name taken").build();
         }
-        else if (!hospitalRepository.findByAddress(hospital.getAddress()).isEmpty()) {
+        else if (!hospitalRepository.addressLine1(hospital.getAddressLine1()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital address taken").build();
         }
-        else if (!hospitalRepository.findByPhone(hospital.getPhone()).isEmpty()) {
+        else if (!hospitalRepository.findByTelephone(hospital.getTelephone()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital phone taken").build();
         }
         else if (!staffRepository.findByEmail(headAdmin.getEmail()).isEmpty()) {
@@ -56,16 +59,17 @@ public class RegController {
                 return ResponseEntity.internalServerError().header("message", "database error: failed to register hospital.").build();
             }
 
-            String passwordHash = encoder.encode(headAdmin.getPassword());
-            headAdmin.setPassword(passwordHash);
+            String passwordHash = encoder.encode(headAdmin.getPasswordHash());
+            headAdmin.setPasswordHash(passwordHash);
 
-            try {
-                staffRepository.save(headAdmin);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                hospitalRepository.delete(hospital);
-                return ResponseEntity.internalServerError().header("message", "database error: failed to register user. rolling back hospital registration").build();
-            }
+
+//            try {
+//                staffRepository.save(headAdmin);
+//            } catch (Exception e) {
+//                System.out.println(e.getMessage());
+//                hospitalRepository.delete(hospital);
+//                return ResponseEntity.internalServerError().header("message", "database error: failed to register user. rolling back hospital registration").build();
+//            }
 
             return ResponseEntity.ok("Registration Successful.");
 
@@ -76,14 +80,6 @@ public class RegController {
     @PostMapping("/test")
     public ResponseEntity<String> test(@RequestBody TestRequest testRequest) {
         System.out.println("Received request \n" + testRequest.text);
-
-        try (Connection connection = dataSource.getConnection()) {
-            System.out.println("Successfully connected to the database!");
-        } catch (Exception e) {
-            System.err.println("Failed to connect to the database: " + Arrays.toString(e.getStackTrace()));
-            // Handle the error appropriately (e.g., exit the application)
-            System.exit(1); // Example: Exit if the connection fails
-        }
 
         return ResponseEntity.ok("Received Data");
     }

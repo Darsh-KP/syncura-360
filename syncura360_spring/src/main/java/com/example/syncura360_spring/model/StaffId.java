@@ -2,14 +2,12 @@ package com.example.syncura360_spring.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.data.util.ProxyUtils;
 
 import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 @Embeddable
 public class StaffId implements java.io.Serializable {
     private static final long serialVersionUID = -7398223966449890386L;

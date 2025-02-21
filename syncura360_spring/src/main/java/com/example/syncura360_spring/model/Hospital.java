@@ -1,13 +1,11 @@
 package com.example.syncura360_spring.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "Hospital", schema = "syncura360")
+@Table(name = "Hospital")
 public class Hospital {
     @Id
     @Column(name = "hospital_id", nullable = false)
@@ -37,7 +35,6 @@ public class Hospital {
     @Column(name = "type", length = 50)
     private String type;
 
-    @Lob
     @Column(name = "trauma_level")
     private String traumaLevel;
 
