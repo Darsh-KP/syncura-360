@@ -3,7 +3,6 @@ package com.example.syncura360_spring.restservice;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.Date;
 
 /*
@@ -36,13 +35,13 @@ public class Staff {
     @NotBlank(message="Email required")
     private String email;
 
-    @NotBlank(message="Email required")
+    @NotBlank(message="Phone required")
     private String phone;
 
-    @NotBlank(message="Phone required")
+    @NotBlank(message="Dob required")
     private Date dob;
 
-    @NotBlank(message="Phone required")
+    @NotBlank(message="Address required")
     private String address;
 
     @NotBlank(message="City required")
