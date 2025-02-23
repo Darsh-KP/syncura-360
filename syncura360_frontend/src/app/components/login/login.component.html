@@ -44,11 +44,18 @@
       </div>
 
       <!-- Login Button -->
-      <button type="submit" [disabled]="loading" 
-        class="w-full p-3 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-300 ease-in-out shadow-md">
-        <span *ngIf="loading">Logging in...</span>
+      <button type="submit" [disabled]="loading"
+        class="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 
+              text-white font-semibold tracking-wide shadow-md transition-all duration-300 ease-in-out 
+              hover:shadow-lg hover:from-blue-600 hover:to-blue-800 active:scale-95 disabled:opacity-50">
+        <svg *ngIf="loading" class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0H4z"></path>
+        </svg>
         <span *ngIf="!loading">Login</span>
+        <span *ngIf="loading">Logging in...</span>
       </button>
+
 
       <!-- Error Message -->
       <p *ngIf="errorMessage" class="text-red-500 text-center">{{ errorMessage }}</p>
@@ -56,7 +63,6 @@
       <!-- Register Link -->
       <p class="text-center mt-4 text-gray-600">
         Don't have an account? 
-        <!-- <a (click)="navigateToRegister()" class="text-blue-600 hover:text-blue-800 cursor-pointer font-medium">Register here</a> -->
         <a class="text-blue-600 hover:text-blue-800 cursor-pointer font-medium" routerLink="/register" >Register here</a>
 
       </p>
