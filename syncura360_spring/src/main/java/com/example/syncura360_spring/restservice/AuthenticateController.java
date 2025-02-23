@@ -1,0 +1,10 @@
+package com.example.syncura360_spring.restservice;
+
+import org.springframework.web.bind.annotation.*;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/auth")
+public class AuthenticateController {
+
+}

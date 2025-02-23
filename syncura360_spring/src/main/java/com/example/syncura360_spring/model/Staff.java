@@ -8,10 +8,12 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "Staff")
 public class Staff {
-    @EmbeddedId
-    private StaffId id;
 
-    @MapsId("worksAt")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "staff_id", nullable = false)
+    private Integer id;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "works_at", nullable = false)
     private Hospital worksAt;
@@ -21,9 +23,6 @@ public class Staff {
 
     @Column(name = "password_hash", nullable = false, length = 70)
     private String passwordHash;
-
-    @Column(name = "password_salt", nullable = false, length = 40)
-    private String passwordSalt;
 
     @Column(name = "role", nullable = false)
     private String role;

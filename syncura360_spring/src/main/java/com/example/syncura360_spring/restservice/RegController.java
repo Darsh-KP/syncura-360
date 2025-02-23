@@ -2,14 +2,10 @@ package com.example.syncura360_spring.restservice;
 
 import com.example.syncura360_spring.model.Hospital;
 import com.example.syncura360_spring.model.Staff;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.sql.Connection;
-import java.util.Arrays;
-import javax.sql.DataSource;
 import javax.validation.Valid;
 
 @CrossOrigin(origins = "*")
@@ -52,6 +48,10 @@ public class RegController {
         }
         else {  // Hash password and create records.
 
+            System.out.println("valid info");
+
+            headAdmin.setWorksAt(hospital);
+
             try {
                 hospitalRepository.save(hospital);
             } catch (Exception e) {
@@ -63,25 +63,32 @@ public class RegController {
             headAdmin.setPasswordHash(passwordHash);
 
 
-//            try {
-//                staffRepository.save(headAdmin);
-//            } catch (Exception e) {
-//                System.out.println(e.getMessage());
-//                hospitalRepository.delete(hospital);
-//                return ResponseEntity.internalServerError().header("message", "database error: failed to register user. rolling back hospital registration").build();
-//            }
+            try {
+                staffRepository.save(headAdmin);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                hospitalRepository.delete(hospital);
+                return ResponseEntity.internalServerError().header("message", "database error: failed to register user. rolling back hospital registration").build();
+            }
 
             return ResponseEntity.ok("Registration Successful.");
 
         }
 
+//        System.out.println(regInfo.getHospital().toString());
+//        System.out.println(regInfo.getStaff().toString());
+//
+//
+//        return ResponseEntity.ok("GotData.");
+
     }
 
     @PostMapping("/test")
     public ResponseEntity<String> test(@RequestBody TestRequest testRequest) {
-        System.out.println("Received request \n" + testRequest.text);
+        System.out.println("Received data: \n" + testRequest.text);
 
         return ResponseEntity.ok("Received Data");
     }
     public record TestRequest(String text) {}
+
 }
