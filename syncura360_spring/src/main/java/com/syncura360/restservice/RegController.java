@@ -75,12 +75,6 @@ public class RegController {
 
         }
 
-//        System.out.println(regInfo.getHospital().toString());
-//        System.out.println(regInfo.getStaff().toString());
-//
-//
-//        return ResponseEntity.ok("GotData.");
-
     }
 
     @PostMapping("/test")

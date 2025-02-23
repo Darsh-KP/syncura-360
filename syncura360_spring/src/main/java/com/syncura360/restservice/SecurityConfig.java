@@ -1,5 +1,7 @@
 package com.syncura360.restservice;
 
+import com.syncura360.security.StaffDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +18,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    StaffDetailsService staffDetailsService;
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
