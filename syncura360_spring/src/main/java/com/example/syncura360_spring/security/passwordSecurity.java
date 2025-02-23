@@ -1,6 +1,13 @@
 package com.example.syncura360_spring.security;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
+
 public class passwordSecurity {
+    static boolean debug = true;
+
     private passwordSecurity() {}
 
     // Method to generate a random salt
@@ -21,7 +28,7 @@ public class passwordSecurity {
             byte[] hashedBytes = digest.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedBytes);
         } catch (NoSuchAlgorithmException e) {
-            if (myDatabase.debug) System.out.println("Couldn't load algorithm for password hashing.");
+            if (debug) System.out.println("Couldn't load algorithm for password hashing.");
             return null;
         }
     }
@@ -42,7 +49,7 @@ public class passwordSecurity {
         String enteredPassword = "password123";
         boolean passwordCorrect = verifyPassword(enteredPassword, hashedPassword, salt);
 
-        if (myDatabase.debug) {
+        if (debug) {
             if (passwordCorrect) {
                 System.out.println("Password is correct.");
             } else {
