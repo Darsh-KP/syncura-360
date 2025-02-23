@@ -74,7 +74,6 @@ public class RegController {
             return ResponseEntity.ok("Registration Successful.");
 
         }
-
     }
 
     @PostMapping("/test")
