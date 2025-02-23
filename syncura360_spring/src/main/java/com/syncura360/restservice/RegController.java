@@ -1,7 +1,7 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
-import com.example.syncura360_spring.model.Hospital;
-import com.example.syncura360_spring.model.Staff;
+import com.syncura360.model.Hospital;
+import com.syncura360.model.Staff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

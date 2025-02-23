@@ -1,4 +1,4 @@
-package com.example.syncura360_spring;
+package com.syncura360;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;

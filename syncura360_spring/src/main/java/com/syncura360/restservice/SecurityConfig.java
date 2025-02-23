@@ -1,4 +1,4 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

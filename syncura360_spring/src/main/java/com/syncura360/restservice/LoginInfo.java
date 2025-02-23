@@ -1,4 +1,4 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
 import lombok.Data;
 

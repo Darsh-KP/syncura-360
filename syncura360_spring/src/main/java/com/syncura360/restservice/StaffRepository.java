@@ -1,6 +1,6 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
-import com.example.syncura360_spring.model.Staff;
+import com.syncura360.model.Staff;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

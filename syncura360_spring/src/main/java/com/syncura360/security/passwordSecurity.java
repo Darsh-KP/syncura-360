@@ -1,4 +1,4 @@
-package com.example.syncura360_spring.security;
+package com.syncura360.security;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
