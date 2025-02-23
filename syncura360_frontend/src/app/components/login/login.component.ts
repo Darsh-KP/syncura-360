@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,12 +13,13 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [
     CommonModule, 
-    ReactiveFormsModule,  // ✅ Import this to fix 'formGroup' error
+    ReactiveFormsModule,
     MatInputModule, 
     MatButtonModule, 
     MatCardModule, 
-    MatFormFieldModule, // ✅ Required for Material form fields
-    MatIconModule // ✅ Optional for icons
+    MatFormFieldModule, 
+    MatIconModule,
+    RouterLink
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -41,24 +42,33 @@ export class LoginComponent {
     this.passwordVisible = !this.passwordVisible;
   }
 
-
   onSubmit() {
-    if (this.loginForm.invalid) return;
+    const username = this.loginForm.get('username')?.value;
+    const password = this.loginForm.get('password')?.value;
+
+    if (!username && !password) {
+      this.errorMessage = 'Please enter your username and password';
+      return;
+    } else if (!username) {
+      this.errorMessage = 'Please enter your username';
+      return;
+    } else if (!password) {
+      this.errorMessage = 'Please enter your password';
+      return;
+    }
+
     this.loading = true;
     
     setTimeout(() => {
       this.loading = false;
-      const { username } = this.loginForm.value;
-      
-      if (username.includes('admin')) {
-        this.router.navigate(['/admin-dashboard']);
-      } else if (username.includes('doctor')) {
-        this.router.navigate(['/doctor-dashboard']);
-      } else if (username.includes('nurse')) {
-        this.router.navigate(['/nurse-dashboard']);
-      } else {
-        this.errorMessage = 'Invalid credentials';
-      }
+      this.router.navigate(['/dashboard']); // Redirect to single dashboard component
     }, 1000);
   }
+
+  navigateToRegister() {
+    console.log("Navigating to register...");
+    this.router.navigateByUrl('/register');  // ✅ Try using `navigateByUrl()`
+  }
+  
+
 }
