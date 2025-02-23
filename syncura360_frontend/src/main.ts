@@ -15,6 +15,6 @@ bootstrapApplication(AppComponent, {
       { path: 'dashboard', component: DashboardComponent }, 
     ]),
     provideHttpClient(),
-    provideAnimations(),
+    provideAnimations()
   ],
 }).catch(err => console.error(err));
