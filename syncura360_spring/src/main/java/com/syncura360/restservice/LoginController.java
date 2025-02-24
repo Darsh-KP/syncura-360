@@ -33,9 +33,10 @@ public class LoginController {
                     new UsernamePasswordAuthenticationToken(loginInfo.getUsername(), loginInfo.getPassword())
             );
 
-            String token = jwtUtil.generateJwtToken(authentication.getName(), authentication.getAuthorities().iterator().next().getAuthority());
+            String role = authentication.getAuthorities().iterator().next().getAuthority();
+            String token = jwtUtil.generateJwtToken(authentication.getName(), role);
 
-            return ResponseEntity.ok(new LoginResponse(token));
+            return ResponseEntity.ok(new LoginResponse(token, role));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
         } catch (NoSuchElementException e) {
@@ -43,6 +44,6 @@ public class LoginController {
         }
     }
 
-    public record LoginResponse(String jwt) {}
+    public record LoginResponse(String jwt, String role) {}
 
 }
