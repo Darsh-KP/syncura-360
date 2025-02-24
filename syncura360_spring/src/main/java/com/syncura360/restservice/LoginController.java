@@ -24,7 +24,7 @@ public class LoginController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginInfo.getUsername(), loginInfo.getPassword())
             );
-            return ResponseEntity.ok("Authentication successful!"); // Confirmation message
+            return ResponseEntity.ok(authentication.getAuthorities().toString()); // Confirmation message
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed."); // Error message
         }
