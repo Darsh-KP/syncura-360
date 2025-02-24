@@ -40,7 +40,7 @@ public class RegController {
         else if (!staffRepository.findByEmail(headAdmin.getEmail()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "staff email taken").build();
         }
-        else if (!staffRepository.findByUsername(headAdmin.getUsername()).isEmpty()) {
+        else if (staffRepository.findByUsername(headAdmin.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().header("message", "staff username taken").build();
         }
         else if (!staffRepository.findByPhone(headAdmin.getPhone()).isEmpty()) {
