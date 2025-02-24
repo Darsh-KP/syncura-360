@@ -8,8 +8,11 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*")
 @RestController
 public class TestController {
+
     @GetMapping("/test_auth")
     public ResponseEntity<String> registerHospital(@Valid @RequestBody RegistrationInfo regInfo) {
-        return null;
+
+        return ResponseEntity.ok().body("Authentication Successful!");
+
     }
 }
