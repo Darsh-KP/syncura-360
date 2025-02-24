@@ -16,10 +16,8 @@ public class JwtUtil {
     private final SecretKey key;
 
     public JwtUtil(@Value("${JWT_SECRET_KEY}") String secret) {
-
         byte [] decodedKey = Base64Coder.decode(secret);
         key = Keys.hmacShaKeyFor(decodedKey);
-
     }
 
     public String generateJwtToken(String username, String role) {

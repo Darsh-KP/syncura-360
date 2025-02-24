@@ -7,6 +7,7 @@ import java.util.Base64;
 public class KeyGenerator {
 
     public static void main (String[] args) {
+        System.out.println(generateSecretKey());
     }
 
     public static String generateSecretKey() {

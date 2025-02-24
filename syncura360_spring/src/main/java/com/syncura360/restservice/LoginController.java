@@ -2,6 +2,7 @@ package com.syncura360.restservice;
 
 import com.syncura360.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,8 +36,10 @@ public class LoginController {
 
             String role = authentication.getAuthorities().iterator().next().getAuthority();
             String token = jwtUtil.generateJwtToken(authentication.getName(), role);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-            return ResponseEntity.ok(new LoginResponse(token, role));
+            return ResponseEntity.ok().headers(headers).body(new LoginResponse("Authentication successful.", role));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
         } catch (NoSuchElementException e) {
@@ -44,6 +47,6 @@ public class LoginController {
         }
     }
 
-    public record LoginResponse(String jwt, String role) {}
+    public record LoginResponse(String message, String role) {}
 
 }
