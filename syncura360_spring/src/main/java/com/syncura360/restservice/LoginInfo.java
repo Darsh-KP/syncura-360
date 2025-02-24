@@ -1,4 +1,4 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
 import lombok.Data;
 
@@ -7,6 +7,5 @@ public class LoginInfo {
 
     private String username;
     private String password;
-    private String role;
 
 }

@@ -1,4 +1,4 @@
-package com.example.syncura360_spring.model;
+package com.syncura360.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

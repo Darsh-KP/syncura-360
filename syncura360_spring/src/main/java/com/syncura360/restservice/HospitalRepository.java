@@ -1,6 +1,6 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
-import com.example.syncura360_spring.model.Hospital;
+import com.syncura360.model.Hospital;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

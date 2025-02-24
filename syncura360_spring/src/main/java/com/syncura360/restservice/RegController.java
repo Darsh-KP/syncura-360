@@ -1,7 +1,7 @@
-package com.example.syncura360_spring.restservice;
+package com.syncura360.restservice;
 
-import com.example.syncura360_spring.model.Hospital;
-import com.example.syncura360_spring.model.Staff;
+import com.syncura360.model.Hospital;
+import com.syncura360.model.Staff;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,7 +40,7 @@ public class RegController {
         else if (!staffRepository.findByEmail(headAdmin.getEmail()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "staff email taken").build();
         }
-        else if (!staffRepository.findByUsername(headAdmin.getUsername()).isEmpty()) {
+        else if (staffRepository.findByUsername(headAdmin.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().header("message", "staff username taken").build();
         }
         else if (!staffRepository.findByPhone(headAdmin.getPhone()).isEmpty()) {
@@ -74,13 +74,6 @@ public class RegController {
             return ResponseEntity.ok("Registration Successful.");
 
         }
-
-//        System.out.println(regInfo.getHospital().toString());
-//        System.out.println(regInfo.getStaff().toString());
-//
-//
-//        return ResponseEntity.ok("GotData.");
-
     }
 
     @PostMapping("/test")

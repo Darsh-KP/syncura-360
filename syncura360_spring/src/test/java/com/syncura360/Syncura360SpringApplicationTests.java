@@ -1,4 +1,4 @@
-package com.example.syncura360_spring;
+package com.syncura360;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
