@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { LoginService } from '../../services/login.service';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, 
     ReactiveFormsModule,
+    HttpClientModule, 
     MatInputModule, 
     MatButtonModule, 
     MatCardModule, 
@@ -24,16 +27,24 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   errorMessage = '';
+  successMessage = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
+  }
+
+  ngOnInit() {
+    // Redirect if user is already logged in
+    if (this.loginService.isAuthenticated()) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   passwordVisible: boolean = false;
@@ -43,32 +54,38 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    const username = this.loginForm.get('username')?.value;
-    const password = this.loginForm.get('password')?.value;
-
-    if (!username && !password) {
-      this.errorMessage = 'Please enter your username and password';
-      return;
-    } else if (!username) {
-      this.errorMessage = 'Please enter your username';
-      return;
-    } else if (!password) {
-      this.errorMessage = 'Please enter your password';
+    if (this.loginForm.invalid) {
+      this.errorMessage = 'Please enter both username and password';
       return;
     }
 
     this.loading = true;
-    
-    setTimeout(() => {
-      this.loading = false;
-      this.router.navigate(['/dashboard']); // Redirect to single dashboard component
-    }, 1000);
+    this.errorMessage = '';
+    this.successMessage = '';
+    const { username, password } = this.loginForm.value;
+
+    this.loginService.login(username, password).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.successMessage = 'Login Successful! Redirecting...';
+
+        // Store user info for dashboard display
+        localStorage.setItem('firstName', response.body?.firstName || '');
+        localStorage.setItem('lastName', response.body?.lastName || '');
+
+        // Brief delay before navigating to the dashboard
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 1500);
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error.message || 'Login failed. Please try again.';
+      }
+    });
   }
 
   navigateToRegister() {
-    console.log("Navigating to register...");
-    this.router.navigateByUrl('/register');  // ✅ Try using `navigateByUrl()`
+    this.router.navigate(['/register']);
   }
-  
-
 }

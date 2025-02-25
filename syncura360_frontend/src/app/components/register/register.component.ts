@@ -90,7 +90,7 @@ export class RegisterComponent {
   
     this.loading = true;
     this.errorMessage = '';
-    this.successMessage = '';
+    this.successMessage = 'Processing your registration...';
   
     const requestBody = {
       hospital: {
@@ -124,40 +124,23 @@ export class RegisterComponent {
     this.registerService.registerHospital(requestBody).subscribe({
       next: (response) => {
         console.log('Response:', response);
-  
-        if (response && response.status === 200) { 
-          this.successMessage = 'Account successfully created! Redirecting to login...';
-          this.loading = false;
-  
-          setTimeout(() => {
-            this.registerForm.reset();
-            this.router.navigate(['/']); 
-          }, 3000);
-        } else {
-          this.errorMessage = 'Unexpected response from server.';
-          this.loading = false;
-        }
-      },
-      error: (err) => {
+        this.successMessage = 'Registration successful! Redirecting to login page...';
         this.loading = false;
   
-        if (err.status === 200) {
-          this.successMessage = 'Account successfully created! Redirecting to login...';
-          setTimeout(() => {
-            this.registerForm.reset();
-            this.router.navigate(['/']);
-          }, 3000);
-          return;
-        }
-  
-        if (err.headers?.get('message')) {
-          this.errorMessage = err.headers.get('message');
-        } else {
-          this.errorMessage = 'An error occurred while processing your request.';
-        }
+        setTimeout(() => {
+          this.registerForm.reset();
+          this.router.navigate(['/']);
+        }, 3000);
+      },
+      error: (err) => {
+        console.error('Registration error:', err);
+        this.loading = false;
+        this.successMessage = ''; // ❌ Hide success message on error
+        this.errorMessage = err.message || 'An error occurred while processing your request.';
       }
     });
   }
+  
 
   /**
    * Navigates back to the login page.

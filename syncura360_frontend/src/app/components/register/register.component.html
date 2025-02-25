@@ -158,13 +158,13 @@
       </button>
     </div>
    
-    <!-- Success Message -->
-    <p *ngIf="successMessage" class="text-green-600 text-center mt-4">
+    <!-- Success Message (Visible During Processing & After Completion) -->
+    <p *ngIf="successMessage" class="text-green-600 text-center mt-4 animate-fade-in">
       {{ successMessage }}
     </p>
 
     <!-- Error Message -->
-    <p *ngIf="errorMessage" class="text-red-600 text-center mt-4">
+    <p *ngIf="errorMessage" class="text-red-600 text-center mt-4 animate-fade-in">
       {{ errorMessage }}
     </p>
 
