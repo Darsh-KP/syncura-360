@@ -1,5 +1,6 @@
 package com.syncura360.restservice;
 
+import com.syncura360.model.Hospital;
 import com.syncura360.model.Staff;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,6 +15,6 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     List<Staff> findByPhone(String email);
 
-    List<Staff> findByWorksAt(Integer worksAt);
+    List<Staff> findByWorksAt(Hospital worksAt);
 
 }
