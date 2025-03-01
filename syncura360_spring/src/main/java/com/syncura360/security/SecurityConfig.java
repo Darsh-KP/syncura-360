@@ -63,7 +63,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("*")); // Allow all origins
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Allow specific HTTP methods
         configuration.setAllowedHeaders(List.of("*")); // Allow all headers
-
+        configuration.setExposedHeaders(List.of("*"));
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply CORS to all endpoints
 

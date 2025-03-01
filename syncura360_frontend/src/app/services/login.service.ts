@@ -21,12 +21,10 @@ export class LoginService {
   
     return this.http.post<LoginResponse>(this.loginUrl, { username, password }, { headers, observe: 'response' }).pipe(
       tap(response => {
-
         const authHeader = response.headers.get('Authorization');
         if (authHeader && authHeader.startsWith('Bearer ')) {
           const token = authHeader.split(' ')[1]; 
           localStorage.setItem('token', token);
-          console.log('Token Stored:', token);
         } else {
           console.warn('Authorization header missing or improperly formatted');
         }
@@ -49,8 +47,9 @@ export class LoginService {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
-  }
+    const token = localStorage.getItem('token');
+    return token !== null && token !== '';
+  }  
 
   getToken(): string | null {
     const token = localStorage.getItem('token');
