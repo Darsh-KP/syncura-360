@@ -6,8 +6,6 @@ import { catchError, tap } from 'rxjs/operators';
 interface LoginResponse {
   message: string;
   role: string;
-  firstName: string;
-  lastName: string;
 }
 
 @Injectable({
@@ -20,33 +18,34 @@ export class LoginService {
 
   login(username: string, password: string): Observable<HttpResponse<LoginResponse>> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
+  
     return this.http.post<LoginResponse>(this.loginUrl, { username, password }, { headers, observe: 'response' }).pipe(
       tap(response => {
-        const authHeader = response.headers.get('Authorization');  
-        const responseBody: LoginResponse | null = response.body;
 
-        if (authHeader) {
-          localStorage.setItem('token', authHeader);
+        const authHeader = response.headers.get('Authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.split(' ')[1]; 
+          localStorage.setItem('token', token);
+          console.log('Token Stored:', token);
+        } else {
+          console.warn('Authorization header missing or improperly formatted');
         }
-
-        if (responseBody) { 
+  
+        const responseBody: LoginResponse | null = response.body;
+        if (responseBody) {
           localStorage.setItem('role', responseBody.role);
-          localStorage.setItem('firstName', responseBody.firstName);
-          localStorage.setItem('lastName', responseBody.lastName);
         }
       }),
       catchError(error => {
+        console.error('Login error:', error);
         return throwError(() => new Error(error.error || 'Login failed. Please try again.'));
       })
     );    
   }
-
+  
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('firstName');
-    localStorage.removeItem('lastName');
   }
 
   isAuthenticated(): boolean {
@@ -56,11 +55,5 @@ export class LoginService {
   getToken(): string | null {
     const token = localStorage.getItem('token');
     return token ? `Bearer ${token}` : null;
-  }
-
-  getUserFullName(): string {
-    const firstName = localStorage.getItem('firstName') || '';
-    const lastName = localStorage.getItem('lastName') || '';
-    return `${firstName} ${lastName}`.trim();
   }
 }

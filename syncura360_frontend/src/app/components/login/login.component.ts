@@ -67,16 +67,11 @@ export class LoginComponent implements OnInit {
     this.loginService.login(username, password).subscribe({
       next: (response) => {
         this.loading = false;
-        this.successMessage = 'Login Successful! Redirecting...';
-
-        // Store user info for dashboard display
-        localStorage.setItem('firstName', response.body?.firstName || '');
-        localStorage.setItem('lastName', response.body?.lastName || '');
-
-        // Brief delay before navigating to the dashboard
-        setTimeout(() => {
+        if (response.body?.message == "Authentication successful.") {
+          this.successMessage = 'Login Successful! Redirecting...';
           this.router.navigate(['/dashboard']);
-        }, 1500);
+        }
+        
       },
       error: (error) => {
         this.loading = false;

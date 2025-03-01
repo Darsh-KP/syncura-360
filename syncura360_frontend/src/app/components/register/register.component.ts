@@ -90,7 +90,6 @@ export class RegisterComponent {
   
     this.loading = true;
     this.errorMessage = '';
-    this.successMessage = 'Processing your registration...';
   
     const requestBody = {
       hospital: {
@@ -135,13 +134,12 @@ export class RegisterComponent {
       error: (err) => {
         console.error('Registration error:', err);
         this.loading = false;
-        this.successMessage = ''; // ❌ Hide success message on error
+        this.successMessage = '';
         this.errorMessage = err.message || 'An error occurred while processing your request.';
       }
     });
   }
   
-
   /**
    * Navigates back to the login page.
    */
