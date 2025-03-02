@@ -41,7 +41,7 @@ public class LoginController {
 
             return ResponseEntity.ok().headers(headers).body(new LoginResponse("Authentication successful.", role));
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed. Invalid credentials.");
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed: role not found.");
         }

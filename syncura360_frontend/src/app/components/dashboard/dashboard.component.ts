@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       addressLine1: ['', Validators.required],
+      addressLine2: null,
       city: ['', Validators.required],
       state: ['', Validators.required],
       postal: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
@@ -50,6 +51,7 @@ export class DashboardComponent implements OnInit {
     this.staffService.getAllStaff().subscribe({
       next: (staff) => {
         this.staffList = staff;
+        console.log('Updated Staff List:', this.staffList);
       },
       error: (error) => {
         this.errorMessage = error.message || 'Failed to load staff.';
@@ -68,16 +70,20 @@ export class DashboardComponent implements OnInit {
     this.successMessage = '';
 
     const newStaff: Staff = this.staffForm.value;
+    
+    // Pass new staff as a list (ensuring consistency with batch API)
+    const staffListPayload: Staff[] = [newStaff];
+    console.log('Creating staff:', staffListPayload);
 
-    this.staffService.createStaff(newStaff).subscribe({
+    this.staffService.createStaff(staffListPayload).subscribe({
       next: (response) => {
         this.successMessage = response.message || 'Staff created successfully.';
         this.staffForm.reset();
-        this.fetchStaff();
+        this.fetchStaff(); // Ensure the latest list is retrieved from the backend
         this.loading = false;
       },
       error: (error) => {
-        this.errorMessage = error.message;
+        this.errorMessage = error.message || 'Failed to create staff.';
         this.loading = false;
       }
     });

@@ -11,6 +11,7 @@ export interface Staff {
   email: string;
   phone: string;
   addressLine1: string;
+  addressLine2: string;
   city: string;
   state: string;
   postal: string;
@@ -36,14 +37,18 @@ export class StaffService {
     return this.http.get<Staff[]>(`${this.baseUrl}/all`, { headers });
   }
 
-  createStaff(staff: Staff): Observable<{ message: string }> {
+  createStaff(staff: Staff[]): Observable<{ message: string }> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     });
 
-    return this.http.post<{ message: string }>(this.baseUrl, staff, { headers });
+    const requestBody = {
+      staff: staff,
+    }
+
+    return this.http.post<{ message: string }>(this.baseUrl, requestBody, { headers });
   }
 
   deleteStaff(staffIds: number[]): Observable<void> {
