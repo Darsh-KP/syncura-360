@@ -34,7 +34,7 @@ public class JwtUtil {
         String jwt = authHeader.substring(7);
         Jws<Claims> jwsClaims = Jwts.parser().verifyWith(key).build().parseSignedClaims(jwt);
         Claims claims = jwsClaims.getPayload();
-        return claims.get("username", String.class);
+        return claims.get("sub", String.class);
 
     }
 
