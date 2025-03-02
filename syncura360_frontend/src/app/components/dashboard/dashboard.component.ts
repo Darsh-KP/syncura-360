@@ -17,7 +17,8 @@ import { CommonModule } from '@angular/common';
 export class DashboardComponent implements OnInit {
   staffList: Staff[] = [];
   staffForm: FormGroup;
-  errorMessage = '';
+  errorMessage = ''; // General errors (e.g., API errors)
+  createStaffError = ''; // Specific error for form validation
   successMessage = '';
   loading = false;
 
@@ -58,12 +59,12 @@ export class DashboardComponent implements OnInit {
 
   addStaff() {
     if (this.staffForm.invalid) {
-      this.errorMessage = 'All fields are required.';
+      this.createStaffError = 'All fields are required.';
       return;
     }
 
     this.loading = true;
-    this.errorMessage = '';
+    this.createStaffError = ''; // Clear previous validation errors
     this.successMessage = '';
 
     const newStaff: Staff = this.staffForm.value;
@@ -80,6 +81,13 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  deleteStaff(index: number) {
+    if (!confirm('Are you sure you want to delete this staff member?')) return;
+
+    this.staffList.splice(index, 1);
+    this.successMessage = 'Staff member removed successfully.';
   }
 
   logoutAndRedirect() {

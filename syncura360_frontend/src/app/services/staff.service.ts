@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Staff {
+  id?: number; // Added ID to support deletion
   username: string;
   passwordHash: string;
   role: string;
@@ -43,6 +44,19 @@ export class StaffService {
       Authorization: `Bearer ${token}`
     });
 
-    return this.http.post<{ message: string }>(this.baseUrl, staff, { headers })
+    return this.http.post<{ message: string }>(this.baseUrl, staff, { headers });
+  }
+
+  deleteStaff(staffIds: number[]): Observable<void> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.request<void>('delete', this.baseUrl, { 
+      headers,
+      body: { staffIds }
+    });
   }
 }

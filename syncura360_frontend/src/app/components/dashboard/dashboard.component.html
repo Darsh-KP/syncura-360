@@ -4,14 +4,10 @@
   <p class="text-gray-600 text-lg">Manage your hospital system efficiently.</p>
 
   <!-- Error Message -->
-  <p *ngIf="errorMessage" class="text-red-600 text-center mt-4">
-    {{ errorMessage }}
-  </p>
+  <p *ngIf="errorMessage" class="text-red-600 text-center mt-4">{{ errorMessage }}</p>
 
   <!-- Success Message -->
-  <p *ngIf="successMessage" class="text-green-600 text-center mt-4">
-    {{ successMessage }}
-  </p>
+  <p *ngIf="successMessage" class="text-green-600 text-center mt-4">{{ successMessage }}</p>
 
   <!-- Staff List -->
   <div class="mt-6 w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
@@ -25,14 +21,22 @@
                       <th class="p-3 text-left">Email</th>
                       <th class="p-3 text-left">Phone</th>
                       <th class="p-3 text-left">Role</th>
+                      <th class="p-3 text-left">Actions</th>
                   </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let staff of staffList" class="border-t">
+                  <tr *ngFor="let staff of staffList; let i = index" class="border-t">
                       <td class="p-3">{{ staff.firstName }} {{ staff.lastName }}</td>
                       <td class="p-3">{{ staff.email }}</td>
                       <td class="p-3">{{ staff.phone }}</td>
                       <td class="p-3">{{ staff.role }}</td>
+                      <td class="p-3">
+                          <button (click)="deleteStaff(i)"
+                                  class="p-2 bg-red-500 text-white font-semibold rounded-lg 
+                                         shadow-md hover:bg-red-600 active:scale-95 focus:ring-4 focus:ring-red-300">
+                              Delete
+                          </button>
+                      </td>
                   </tr>
               </tbody>
           </table>
@@ -43,51 +47,72 @@
       </ng-template>
   </div>
 
-  <!-- Staff Creation Form -->
-  <div class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mt-6">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">Create New Staff</h2>
+<!-- Staff Creation Form -->
+<div class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mt-6">
+  <h2 class="text-xl font-semibold text-gray-700 mb-4">Create New Staff</h2>
 
-      <form [formGroup]="staffForm" (ngSubmit)="addStaff()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <input type="text" placeholder="Username" formControlName="username" class="input-field">
-          <input type="password" placeholder="Password" formControlName="passwordHash" class="input-field">
-          <select formControlName="role" class="input-field">
-              <option value="">Select Role</option>
-              <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-          </select>
-          <input type="text" placeholder="First Name" formControlName="firstName" class="input-field">
-          <input type="text" placeholder="Last Name" formControlName="lastName" class="input-field">
-          <input type="email" placeholder="Email" formControlName="email" class="input-field">
-          <input type="text" placeholder="Phone (10 digits)" formControlName="phone" class="input-field">
-          <input type="text" placeholder="Address" formControlName="addressLine1" class="input-field">
-          <input type="text" placeholder="City" formControlName="city" class="input-field">
-          <input type="text" placeholder="State" formControlName="state" class="input-field">
-          <input type="text" placeholder="Postal Code (5 digits)" formControlName="postal" class="input-field">
-          <input type="text" placeholder="Country" formControlName="country" class="input-field">
-          <input type="date" formControlName="dateOfBirth" class="input-field">
-
-          <!-- Submit Button -->
-          <button type="submit" [disabled]="loading"
+  <form [formGroup]="staffForm" (ngSubmit)="addStaff()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <input type="text" placeholder="Username" formControlName="username" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="password" placeholder="Password" formControlName="passwordHash" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <select formControlName="role" 
+              class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <option value="">Select Role</option>
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+  
+      <input type="text" placeholder="First Name" formControlName="firstName" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="Last Name" formControlName="lastName" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="email" placeholder="Email" formControlName="email" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="Phone (10 digits)" formControlName="phone" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="Address" formControlName="addressLine1" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="City" formControlName="city" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="State" formControlName="state" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="Postal Code (5 digits)" formControlName="postal" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="text" placeholder="Country" formControlName="country" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <input type="date" formControlName="dateOfBirth" 
+             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none">
+  
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="loading"
               class="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-gradient-to-r from-blue-500 to-blue-700 
-                    text-white font-semibold tracking-wide shadow-md transition-all duration-300 ease-in-out 
-                    hover:shadow-lg hover:from-blue-600 hover:to-blue-800 active:scale-95 disabled:opacity-50 cursor-pointer">
-              
-              <svg *ngIf="loading" class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0H4z"></path>
-              </svg>
-      
-              <span *ngIf="!loading">Create Staff</span>
-              <span *ngIf="loading">Processing...</span>
-          </button>
-      </form>
-  </div>
+                     text-white font-semibold tracking-wide shadow-md transition-all duration-300 ease-in-out 
+                     hover:shadow-lg hover:from-blue-600 hover:to-blue-800 active:scale-95 disabled:opacity-50">
+          <span *ngIf="!loading">Create Staff</span>
+          <span *ngIf="loading">Processing...</span>
+      </button>
+  </form>    
+
+  <!-- Show `createStaffError` below the form -->
+  <p *ngIf="createStaffError" class="text-red-600 text-center mt-4">{{ createStaffError }}</p>
+</div>
 
   <!-- Back to Login Button -->
   <div class="mt-6">
     <button (click)="logoutAndRedirect()" 
-      class="p-3 bg-gray-500 text-white font-semibold rounded-lg 
-              shadow-md hover:shadow-lg transition-all duration-300 ease-in-out 
-              hover:bg-gray-600 active:scale-95 focus:ring-4 focus:ring-gray-300 cursor-pointer">
+      class="p-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg 
+             transition-all duration-300 ease-in-out hover:bg-gray-600 active:scale-95 focus:ring-4 focus:ring-gray-300">
       Back to Login
     </button>
   </div>
