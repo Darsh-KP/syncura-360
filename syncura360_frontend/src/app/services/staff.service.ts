@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Staff {
-  id?: number; // Added ID to support deletion
   username: string;
   passwordHash: string;
   role: string;
