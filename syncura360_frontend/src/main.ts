@@ -6,6 +6,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { LoginComponent } from './app/components/login/login.component';
 import { RegisterComponent } from './app/components/register/register.component';
 import { DashboardComponent } from './app/components/dashboard/dashboard.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { importProvidersFrom } from '@angular/core';
 
 
 bootstrapApplication(AppComponent, {
@@ -16,6 +18,7 @@ bootstrapApplication(AppComponent, {
       { path: 'dashboard', component: DashboardComponent }, 
     ]),
     provideHttpClient(),
-    provideAnimations()
+    provideAnimations(),
+    importProvidersFrom(MatNativeDateModule),
   ],
 }).catch(err => console.error(err));

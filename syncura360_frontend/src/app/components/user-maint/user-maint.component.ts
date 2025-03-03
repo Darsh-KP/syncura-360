@@ -7,6 +7,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+
+
 
 @Component({
   selector: 'app-user-maint',
@@ -17,7 +22,15 @@ import { MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule
+  ],
+  providers: [
+    MatNativeDateModule,
+    MatDatepickerModule,
+    { provide: MAT_DATE_LOCALE, useValue: 'en-US' } // Optional: Set locale
   ],
   templateUrl: './user-maint.component.html',
   styleUrls: ['./user-maint.component.css'],
@@ -31,6 +44,8 @@ export class UserMaintComponent implements OnInit {
     'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
     'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
   ];
+  passwordVisible: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -45,9 +60,9 @@ export class UserMaintComponent implements OnInit {
       firstName: [data?.firstName || '', Validators.required],
       lastName: [data?.lastName || '', Validators.required],
       email: [data?.email || '', [Validators.required, Validators.email]],
-      phone: [data?.phone || '', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      phone: [data?.phone || '', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       addressLine1: [data?.addressLine1 || '', Validators.required],
-      addressLine2: [data?.addressLine2 || '', Validators.required],
+      addressLine2: [data?.addressLine2],
       city: [data?.city || '', Validators.required],
       state: [data?.state || '', Validators.required],
       postal: [data?.postal || '', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
@@ -67,6 +82,12 @@ export class UserMaintComponent implements OnInit {
     this.loading = true;
     this.createStaffError = '';
 
+    // Format phone number before sending
+    let formattedPhone = this.staffForm.value.phone.replace(/\D/g, '');
+    if (formattedPhone.length === 10) {
+      formattedPhone = `${formattedPhone.slice(0, 3)}-${formattedPhone.slice(3, 6)}-${formattedPhone.slice(6)}`;
+    }
+
     const staffPayload = [this.staffForm.value];
 
     this.staffService.createStaff(staffPayload).subscribe({
@@ -78,6 +99,10 @@ export class UserMaintComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  togglePassword() {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   closeDialog() {

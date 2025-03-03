@@ -14,16 +14,21 @@ html, body {
 body { margin: 0; font-family: "Open Sans", "Helvetica Neue", sans-serif; }
 
 /* Fix input alignment */
-mat-form-field {
-    width: 100%;
-  }
-  
+  mat-form-field {
+      width: 100%;
+    }
+    
   /* Ensure proper background color */
   .mat-mdc-text-field-wrapper {
     background-color: white !important;
     border-radius: 4px;
   }
   
+  /* Override Material's error padding */
+  .mat-mdc-form-field-error-wrapper {
+    padding: 0 !important;
+}
+
   /* Fix text alignment */
   .mat-mdc-form-field-infix {
     min-height: 50px !important;

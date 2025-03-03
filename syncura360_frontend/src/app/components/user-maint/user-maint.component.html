@@ -13,7 +13,18 @@
 
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Password</mat-label>
-      <input matInput type="password" formControlName="passwordHash" required>
+      <input matInput [type]="passwordVisible ? 'text' : 'password'"
+             formControlName="passwordHash"
+             required>
+      <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
+        <mat-icon>{{ passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="staffForm.get('passwordHash')?.hasError('required')">
+        Password is required
+      </mat-error>
+      <mat-error *ngIf="staffForm.get('passwordHash')?.hasError('minlength')">
+        Password must be at least 6 characters
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-full">
@@ -35,14 +46,23 @@
 
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Email</mat-label>
-      <input matInput type="email" formControlName="email" required>
-    </mat-form-field>
-
+      <input matInput formControlName="email" type="email" required>
+      <mat-error *ngIf="staffForm.get('email')?.invalid">
+        Enter a valid email address
+      </mat-error>
+    </mat-form-field>    
+    
     <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Phone (10 digits)</mat-label>
-      <input matInput formControlName="phone" required>
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone"
+             type="text"
+             maxlength="10"
+             pattern="\d{10}" required>
+      <mat-error *ngIf="staffForm.get('phone')?.invalid">
+        Enter a valid 10-digit phone number
+      </mat-error>
     </mat-form-field>
-
+    
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Address 1</mat-label>
       <input matInput formControlName="addressLine1" required>
@@ -50,7 +70,7 @@
 
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Address 2</mat-label>
-      <input matInput formControlName="addressLine2" required>
+      <input matInput formControlName="addressLine2">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-full">
@@ -66,20 +86,25 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Postal Code (5 digits)</mat-label>
+      <mat-label>Postal Code</mat-label>
       <input matInput formControlName="postal" required>
+      <mat-error *ngIf="staffForm.get('phone')?.invalid">Enter a valid 5-digit postal code</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Country</mat-label>
       <input matInput formControlName="country" required>
     </mat-form-field>
-
-    <mat-form-field appearance="outline" class="w-full">
+    
+    <mat-form-field  appearance="outline" class="w-full">
       <mat-label>Date of Birth</mat-label>
-      <input matInput type="date" formControlName="dateOfBirth" required>
+      <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+    
 
+    
     <!-- Buttons: Submit (Add/Update) and Cancel -->
     <div class="flex gap-4 col-span-2 justify-center">
       <button mat-raised-button color="primary" type="submit" [disabled]="loading">

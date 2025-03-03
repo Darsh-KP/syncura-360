@@ -32,13 +32,21 @@
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Zip Code</mat-label>
-            <input matInput formControlName="postal">
+            <input matInput formControlName="postal" required>
+            <mat-error *ngIf="registerForm.get('postal')?.invalid">Enter a valid 5-digit postal code</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Telephone (10 digits)</mat-label>
-            <input matInput formControlName="telephone">
+            <mat-label>Telephone</mat-label>
+            <input matInput formControlName="telephone"
+                   type="text"
+                   maxlength="10"
+                   pattern="\d{10}" required>
+            <mat-error *ngIf="registerForm.get('telephone')?.invalid">
+              Enter a valid 10-digit telephone number
+            </mat-error>
           </mat-form-field>
+          
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Hospital Type</mat-label>
@@ -70,11 +78,20 @@
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Password</mat-label>
-            <input matInput [type]="passwordVisible ? 'text' : 'password'" formControlName="passwordHash">
+            <input matInput [type]="passwordVisible ? 'text' : 'password'"
+                   formControlName="passwordHash"
+                   required>
             <button mat-icon-button matSuffix (click)="togglePassword()" type="button">
               <mat-icon>{{ passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
+            <mat-error *ngIf="registerForm.get('passwordHash')?.hasError('required')">
+              Password is required
+            </mat-error>
+            <mat-error *ngIf="registerForm.get('passwordHash')?.hasError('minlength')">
+              Password must be at least 6 characters
+            </mat-error>
           </mat-form-field>
+          
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>First Name</mat-label>
@@ -88,17 +105,28 @@
 
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email">
-          </mat-form-field>
+            <input matInput formControlName="email" type="email" required>
+            <mat-error *ngIf="registerForm.get('email')?.invalid">
+              Enter a valid email address
+            </mat-error>
+          </mat-form-field>  
 
           <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Phone (10 digits)</mat-label>
-            <input matInput formControlName="phone">
+            <mat-label>Phone</mat-label>
+            <input matInput formControlName="phone"
+                   type="text"
+                   maxlength="10"
+                   pattern="\d{10}" required>
+            <mat-error *ngIf="registerForm.get('phone')?.invalid">
+              Enter a valid 10-digit phone number
+            </mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="w-full">
+          <mat-form-field  appearance="outline" class="w-full">
             <mat-label>Date of Birth</mat-label>
-            <input matInput type="date" formControlName="dateOfBirth">
+            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>
@@ -111,7 +139,7 @@
                 text-white font-semibold tracking-wide shadow-md transition-all duration-300 ease-in-out 
                 hover:shadow-lg hover:from-blue-600 hover:to-blue-800 active:scale-95 disabled:opacity-50 cursor-pointer">
           
-          <!-- Spinner Animation (Same as Login) -->
+          <!-- Spinner Animation -->
           <svg *ngIf="loading" class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0116 0H4z"></path>

@@ -27,6 +27,7 @@
     "ag-grid-angular": "^31.0.3",
     "ag-grid-community": "^31.0.3",
     "express": "^4.18.2",
+    "ngx-mask": "^19.0.6",
     "postcss": "^8.5.2",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.0.6",
