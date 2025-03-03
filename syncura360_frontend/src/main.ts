@@ -7,6 +7,7 @@ import { LoginComponent } from './app/components/login/login.component';
 import { RegisterComponent } from './app/components/register/register.component';
 import { DashboardComponent } from './app/components/dashboard/dashboard.component';
 
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter([

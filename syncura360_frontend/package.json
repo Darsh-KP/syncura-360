@@ -24,6 +24,8 @@
     "@angular/router": "^19.1.0",
     "@angular/ssr": "^19.1.7",
     "@tailwindcss/postcss": "^4.0.6",
+    "ag-grid-angular": "^31.0.3",
+    "ag-grid-community": "^31.0.3",
     "express": "^4.18.2",
     "postcss": "^8.5.2",
     "rxjs": "~7.8.0",

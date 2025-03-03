@@ -1,6 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+
 html, body { 
     height: 100%; 
     overflow-x: hidden; /* Prevents horizontal scrolling */
@@ -8,3 +12,27 @@ html, body {
     background-color: #f3f4f6; /* Keeps background consistent */
 }
 body { margin: 0; font-family: "Open Sans", "Helvetica Neue", sans-serif; }
+
+/* Fix input alignment */
+mat-form-field {
+    width: 100%;
+  }
+  
+  /* Ensure proper background color */
+  .mat-mdc-text-field-wrapper {
+    background-color: white !important;
+    border-radius: 4px;
+  }
+  
+  /* Fix text alignment */
+  .mat-mdc-form-field-infix {
+    min-height: 50px !important;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Remove hover background */
+  .mdc-text-field--filled:not(.mdc-text-field--disabled):hover {
+    background-color: transparent !important;
+  }
+  
