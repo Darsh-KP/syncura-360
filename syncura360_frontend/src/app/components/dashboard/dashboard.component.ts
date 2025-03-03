@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule
   ],
   templateUrl: './dashboard.component.html',
@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 })
 export class DashboardComponent implements OnInit {
   staffList: Staff[] = [];
+  today: Date = new Date();
   staffForm: FormGroup;
   errorMessage = ''; // General errors (e.g., API errors)
   createStaffError = ''; // Specific error for form validation
@@ -70,7 +71,7 @@ export class DashboardComponent implements OnInit {
     this.successMessage = '';
 
     const newStaff: Staff = this.staffForm.value;
-    
+
     // Pass new staff as a list (ensuring consistency with batch API)
     const staffListPayload: Staff[] = [newStaff];
     console.log('Creating staff:', staffListPayload);
