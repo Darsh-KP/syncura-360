@@ -60,7 +60,9 @@
 
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>State</mat-label>
-      <input matInput formControlName="state" required>
+      <mat-select formControlName="state">
+        <mat-option *ngFor="let state of states" [value]="state">{{ state }}</mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="w-full">
