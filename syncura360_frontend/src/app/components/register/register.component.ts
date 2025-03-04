@@ -11,6 +11,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { provideHttpClient } from '@angular/common/http';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 @Component({
   selector: 'app-register',
@@ -24,7 +26,10 @@ import { provideHttpClient } from '@angular/common/http';
     MatSelectModule,
     MatCheckboxModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
@@ -90,6 +95,12 @@ export class RegisterComponent {
   
     this.loading = true;
     this.errorMessage = '';
+
+    // Function to format a phone number as XXX-XXX-XXXX
+    const formatPhoneNumber = (phone: string) => {
+      phone = phone.replace(/\D/g, ''); // Remove non-numeric characters
+      return phone.length === 10 ? `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}` : phone;
+    };
   
     const requestBody = {
       hospital: {
@@ -98,7 +109,7 @@ export class RegisterComponent {
         city: this.registerForm.value.city,
         state: this.registerForm.value.state,
         postal: this.registerForm.value.postal,
-        telephone: this.registerForm.value.telephone,
+        telephone: formatPhoneNumber(this.registerForm.value.telephone),
         type: this.registerForm.value.type,
         traumaLevel: this.registerForm.value.traumaLevel,
         hasHelipad: this.registerForm.value.hasHelipad
@@ -110,7 +121,7 @@ export class RegisterComponent {
         firstName: this.registerForm.value.firstName,
         lastName: this.registerForm.value.lastName,
         email: this.registerForm.value.email,
-        phone: this.registerForm.value.phone,
+        phone: formatPhoneNumber(this.registerForm.value.phone),
         addressLine1: this.registerForm.value.addressLine1Admin,
         city: this.registerForm.value.cityAdmin,
         state: this.registerForm.value.stateAdmin,
