@@ -1,11 +1,13 @@
 <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
   <!-- Welcome Message -->
   <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome to the Dashboard</h1>
-  <p class="text-gray-600 text-lg">Manage your hospital system efficiently.</p>
+  <div class="text-gray-500 text-sm">{{ today }}</div>
+  <p class="text-gray-600 text-lg">Manage your HealthCare Organization efficiently.</p>
 
   <!-- Error & Success Messages -->
   <p *ngIf="errorMessage" class="text-red-600 text-center mt-4">{{ errorMessage }}</p>
   <p *ngIf="successMessage" class="text-green-600 text-center mt-4">{{ successMessage }}</p>
+
 
   <!-- Staff List Using AG Grid -->
   <div class="mt-6 w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
@@ -36,12 +38,13 @@
       (gridReady)="onGridReady($event)"
       (cellClicked)="onCellClicked($event)">
     </ag-grid-angular>
+
   </div>
 
   <!-- Logout Button -->
   <div class="mt-6">
-    <button (click)="logoutAndRedirect()" 
-      class="p-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg 
+    <button (click)="logoutAndRedirect()"
+            class="p-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg
              transition-all duration-300 ease-in-out hover:bg-gray-600 active:scale-95 focus:ring-4 focus:ring-gray-300">
       Logout
     </button>

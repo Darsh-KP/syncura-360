@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     AgGridModule
+
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
@@ -20,6 +21,7 @@ import { CommonModule } from '@angular/common';
 export class DashboardComponent implements OnInit {
   staffList: Staff[] = [];
   errorMessage = '';
+
   successMessage = '';
   gridApi: any;
   public themeClass: string = 'ag-theme-quartz';
@@ -72,7 +74,6 @@ export class DashboardComponent implements OnInit {
     const filterValue = event.target.value;
     this.gridApi.setQuickFilter(filterValue);
   }
-
 
   openStaffDialog(staff?: Staff) {
     const dialogRef = this.dialog.open(UserMaintComponent, {
