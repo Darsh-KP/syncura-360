@@ -58,7 +58,7 @@ export class RegisterComponent {
       city: ['New Jersey', Validators.required],
       state: ['NJ', Validators.required],
       postal: ['10001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      telephone: ['7324343950', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      telephone: ['4738258383', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       type: ['General', Validators.required],
       traumaLevel: ['Level I', Validators.required],
       hasHelipad: [true],
@@ -70,7 +70,7 @@ export class RegisterComponent {
       firstName: ['John', Validators.required],
       lastName: ['Doe', Validators.required],
       email: ['john.doe@example.com', [Validators.required, Validators.email]],
-      phone: ['9876543210', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      phone: ['2382838233', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       
       // Admin Address
       addressLine1Admin: ['456 Elm St', Validators.required],
