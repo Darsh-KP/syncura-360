@@ -5,6 +5,8 @@ import { AgGridModule } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { UserMaintComponent } from '../user-maint/user-maint.component';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -44,7 +46,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private staffService: StaffService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router  // Inject Router
   ) {}
 
   ngOnInit() {
@@ -115,6 +118,6 @@ export class DashboardComponent implements OnInit {
   logoutAndRedirect() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    window.location.href = '/';
+    this.router.navigate(['/']); 
   }
 }
