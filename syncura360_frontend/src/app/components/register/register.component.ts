@@ -52,55 +52,71 @@ export class RegisterComponent {
 
   constructor(private fb: FormBuilder, private router: Router, private registerService: RegisterService) {
     this.registerForm = this.fb.group({
-      hospitalName: ['', Validators.required],
-      addressLine1: ['', Validators.required],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
-      postal: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      telephone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      type: ['', Validators.required],
-      traumaLevel: ['', Validators.required],
-      hasHelipad: [false],
-
-      username: ['', Validators.required],
-      passwordHash: ['', [Validators.required, Validators.minLength(6)]],
+      // Hospital Information
+      hospitalName: ['NJ General Hospital', Validators.required],
+      addressLine1: ['123 Main St', Validators.required],
+      city: ['New Jersey', Validators.required],
+      state: ['NJ', Validators.required],
+      postal: ['10001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      telephone: ['7324343950', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      type: ['General', Validators.required],
+      traumaLevel: ['Level I', Validators.required],
+      hasHelipad: [true],
+  
+      // Admin (Staff) Information
+      username: ['admin123', Validators.required],
+      passwordHash: ['123456', [Validators.required, Validators.minLength(6)]],
       role: ['Super_Admin'],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      addressLine1Admin: ['', Validators.required],
-      cityAdmin: ['', Validators.required],
-      stateAdmin: ['', Validators.required],
-      postalAdmin: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      country: ['United States'],
-      dateOfBirth: ['', Validators.required]
+      firstName: ['John', Validators.required],
+      lastName: ['Doe', Validators.required],
+      email: ['john.doe@example.com', [Validators.required, Validators.email]],
+      phone: ['9876543210', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      
+      // Admin Address
+      addressLine1Admin: ['456 Elm St', Validators.required],
+      cityAdmin: ['Los Angeles', Validators.required],
+      stateAdmin: ['CA', Validators.required],
+      postalAdmin: ['90001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      country: ['United States', Validators.required],
+      dateOfBirth: ['1990-01-01', Validators.required] // Make sure date format matches what your input expects
     });
   }
+  
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
   }
+
+  getInvalidControls() {
+    const invalid = [];
+    const controls = this.registerForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push({ field: name, errors: controls[name].errors });
+      }
+    }
+    return invalid;
+  }
+  
 
   /**
    * Handles form submission, validates data, and sends the registration request.
    */
   onSubmit() {
     this.submitted = true;
-
+    
+    // Log form values for debugging
+    console.log('Form Values:', this.registerForm.value);
+    
+  
     if (this.registerForm.invalid) {
+      console.log('Form Errors:', this.getInvalidControls());
       this.errorMessage = 'All fields must be correctly filled to register';
       return;
     }
   
     this.loading = true;
     this.errorMessage = '';
-
-    // Function to format a phone number as XXX-XXX-XXXX
-    const formatPhoneNumber = (phone: string) => {
-      phone = phone.replace(/\D/g, ''); // Remove non-numeric characters
-      return phone.length === 10 ? `${phone.slice(0, 3)}-${phone.slice(3, 6)}-${phone.slice(6)}` : phone;
-    };
   
     const requestBody = {
       hospital: {
@@ -109,7 +125,7 @@ export class RegisterComponent {
         city: this.registerForm.value.city,
         state: this.registerForm.value.state,
         postal: this.registerForm.value.postal,
-        telephone: formatPhoneNumber(this.registerForm.value.telephone),
+        telephone: this.registerForm.value.telephone,
         type: this.registerForm.value.type,
         traumaLevel: this.registerForm.value.traumaLevel,
         hasHelipad: this.registerForm.value.hasHelipad
@@ -121,7 +137,7 @@ export class RegisterComponent {
         firstName: this.registerForm.value.firstName,
         lastName: this.registerForm.value.lastName,
         email: this.registerForm.value.email,
-        phone: formatPhoneNumber(this.registerForm.value.phone),
+        phone: this.registerForm.value.phone,
         addressLine1: this.registerForm.value.addressLine1Admin,
         city: this.registerForm.value.cityAdmin,
         state: this.registerForm.value.stateAdmin,
@@ -130,6 +146,8 @@ export class RegisterComponent {
         dateOfBirth: this.registerForm.value.dateOfBirth
       }
     };
+  
+    console.log('Submitting Request:', requestBody);
   
     this.registerService.registerHospital(requestBody).subscribe({
       next: (response) => {
@@ -150,6 +168,7 @@ export class RegisterComponent {
       }
     });
   }
+  
   
   /**
    * Navigates back to the login page.

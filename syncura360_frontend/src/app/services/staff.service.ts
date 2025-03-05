@@ -3,8 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Staff {
+  id?: number;
   username: string;
-  passwordHash: string;
+  passwordHash?: string;
   role: string;
   firstName: string;
   lastName: string;
@@ -19,6 +20,15 @@ export interface Staff {
   dateOfBirth: string;
 }
 
+export interface StaffUpdateDto {
+  id: number;
+  fields: Partial<Staff>;
+}
+
+export interface StaffUpdateRequest {
+  updates: StaffUpdateDto[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,39 +37,35 @@ export class StaffService {
 
   constructor(private http: HttpClient) {}
 
-  getAllStaff(): Observable<Staff[]> {
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
+    return new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     });
+  }
 
-    return this.http.get<Staff[]>(`${this.baseUrl}/all`, { headers });
+  getAllStaff(): Observable<Staff[]> {
+    return this.http.get<Staff[]>(`${this.baseUrl}/all`, { headers: this.getHeaders() });
   }
 
   createStaff(staff: Staff[]): Observable<{ message: string }> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    });
-
-    const requestBody = {
-      staff: staff,
-    }
-
+    const requestBody = { staff };
+    const headers = this.getHeaders();
+    
+    console.log("Sending Token: ", headers.get('Authorization')); // Debugging
+  
     return this.http.post<{ message: string }>(this.baseUrl, requestBody, { headers });
+  }  
+
+  updateStaff(updates: StaffUpdateDto[]): Observable<{ message: string; staffIds: number[] }> {
+    const requestBody: StaffUpdateRequest = { updates };
+    return this.http.put<{ message: string; staffIds: number[] }>(`${this.baseUrl}/batch`, requestBody, { headers: this.getHeaders() });
   }
 
   deleteStaff(staffIds: number[]): Observable<void> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    });
-
-    return this.http.request<void>('delete', this.baseUrl, { 
-      headers,
+    return this.http.request<void>('delete', this.baseUrl, {
+      headers: this.getHeaders(),
       body: { staffIds }
     });
   }
