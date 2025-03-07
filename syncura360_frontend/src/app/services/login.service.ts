@@ -47,9 +47,11 @@ export class LoginService {
   }
 
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    return token !== null && token !== '';
-  }  
+    if (typeof window !== 'undefined' && localStorage.getItem('token')) {
+      return true;
+    }
+    return false;
+  }   
 
   getToken(): string | null {
     const token = localStorage.getItem('token');

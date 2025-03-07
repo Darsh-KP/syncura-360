@@ -1,0 +1,17 @@
+.input-field {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid;
+        border-radius: 0.375rem;
+        transition: box-shadow 0.2s;
+    }
+    
+    .input-field:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  }
+  
+  /* Adjust the outline to remove the vertical separation */
+  ::ng-deep .mdc-notched-outline__notch {
+    border-right: none !important; /* Removes the vertical line */
+  }
+  

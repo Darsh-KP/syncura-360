@@ -1,0 +1,7 @@
+input.ng-invalid.ng-touched {
+    border-color: red;
+  }
+  
+  h2 {
+    margin: 0 0 0 0 !important; 
+  }
