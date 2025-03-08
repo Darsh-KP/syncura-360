@@ -53,7 +53,7 @@ export class RegisterComponent {
   constructor(private fb: FormBuilder, private router: Router, private registerService: RegisterService) {
     this.registerForm = this.fb.group({
       // Hospital Information
-      hospitalName: ['NJ General Hospital', Validators.required],
+      name: ['NJ General Hospital', Validators.required],
       addressLine1: ['123 Main St', Validators.required],
       city: ['New Jersey', Validators.required],
       state: ['NJ', Validators.required],
@@ -66,7 +66,7 @@ export class RegisterComponent {
       // Admin (Staff) Information
       username: ['admin123', Validators.required],
       passwordHash: ['123456', [Validators.required, Validators.minLength(6)]],
-      role: ['Super_Admin'],
+      role: ['Super Admin'],
       firstName: ['John', Validators.required],
       lastName: ['Doe', Validators.required],
       email: ['john.doe@example.com', [Validators.required, Validators.email]],
@@ -120,7 +120,7 @@ export class RegisterComponent {
   
     const requestBody = {
       hospital: {
-        hospitalName: this.registerForm.value.hospitalName,
+        name: this.registerForm.value.hospitalName,
         addressLine1: this.registerForm.value.addressLine1,
         city: this.registerForm.value.city,
         state: this.registerForm.value.state,
@@ -133,7 +133,7 @@ export class RegisterComponent {
       staff: {
         username: this.registerForm.value.username,
         passwordHash: this.registerForm.value.passwordHash,
-        role: 'Super_Admin',
+        role: 'Super Admin',
         firstName: this.registerForm.value.firstName,
         lastName: this.registerForm.value.lastName,
         email: this.registerForm.value.email,
