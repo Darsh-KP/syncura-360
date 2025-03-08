@@ -1,14 +1,19 @@
-package com.syncura360.restservice;
+package com.syncura360.controller;
 
 import com.syncura360.model.Hospital;
 import com.syncura360.model.Staff;
+import com.syncura360.model.enums.Role;
+import com.syncura360.security.passwordSecurity;
+import com.syncura360.unorganized.StaffCreationRequest;
+import com.syncura360.unorganized.StaffCreationResponse;
+import com.syncura360.repository.StaffRepository;
+import com.syncura360.unorganized.StaffUpdateRequest;
 import com.syncura360.security.JwtUtil;
 import lombok.Data;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -39,7 +44,7 @@ public class StaffController {
         }
 
         Hospital hospital = authenticatedStaff.get().getWorksAt();
-        List<Integer> idList = new ArrayList<Integer>();
+        List<Integer> idList = new ArrayList<>();
 
         for (StaffUpdateRequest.StaffUpdateDto updateDto : staffUpdateRequest.getUpdates()) {
 
@@ -154,14 +159,14 @@ public class StaffController {
         }
 
         Hospital hospital = authenticatedStaff.get().getWorksAt();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+        PasswordEncoder encoder = passwordSecurity.getPasswordEncoder();
 
         List<Staff> staffList = staffCreationRequest.getStaff().stream()
                 .map(dto -> {
                     Staff staff = new Staff();
                     staff.setUsername(dto.getUsername());
                     staff.setPasswordHash(encoder.encode(dto.getPasswordHash()));
-                    staff.setRole(dto.getRole());
+                    staff.setRole(Role.fromValue(dto.getRole()));
                     staff.setFirstName(dto.getFirstName());
                     staff.setLastName(dto.getLastName());
                     staff.setEmail(dto.getEmail());
@@ -181,8 +186,8 @@ public class StaffController {
         staffRepository.saveAll(staffList);
 
         // Extract the IDs from the updated staffList
-        List<Integer> staffIds = staffList.stream()
-                .map(Staff::getId)
+        List<String> staffIds = staffList.stream()
+                .map(Staff::getUsername)
                 .collect(Collectors.toList());
 
         StaffCreationResponse response = new StaffCreationResponse("Staff created successfully.", staffIds);

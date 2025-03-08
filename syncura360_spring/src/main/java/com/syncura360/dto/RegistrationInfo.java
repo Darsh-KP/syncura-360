@@ -1,4 +1,4 @@
-package com.syncura360.restservice;
+package com.syncura360.dto;
 
 import com.syncura360.model.Hospital;
 import com.syncura360.model.Staff;
