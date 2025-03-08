@@ -1,31 +1,31 @@
 package com.syncura360.model;
 
+import com.syncura360.model.enums.Role;
+import com.syncura360.model.enums.RoleConvertor;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+
 import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "Staff")
+@Table(name = "Staff", uniqueConstraints = @UniqueConstraint(columnNames = {"works_at", "email"}))
 public class Staff {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "staff_id", nullable = false)
-    private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "works_at", nullable = false)
-    private Hospital worksAt;
-
     @Column(name = "username", nullable = false, length = 20)
     private String username;
 
-    @Column(name = "password_hash", nullable = false, length = 70)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "works_at", referencedColumnName = "hospital_id", nullable = false)
+    private Hospital worksAt;
+
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
+    @Convert(converter = RoleConvertor.class)
     @Column(name = "role", nullable = false)
-    private String role;
+    private Role role;
 
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
@@ -33,7 +33,7 @@ public class Staff {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "date_of_birth", nullable = false)
@@ -65,5 +65,4 @@ public class Staff {
 
     @Column(name = "years_experience")
     private Integer yearsExperience;
-
 }
