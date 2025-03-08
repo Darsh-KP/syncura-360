@@ -1,7 +1,7 @@
 package com.syncura360.security;
 
 import com.syncura360.model.Staff;
-import com.syncura360.restservice.StaffRepository;
+import com.syncura360.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +30,7 @@ public class StaffDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 staff.getUsername(),
                 staff.getPasswordHash(),
-                getAuthorities(staff.getRole())
+                getAuthorities(staff.getRole().getValue())
         );
 
     }

@@ -1,4 +1,4 @@
-package com.syncura360.restservice;
+package com.syncura360.unorganized;
 
 import lombok.Data;
 

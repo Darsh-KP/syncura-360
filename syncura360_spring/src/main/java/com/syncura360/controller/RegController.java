@@ -1,7 +1,10 @@
-package com.syncura360.restservice;
+package com.syncura360.controller;
 
 import com.syncura360.model.Hospital;
 import com.syncura360.model.Staff;
+import com.syncura360.repository.HospitalRepository;
+import com.syncura360.dto.RegistrationInfo;
+import com.syncura360.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,7 +31,7 @@ public class RegController {
 
         // Check for unique values.
 
-        if (!hospitalRepository.findByHospitalName(hospital.getHospitalName()).isEmpty()) {
+        if (!hospitalRepository.findByHospitalName(hospital.getName()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital name taken").build();
         }
         else if (!hospitalRepository.addressLine1(hospital.getAddressLine1()).isEmpty()) {
