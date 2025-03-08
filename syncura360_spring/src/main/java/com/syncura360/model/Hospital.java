@@ -1,5 +1,7 @@
 package com.syncura360.model;
 
+import com.syncura360.model.enums.TraumaLevel;
+import com.syncura360.model.enums.TraumaLevelConvertor;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,7 +15,7 @@ public class Hospital {
     private Integer id;
 
     @Column(name = "hospital_name", nullable = false)
-    private String hospitalName;
+    private String name;
 
     @Column(name = "address_line_1", nullable = false)
     private String addressLine1;
@@ -36,10 +38,10 @@ public class Hospital {
     @Column(name = "type", length = 50)
     private String type;
 
+    @Convert(converter = TraumaLevelConvertor.class)
     @Column(name = "trauma_level")
-    private String traumaLevel;
+    private TraumaLevel traumaLevel;
 
     @Column(name = "has_helipad", nullable = false)
     private Boolean hasHelipad = false;
-
 }
