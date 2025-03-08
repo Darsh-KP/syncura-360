@@ -4,7 +4,6 @@ import com.syncura360.model.enums.Role;
 import com.syncura360.model.enums.RoleConvertor;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.time.LocalDate;
 
