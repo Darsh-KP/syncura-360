@@ -8,7 +8,6 @@ import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.passwordSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
@@ -29,24 +28,15 @@ public class RegController {
         Staff headAdmin = regInfo.getStaff();
 
         // Check for unique values.
-
-        if (!hospitalRepository.findByName(hospital.getName()).isEmpty()) {
-            return ResponseEntity.badRequest().header("message", "hospital name taken").build();
-        }
         if (!hospitalRepository.addressLine1(hospital.getAddressLine1()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital address taken").build();
         }
         if (!hospitalRepository.findByTelephone(hospital.getTelephone()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital phone taken").build();
         }
-        if (!staffRepository.findByEmail(headAdmin.getEmail()).isEmpty()) {
-            return ResponseEntity.badRequest().header("message", "staff email taken").build();
-        }
+
         if (staffRepository.findByUsername(headAdmin.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().header("message", "staff username taken").build();
-        }
-        if (!staffRepository.findByPhone(headAdmin.getPhone()).isEmpty()) {
-            return ResponseEntity.badRequest().header("message", "staff phone taken").build();
         }
 
         // Hash password and create records.
@@ -75,13 +65,4 @@ public class RegController {
 
         return ResponseEntity.ok("Registration Successful.");
     }
-
-    @PostMapping("/test")
-    public ResponseEntity<String> test(@RequestBody TestRequest testRequest) {
-        System.out.println("Received data: \n" + testRequest.text);
-
-        return ResponseEntity.ok("Received Data");
-    }
-    public record TestRequest(String text) {}
-
 }
