@@ -5,6 +5,7 @@ import com.syncura360.model.Staff;
 import com.syncura360.repository.HospitalRepository;
 import com.syncura360.dto.RegistrationInfo;
 import com.syncura360.repository.StaffRepository;
+import com.syncura360.security.passwordSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,59 +25,55 @@ public class RegController {
     @PostMapping("/hospital")
     public ResponseEntity<String> registerHospital(@Valid @RequestBody RegistrationInfo regInfo) {
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
-
         Hospital hospital = regInfo.getHospital();
         Staff headAdmin = regInfo.getStaff();
 
         // Check for unique values.
 
-        if (!hospitalRepository.findByHospitalName(hospital.getName()).isEmpty()) {
+        if (!hospitalRepository.findByName(hospital.getName()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital name taken").build();
         }
-        else if (!hospitalRepository.addressLine1(hospital.getAddressLine1()).isEmpty()) {
+        if (!hospitalRepository.addressLine1(hospital.getAddressLine1()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital address taken").build();
         }
-        else if (!hospitalRepository.findByTelephone(hospital.getTelephone()).isEmpty()) {
+        if (!hospitalRepository.findByTelephone(hospital.getTelephone()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "hospital phone taken").build();
         }
-        else if (!staffRepository.findByEmail(headAdmin.getEmail()).isEmpty()) {
+        if (!staffRepository.findByEmail(headAdmin.getEmail()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "staff email taken").build();
         }
-        else if (staffRepository.findByUsername(headAdmin.getUsername()).isPresent()) {
+        if (staffRepository.findByUsername(headAdmin.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().header("message", "staff username taken").build();
         }
-        else if (!staffRepository.findByPhone(headAdmin.getPhone()).isEmpty()) {
+        if (!staffRepository.findByPhone(headAdmin.getPhone()).isEmpty()) {
             return ResponseEntity.badRequest().header("message", "staff phone taken").build();
         }
-        else {  // Hash password and create records.
 
-            System.out.println("valid info");
+        // Hash password and create records.
+        System.out.println("valid info");
 
-            headAdmin.setWorksAt(hospital);
+        headAdmin.setWorksAt(hospital);
 
-            try {
-                hospitalRepository.save(hospital);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return ResponseEntity.internalServerError().header("message", "database error: failed to register hospital.").build();
-            }
-
-            String passwordHash = encoder.encode(headAdmin.getPasswordHash());
-            headAdmin.setPasswordHash(passwordHash);
-
-
-            try {
-                staffRepository.save(headAdmin);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                hospitalRepository.delete(hospital);
-                return ResponseEntity.internalServerError().header("message", "database error: failed to register user. rolling back hospital registration").build();
-            }
-
-            return ResponseEntity.ok("Registration Successful.");
-
+        try {
+            hospitalRepository.save(hospital);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().header("message", "database error: failed to register hospital.").build();
         }
+
+        String passwordHash = passwordSecurity.getPasswordEncoder().encode(headAdmin.getPasswordHash());
+        headAdmin.setPasswordHash(passwordHash);
+
+
+        try {
+            staffRepository.save(headAdmin);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            hospitalRepository.delete(hospital);
+            return ResponseEntity.internalServerError().header("message", "database error: failed to register user. rolling back hospital registration").build();
+        }
+
+        return ResponseEntity.ok("Registration Successful.");
     }
 
     @PostMapping("/test")
