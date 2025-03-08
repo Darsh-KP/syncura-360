@@ -1,4 +1,4 @@
-package com.syncura360.restservice;
+package com.syncura360.controller;
 
 import com.syncura360.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;

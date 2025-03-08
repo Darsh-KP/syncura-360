@@ -1,5 +1,7 @@
-package com.syncura360.restservice;
+package com.syncura360.controller;
 
+import com.syncura360.dto.LoginInfo;
+import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
