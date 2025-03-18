@@ -53,7 +53,7 @@ export class RegisterComponent {
   constructor(private fb: FormBuilder, private router: Router, private registerService: RegisterService) {
     this.registerForm = this.fb.group({
       // Hospital Information
-      name: ['NJ General Hospital', Validators.required],
+      hospitalName: ['NJ General Hospital', Validators.required],
       addressLine1: ['123 Main St', Validators.required],
       city: ['New Jersey', Validators.required],
       state: ['NJ', Validators.required],
