@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface StaffRepository extends JpaRepository<Staff, Integer> {
 
     public interface StaffProjection {
-        Integer getId();
         String getUsername();
         String getRole();
         String getFirstName();

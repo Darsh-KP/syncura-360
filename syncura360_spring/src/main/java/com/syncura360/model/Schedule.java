@@ -13,7 +13,7 @@ public class Schedule {
     private ScheduleId id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "staff_username", referencedColumnName = "username", nullable = false)
+    @JoinColumn(name = "staff_username", referencedColumnName = "username", nullable = false, insertable = false, updatable = false)
     private Staff staff;
 
     @Column(name = "end_date_time", nullable = false)
