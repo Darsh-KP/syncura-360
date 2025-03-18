@@ -1,5 +1,8 @@
 package com.syncura360.model;
 
+import com.syncura360.model.enums.BloodType;
+import com.syncura360.model.enums.BloodTypeConvertor;
+import com.syncura360.model.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,13 +26,13 @@ public class PatientInfo {
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
-    private String gender;
+    private Gender gender;
 
-    @Lob
+    @Convert(converter = BloodTypeConvertor.class)
     @Column(name = "blood_type")
-    private String bloodType;
+    private BloodType bloodType;
 
     @Column(name = "height")
     private Integer height;
