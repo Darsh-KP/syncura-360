@@ -1,0 +1,37 @@
+<div class="h-screen w-60 bg-gray-800 text-white flex flex-col p-4 shadow-lg fixed left-0 top-0">
+    <!-- App Title -->
+    <h2 class="text-2xl font-bold mb-6 text-center">Dashboard</h2>
+  
+    <!-- Navigation Links -->
+    <nav class="flex flex-col space-y-4">
+      <a routerLink="/dashboard"
+         class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+        🏠 <span class="ml-3">Home</span>
+      </a>
+  
+      <a routerLink="/scheduling"
+         class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+        📅 <span class="ml-3">Scheduling</span>
+      </a>
+  
+      <a routerLink="/inventory"
+         class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+        📦 <span class="ml-3">Inventory</span>
+      </a>
+  
+      <a routerLink="/account"
+         class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+        👤 <span class="ml-3">Account Details</span>
+      </a>
+    </nav>
+  
+    <!-- Logout Button -->
+    <div class="mt-auto">
+      <button (click)="logoutAndRedirect()"
+        class="w-full p-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 
+               transition-all duration-300 active:scale-95 focus:ring-4 focus:ring-red-300 cursor-pointer">
+        🚪 Logout
+      </button>
+    </div>
+  </div>
+  
