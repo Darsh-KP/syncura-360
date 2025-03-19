@@ -58,6 +58,9 @@ public class StaffController {
 
         Hospital hospital = authenticatedStaff.get().getWorksAt();
 
+        System.out.println(staffUpdateRequest.getUpdates().toString());
+
+
         for (StaffUpdateRequest.StaffUpdateDto updateDto : staffUpdateRequest.getUpdates()) {
 
             Optional<Staff> optionalStaff = staffRepository.findByUsername(updateDto.getUsername());
@@ -73,7 +76,9 @@ public class StaffController {
                     staffRepository.save(staff);
                     response.getStaffUsernames().add(updateDto.getUsername());
                     // Failed if saving changes causes any error.
-                } catch (Exception e) { failed.add(updateDto.getUsername()); }
+                } catch (Exception e) {
+                    System.out.println(e.toString());
+                    failed.add(updateDto.getUsername()); }
             }
 
         }
@@ -107,6 +112,10 @@ public class StaffController {
 
             switch (fieldName) {
 
+                case "username": staff.setUsername((String) fieldValue);
+                    break;
+                case "role": staff.setRole(Role.fromValue((String) fieldValue));
+                    break;
                 case "firstName": staff.setFirstName((String) fieldValue);
                     break;
                 case "lastName": staff.setLastName((String) fieldValue);
@@ -129,9 +138,7 @@ public class StaffController {
                     break;
                 case "specialty": staff.setSpecialty((String) fieldValue);
                     break;
-                case "dateOfBirth":
-                    if (fieldValue instanceof LocalDate) { staff.setDateOfBirth((LocalDate) fieldValue); }
-                    else { throw new IllegalArgumentException("Illegal date format"); }
+                case "dateOfBirth": staff.setDateOfBirth(LocalDate.parse((String) fieldValue));
                     break;
                 case "yearsExperience":
                     if (fieldValue instanceof Integer) { staff.setYearsExperience((Integer) fieldValue); }
@@ -227,33 +234,6 @@ public class StaffController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
-
-//    /**
-//     *
-//     * @param authorization
-//     * @return
-//     */
-//    @GetMapping("/all")
-//    public ResponseEntity<List<StaffRepository.StaffProjection>> getAllStaff(
-//            @RequestHeader(name="Authorization") String authorization)
-//    {
-//
-//        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
-//
-//        if (authenticatedStaff.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-//        }
-//
-//        List<StaffRepository.StaffProjection> staffList = staffRepository.findByWorksAt(
-//                authenticatedStaff.get().getWorksAt());
-//
-//        if (staffList.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-//        }
-//
-//        return ResponseEntity.ok().body(staffList);
-//
-//    }
 
     /**
      * Retrieves the list of staff member info of the accessing users hospital.
