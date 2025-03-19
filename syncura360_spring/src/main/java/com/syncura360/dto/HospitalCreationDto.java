@@ -1,6 +1,5 @@
-package com.syncura360.unorganized;
+package com.syncura360.dto;
 
-import com.syncura360.model.enums.TraumaLevel;
 import lombok.Data;
 
 @Data

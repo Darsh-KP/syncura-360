@@ -1,4 +1,4 @@
-package com.syncura360.unorganized;
+package com.syncura360.dto;
 
 import java.util.List;
 
