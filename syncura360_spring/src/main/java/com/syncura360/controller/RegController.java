@@ -44,6 +44,9 @@ public class RegController {
         HospitalCreationDto hospitalCreationDto = regInfo.getHospital();
         StaffCreationDto headAdminCreationDto = regInfo.getStaff();
 
+        System.out.println(hospitalCreationDto.toString());
+
+
         // Check for unique values. Not sure exactly which values we should be checking for, but we can decide soon.
         if (!hospitalRepository.addressLine1(hospitalCreationDto.getAddressLine1()).isEmpty()) { responseMessage = "Failed: Hospital address is taken.";}
         else if (!hospitalRepository.findByTelephone(hospitalCreationDto.getTelephone()).isEmpty()) { responseMessage = "Failed: Hospital phone is taken."; }
@@ -57,6 +60,9 @@ public class RegController {
                 hospital = getHospital(hospitalCreationDto);
                 hospitalRepository.save(hospital);
             } catch (Exception e) {
+
+                System.out.println(e.toString());
+
                 responseType = HttpStatus.INTERNAL_SERVER_ERROR;
                 responseMessage = "Failed. Error saving hospital to database.";
                 return ResponseEntity.status(responseType).body(responseMessage);
