@@ -55,7 +55,6 @@ export class UserMaintComponent implements OnInit {
     this.isEditing = !!data; // Determines if we are editing an existing staff member
 
     this.staffForm = this.fb.group({
-      id: [data?.id || null],
       username: [data?.username || '', Validators.required],
 
       // Only add password field if creating a new staff member
@@ -93,7 +92,7 @@ export class UserMaintComponent implements OnInit {
       // If editing, update staff member
       const updatePayload = [
         {
-          id: formData.id,
+          username: formData.username,
           fields: {
             username: formData.username,
             role: formData.role,
