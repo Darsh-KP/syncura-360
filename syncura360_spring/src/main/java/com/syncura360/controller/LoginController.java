@@ -1,7 +1,6 @@
 package com.syncura360.controller;
 
 import com.syncura360.dto.LoginInfo;
-import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,39 +15,60 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.NoSuchElementException;
 
-@CrossOrigin(origins = "*")
+/**
+ * Handles all incoming login requests.
+ * @author Benjamin Leiby
+ */
 @RestController
+@CrossOrigin(origins = "*")
 public class LoginController {
 
     @Autowired
     JwtUtil jwtUtil;
-
-    @Autowired
-    StaffRepository staffRepository;
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     * @param loginInfo DTO containing username and plaintext password.
+     * @return loginResponse DTO containing message, JWT, and authenticated user's role.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginInfo loginInfo) {
+
+        HttpHeaders headers = new HttpHeaders();
+        HttpStatus responseType = HttpStatus.UNAUTHORIZED;
+        String responseMessage;
+        String role = "None";
+
         try {
+
+            // Throws authentication exception if invalid credentials.
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginInfo.getUsername(), loginInfo.getPassword())
             );
 
-            String role = authentication.getAuthorities().iterator().next().getAuthority();
+            // Throws no element exception if the credentials are not linked to a role (has no permissions).
+            role = authentication.getAuthorities().iterator().next().getAuthority();
+
             String token = jwtUtil.generateJwtToken(authentication.getName(), role);
-            HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-            return ResponseEntity.ok().headers(headers).body(new LoginResponse("Authentication successful.", role));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed. Invalid credentials.");
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed: role not found.");
+            responseType = HttpStatus.OK;
+            responseMessage = "Authentication successful.";
+
         }
+        catch (AuthenticationException e) { responseMessage = "Failed: Invalid credentials."; }
+        catch (NoSuchElementException e) { responseMessage = "Failed: User access denied."; }
+
+        return ResponseEntity.status(responseType).headers(headers).body(new LoginResponse(responseMessage, role));
+
     }
 
+    /**
+     * DTO for login response.
+     * @param message
+     * @param role
+     */
     public record LoginResponse(String message, String role) {}
 
 }

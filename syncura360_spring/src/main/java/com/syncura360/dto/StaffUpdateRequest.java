@@ -1,4 +1,4 @@
-package com.syncura360.unorganized;
+package com.syncura360.dto;
 
 import lombok.Data;
 
@@ -10,7 +10,7 @@ public class StaffUpdateRequest {
 
     @Data
     public static class StaffUpdateDto {
-        private Integer id;
+        private String username;
         private Map<String, Object> fields;
     }
 
