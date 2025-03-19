@@ -20,6 +20,10 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * CRUD operations on staff credentials.
+ * @author Benjamin Leiby
+ */
 @RestController
 @CrossOrigin(origins="*")
 @RequestMapping("/staff")
@@ -27,45 +31,65 @@ public class StaffController {
 
     @Autowired
     StaffRepository staffRepository;
-
     @Autowired
     JwtUtil jwtUtil;
 
+    /**
+     * Attempts to apply a list of staff info updates.
+     * @param authorization JWT.
+     * @param staffUpdateRequest DTO to model a collection of attempted staff updates.
+     * @return StaffUpdateResponse DTO to communicate which updates were successful.
+     */
     @PutMapping("/batch")
     public ResponseEntity<StaffUpdateResponse> updateStaff(
             @RequestHeader(name="Authorization") String authorization,
             @RequestBody StaffUpdateRequest staffUpdateRequest)
     {
 
-        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
+        StaffUpdateResponse response = new StaffUpdateResponse();
+        List<String> failed = new ArrayList<String>(); // Track to determine partial success.
 
+        String authenticatedUsername = jwtUtil.getUsername(authorization);
+        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(authenticatedUsername);
         if (authenticatedStaff.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            response.setMessage("Failed: Accessing user not found.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
         Hospital hospital = authenticatedStaff.get().getWorksAt();
-        List<Integer> idList = new ArrayList<>();
 
         for (StaffUpdateRequest.StaffUpdateDto updateDto : staffUpdateRequest.getUpdates()) {
 
-            Optional<Staff> optionalStaff = staffRepository.findById(updateDto.getId());
+            Optional<Staff> optionalStaff = staffRepository.findByUsername(updateDto.getUsername());
 
-            if (optionalStaff.isPresent() && optionalStaff.get().getWorksAt() == hospital) {
+            // Failed if staff member doesn't exist or staff doesn't work at same hospital as accessing user.
+            if (optionalStaff.isEmpty() || optionalStaff.get().getWorksAt() != hospital) {
+                failed.add(updateDto.getUsername());
+            }
+            else {
+                Staff staff = optionalStaff.get();
                 try {
-                    Staff staff = optionalStaff.get();
                     applyUpdates(staff, updateDto.getFields());
                     staffRepository.save(staff);
-                    idList.add(updateDto.getId());
-                } catch (Exception e) {
-                    System.err.println("Failed to update staff record: " + e);
-                }
+                    response.getStaffUsernames().add(updateDto.getUsername());
+                    // Failed if saving changes causes any error.
+                } catch (Exception e) { failed.add(updateDto.getUsername()); }
             }
+
         }
 
-        StaffUpdateResponse response = new StaffUpdateResponse();
-        response.setStaffIds(idList);
-        response.setMessage("Update successful");
-        return ResponseEntity.ok(response);
+        if (failed.isEmpty()) {
+            response.setMessage("Success: All updates applied.");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+        else if (response.getStaffUsernames().isEmpty()) {
+            response.setMessage("Failed: All updates failed.");
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(response);
+        }
+        else { // Else then only partial records were updated.
+            response.setMessage("Partial success: Some updates applied.");
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(response);
+        }
 
     }
 
@@ -77,11 +101,7 @@ public class StaffController {
             Object fieldValue = entry.getValue();
 
             switch (fieldName) {
-
-
-                case "username":
-                    staff.setUsername((String) fieldValue);
-                    break;
+                
                 case "passwordHash":
                     staff.setPasswordHash((String) fieldValue);
                     break;
@@ -140,10 +160,21 @@ public class StaffController {
         }
     }
 
+    /**
+     * DTO to model response containing successfully updated records.
+     * @author Benjamin Leiby
+     */
     @Data
     public static class StaffUpdateResponse {
         private String message;
-        private List<Integer> staffIds;
+        private List<String> staffUsernames; // Of updated records
+        public StaffUpdateResponse(String responseMessage, List<String> staffUsernames) {
+            this.message = responseMessage;
+            this.staffUsernames = staffUsernames;
+        }
+        public StaffUpdateResponse() {
+            staffUsernames = new ArrayList<String>();
+        }
     }
 
     @PostMapping
