@@ -4,10 +4,10 @@ import com.syncura360.model.Hospital;
 import com.syncura360.model.Staff;
 import com.syncura360.model.enums.Role;
 import com.syncura360.security.passwordSecurity;
-import com.syncura360.unorganized.StaffCreationRequest;
-import com.syncura360.unorganized.StaffCreationResponse;
+import com.syncura360.dto.StaffCreationRequest;
+import com.syncura360.dto.StaffCreationResponse;
 import com.syncura360.repository.StaffRepository;
-import com.syncura360.unorganized.StaffUpdateRequest;
+import com.syncura360.dto.StaffUpdateRequest;
 import com.syncura360.security.JwtUtil;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +93,11 @@ public class StaffController {
 
     }
 
+    /**
+     * Applies updates given a mapping of field names and values.
+     * @param staff instance of JPA entity to update.
+     * @param fields field-value mapping of the update.
+     */
     private void applyUpdates(Staff staff, Map<String, Object> fields) {
 
         for (Map.Entry<String, Object> entry : fields.entrySet()) {
@@ -101,63 +106,45 @@ public class StaffController {
             Object fieldValue = entry.getValue();
 
             switch (fieldName) {
-                
-                case "passwordHash":
-                    staff.setPasswordHash((String) fieldValue);
+
+                case "firstName": staff.setFirstName((String) fieldValue);
                     break;
-                case "firstName":
-                    staff.setFirstName((String) fieldValue);
+                case "lastName": staff.setLastName((String) fieldValue);
                     break;
-                case "lastName":
-                    staff.setLastName((String) fieldValue);
+                case "email": staff.setEmail((String) fieldValue);
                     break;
-                case "email":
-                    staff.setEmail((String) fieldValue);
+                case "phone": staff.setPhone((String) fieldValue);
+                    break;
+                case "addressLine1": staff.setAddressLine1((String) fieldValue);
+                    break;
+                case "addressLine2": staff.setAddressLine2((String) fieldValue);
+                    break;
+                case "city": staff.setCity((String) fieldValue);
+                    break;
+                case "state": staff.setState((String) fieldValue);
+                    break;
+                case "postal": staff.setPostal((String) fieldValue);
+                    break;
+                case "country": staff.setCountry((String) fieldValue);
+                    break;
+                case "specialty": staff.setSpecialty((String) fieldValue);
                     break;
                 case "dateOfBirth":
-                    if (fieldValue instanceof LocalDate) {
-                        staff.setDateOfBirth((LocalDate) fieldValue);
-                    }
-                    else {
-                        System.err.println("Bad date format");
-                    }
-                    break;
-                case "phone":
-                    staff.setPhone((String) fieldValue);
-                    break;
-                case "addressLine1":
-                    staff.setAddressLine1((String) fieldValue);
-                    break;
-                case "addressLine2":
-                    staff.setAddressLine2((String) fieldValue);
-                    break;
-                case "city":
-                    staff.setCity((String) fieldValue);
-                    break;
-                case "state":
-                    staff.setState((String) fieldValue);
-                    break;
-                case "postal":
-                    staff.setPostal((String) fieldValue);
-                    break;
-                case "country":
-                    staff.setCountry((String) fieldValue);
-                    break;
-                case "specialty":
-                    staff.setSpecialty((String) fieldValue);
+                    if (fieldValue instanceof LocalDate) { staff.setDateOfBirth((LocalDate) fieldValue); }
+                    else { throw new IllegalArgumentException("Illegal date format"); }
                     break;
                 case "yearsExperience":
-                    if (fieldValue instanceof Integer) {
-                        staff.setYearsExperience((Integer) fieldValue);
-                    } else if (fieldValue instanceof Number) { // Handles cases where the number is a double or float.
+                    if (fieldValue instanceof Integer) { staff.setYearsExperience((Integer) fieldValue); }
+                    else if (fieldValue instanceof Number) { // Handles cases where the number is a double or float.
                         staff.setYearsExperience(((Number) fieldValue).intValue());
                     }
+                    else { throw new IllegalArgumentException("Illegal data type"); }
                     break;
                 default:
-                    System.err.println("Unknown field: " + fieldName);
-                    break;
-            }
-        }
+                    throw new IllegalArgumentException("Unknown field name");
+
+            } // End switch
+        } // End for
     }
 
     /**
@@ -167,7 +154,7 @@ public class StaffController {
     @Data
     public static class StaffUpdateResponse {
         private String message;
-        private List<String> staffUsernames; // Of updated records
+        private List<String> staffUsernames; // Usernames of updated staff records
         public StaffUpdateResponse(String responseMessage, List<String> staffUsernames) {
             this.message = responseMessage;
             this.staffUsernames = staffUsernames;
@@ -177,16 +164,25 @@ public class StaffController {
         }
     }
 
+    /**
+     * Attempts to insert new staff members from a list of new staff info.
+     * @param authorization JWT.
+     * @param staffCreationRequest DTO to model a collection of new staff member info.
+     * @return StaffCreationResponse DTO to communicate which insertions were successful.
+     */
     @PostMapping
     public ResponseEntity<StaffCreationResponse> createStaff(
             @RequestHeader(name="Authorization") String authorization,
             @RequestBody StaffCreationRequest staffCreationRequest)
     {
 
-        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
+        StaffCreationResponse response = new StaffCreationResponse();
 
+        String authenticatedUsername = jwtUtil.getUsername(authorization);
+        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(authenticatedUsername);
         if (authenticatedStaff.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            response.setMessage("Failed: Accessing user not found.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
         Hospital hospital = authenticatedStaff.get().getWorksAt();
@@ -214,38 +210,86 @@ public class StaffController {
                 })
                 .toList();
 
-        staffRepository.saveAll(staffList);
+        try { staffRepository.saveAll(staffList); }
+        catch (Exception e) {
+            response.setMessage("Failed. Error saving records to database.");
+            response.setStaffUsernames(new ArrayList<>());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
 
-        // Extract the IDs from the updated staffList
-        List<String> staffIds = staffList.stream()
+        // Extract the usernames from the staffList
+        List<String> staffUsernames = staffList.stream()
                 .map(Staff::getUsername)
                 .collect(Collectors.toList());
 
-        StaffCreationResponse response = new StaffCreationResponse("Staff created successfully.", staffIds);
+        response.setMessage("Success. Records created.");
+        response.setStaffUsernames(staffUsernames);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 
+//    /**
+//     *
+//     * @param authorization
+//     * @return
+//     */
+//    @GetMapping("/all")
+//    public ResponseEntity<List<StaffRepository.StaffProjection>> getAllStaff(
+//            @RequestHeader(name="Authorization") String authorization)
+//    {
+//
+//        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
+//
+//        if (authenticatedStaff.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
+//
+//        List<StaffRepository.StaffProjection> staffList = staffRepository.findByWorksAt(
+//                authenticatedStaff.get().getWorksAt());
+//
+//        if (staffList.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+//        }
+//
+//        return ResponseEntity.ok().body(staffList);
+//
+//    }
+
+    /**
+     * Retrieves the list of staff member info of the accessing users hospital.
+     * @param authorization JWT.
+     * @return AllStaffDTO to model a list of staff member info.
+     */
     @GetMapping("/all")
-    public ResponseEntity<List<StaffRepository.StaffProjection>> getAllStaff(
+    public ResponseEntity<AllStaffDTO> getAllStaff(
             @RequestHeader(name="Authorization") String authorization)
     {
 
-        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
-
+        String authenticatedUsername = jwtUtil.getUsername(authorization);
+        Optional<Staff> authenticatedStaff = staffRepository.findByUsername(authenticatedUsername);
         if (authenticatedStaff.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            AllStaffDTO response = new AllStaffDTO("Failed: Accessing user not found.", new ArrayList<>());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
         List<StaffRepository.StaffProjection> staffList = staffRepository.findByWorksAt(
                 authenticatedStaff.get().getWorksAt());
 
         if (staffList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            AllStaffDTO response = new AllStaffDTO("Failed: No staff members found.", new ArrayList<>());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
         }
 
-        return ResponseEntity.ok().body(staffList);
+        AllStaffDTO response = new AllStaffDTO("Success.", staffList);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
+
+    /**
+     * DTO for a list of staff info.
+     * @param message
+     * @param staffList
+     */
+    public record AllStaffDTO (String message, List<StaffRepository.StaffProjection> staffList) { }
 
 }

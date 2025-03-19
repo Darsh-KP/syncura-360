@@ -8,8 +8,8 @@ import com.syncura360.repository.HospitalRepository;
 import com.syncura360.dto.RegistrationInfo;
 import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.passwordSecurity;
-import com.syncura360.unorganized.HospitalCreationDto;
-import com.syncura360.unorganized.StaffCreationDto;
+import com.syncura360.dto.HospitalCreationDto;
+import com.syncura360.dto.StaffCreationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +66,7 @@ public class RegController {
                 staff = getStaff(headAdminCreationDto, hospital);
                 staffRepository.save(staff);
             } catch (Exception e) {
+                hospitalRepository.delete(hospital); // VERY IMPORTANT. Roll back hospital creation if user creation fails.
                 responseType = HttpStatus.INTERNAL_SERVER_ERROR;
                 responseMessage = "Failed. Error saving user credentials to database.";
                 return ResponseEntity.status(responseType).body(responseMessage);
