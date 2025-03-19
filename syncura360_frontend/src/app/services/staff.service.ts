@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 export interface Staff {
-  id?: number;
   username: string;
   passwordHash?: string;
   role: string;
@@ -21,7 +20,7 @@ export interface Staff {
 }
 
 export interface StaffUpdateDto {
-  id: number;
+  username: string;
   fields: Partial<Staff>;
 }
 
@@ -46,7 +45,20 @@ export class StaffService {
   }
 
   getAllStaff(): Observable<Staff[]> {
-    return this.http.get<Staff[]>(`${this.baseUrl}/all`, { headers: this.getHeaders() });
+    return this.http.get<{ message: string; staffList: Staff[] }>(`${this.baseUrl}/all`, { headers: this.getHeaders() })
+      .pipe(
+        map(response => {
+          if (response.staffList) {
+            return response.staffList;
+          } else {
+            throw new Error(response.message || 'Failed to fetch staff.');
+          }
+        }),
+        catchError(error => {
+          console.error('Error fetching staff:', error);
+          return throwError(() => new Error(error.message || 'Failed to load staff.'));
+        })
+      );
   }
 
   createStaff(staff: Staff[]): Observable<{ message: string }> {
@@ -58,9 +70,9 @@ export class StaffService {
     return this.http.post<{ message: string }>(this.baseUrl, requestBody, { headers });
   }  
 
-  updateStaff(updates: StaffUpdateDto[]): Observable<{ message: string; staffIds: number[] }> {
+  updateStaff(updates: StaffUpdateDto[]): Observable<{ message: string; staffUsernames: string[] }> {
     const requestBody: StaffUpdateRequest = { updates };
-    return this.http.put<{ message: string; staffIds: number[] }>(`${this.baseUrl}/batch`, requestBody, { headers: this.getHeaders() });
+    return this.http.put<{ message: string; staffUsernames: string[] }>(`${this.baseUrl}/batch`, requestBody, { headers: this.getHeaders() });
   }
 
   deleteStaff(staffIds: number[]): Observable<void> {
