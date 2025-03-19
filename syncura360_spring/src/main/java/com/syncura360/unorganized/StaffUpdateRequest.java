@@ -10,7 +10,7 @@ public class StaffUpdateRequest {
 
     @Data
     public static class StaffUpdateDto {
-        private Integer id;
+        private String username;
         private Map<String, Object> fields;
     }
 
