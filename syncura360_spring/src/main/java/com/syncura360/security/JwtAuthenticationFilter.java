@@ -42,6 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith(("Bearer "))) {
 
             String jwt = authHeader.substring(7);
+            System.out.println("JWT: " + jwt);
 
             try {
                 Jws<Claims> jwsClaims = Jwts.parser().verifyWith(key).build().parseSignedClaims(jwt);
