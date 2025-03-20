@@ -12,6 +12,36 @@
     <p *ngIf="errorMessage" class="text-red-600 text-center mt-4">{{ errorMessage }}</p>
     <p *ngIf="successMessage" class="text-green-600 text-center mt-4">{{ successMessage }}</p>
 
+    <!-- Calendar View for Scheduled Appointments -->
+    <div class="mt-6 w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Appointment Calendar</h2>
+
+      <div class="flex justify-between items-center mb-4">
+        <button (click)="previousWeek()" class="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+          ⬅ Previous Week
+        </button>
+        <h3 class="text-lg font-semibold">{{ viewDate | date: 'MMMM d, y' }}</h3>
+        <button (click)="nextWeek()" class="p-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+          Next Week ➡
+        </button>
+      </div>
+
+      <!-- Adjust height dynamically -->
+      <div class="h-auto">
+        <mwl-calendar-week-view
+          class="h-full"
+          [viewDate]="viewDate"
+          [events]="events"
+          [refresh]="refresh"
+          (eventClicked)="handleEvent('Clicked', $event.event)"
+          (eventTimesChanged)="eventTimesChanged($event)"
+          [hourSegments]="2"
+          [dayStartHour]="8"
+          [dayEndHour]="17">
+        </mwl-calendar-week-view>
+      </div>
+    </div>
+
     <!-- Schedule List Using AG Grid -->
     <div class="mt-6 w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
       <h2 class="text-xl font-semibold text-gray-700 mb-4">Scheduled Appointments</h2>

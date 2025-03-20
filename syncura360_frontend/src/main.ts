@@ -10,6 +10,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { importProvidersFrom } from '@angular/core';
 import { AuthGuard } from './app/guards/auth.guard';
 import { routes } from './app/app.routes';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 
 bootstrapApplication(AppComponent, {
@@ -18,5 +20,6 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withFetch()),
     provideAnimations(),
     importProvidersFrom(MatNativeDateModule),
+    importProvidersFrom(CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }))
   ],
 }).catch(err => console.error(err));
