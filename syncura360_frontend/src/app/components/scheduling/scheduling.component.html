@@ -5,14 +5,14 @@
   </div>
 
   <!-- Main Content -->
-  <div class="flex-1 ml-64 p-6 bg-gray-100">
-    <h1 class="text-3xl font-bold text-gray-800 mb-4">Manage Schedules</h1>
+  <div class="flex-1 ml-72 p-6 bg-gray-100">
+    <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">Manage Schedules</h1>
 
     <!-- Success & Error Messages -->
     <p *ngIf="errorMessage" class="text-red-600 text-center mt-4">{{ errorMessage }}</p>
     <p *ngIf="successMessage" class="text-green-600 text-center mt-4">{{ successMessage }}</p>
 
-    <!-- Calendar View for Scheduled Appointments -->
+    <!-- 📅 Calendar View for Scheduled Appointments -->
     <div class="mt-6 w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
       <h2 class="text-xl font-semibold text-gray-700 mb-4">Appointment Calendar</h2>
 
@@ -26,7 +26,7 @@
         </button>
       </div>
 
-      <!-- Adjust height dynamically -->
+      <!-- Calendar Component -->
       <div class="h-auto">
         <mwl-calendar-week-view
           class="h-full"
@@ -49,72 +49,28 @@
       <!-- Search Input and Add Button -->
       <div class="flex justify-between items-center mb-4">
         <input type="text"
-               class="w-[300px] p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-               placeholder="Filter schedule..."
-               (input)="onQuickFilterChanged($event)">
+              class="w-[300px] p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholder="Filter schedule..."
+              (input)="onQuickFilterChanged($event)">
 
-        <button (click)="toggleScheduleForm()"
+        <button (click)="openScheduleDialog()"
                 class="p-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg
-                       transition-all duration-300 hover:bg-blue-600 active:scale-95 focus:ring-4 focus:ring-blue-300 cursor-pointer">
+                      transition-all duration-300 hover:bg-blue-600 active:scale-95 focus:ring-4 focus:ring-blue-300 cursor-pointer">
           + Schedule Appointment
         </button>
       </div>
 
-      <ag-grid-angular style="width: 100%; height: 400px;"
-                       class="ag-theme-quartz"
-                       [rowData]="scheduleList"
-                       [columnDefs]="columnDefs"
-                       rowSelection="single"
-                       [rowModelType]="'clientSide'"
-                       (gridReady)="onGridReady($event)"
-                       (cellClicked)="onCellClicked($event)">
-      </ag-grid-angular>
-    </div>
-
-    <!-- Scheduling Form -->
-    <div *ngIf="showScheduleForm" class="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 class="text-xl font-semibold text-gray-700 mb-4">Schedule an Appointment</h2>
-
-        <form [formGroup]="scheduleForm" (ngSubmit)="scheduleAppointment()">
-          <div class="grid grid-cols-1 gap-4">
-            <div>
-              <label class="block mb-2 font-semibold">Select Doctor/Nurse:</label>
-              <select formControlName="staffId" class="w-full p-2 border rounded">
-                <option *ngFor="let staff of staffList" [value]="staff.id">{{ staff.name }}</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block mb-2 font-semibold">Select Date:</label>
-              <input type="date" formControlName="date" class="w-full p-2 border rounded">
-            </div>
-
-            <div>
-              <label class="block mb-2 font-semibold">Start Time:</label>
-              <input type="time" formControlName="startTime" class="w-full p-2 border rounded">
-            </div>
-
-            <div>
-              <label class="block mb-2 font-semibold">End Time:</label>
-              <input type="time" formControlName="endTime" class="w-full p-2 border rounded">
-            </div>
-          </div>
-
-          <div class="mt-6 flex justify-between">
-            <button type="button"
-                    (click)="toggleScheduleForm()"
-                    class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
-              Cancel
-            </button>
-            <button type="submit"
-                    [disabled]="loading"
-                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-              {{ loading ? 'Processing...' : 'Schedule' }}
-            </button>
-          </div>
-        </form>
-      </div>
+      <ag-grid-angular
+          style="width: 100%; height: 400px;"
+          class="ag-theme-quartz"
+          [rowData]="scheduleList"
+          [columnDefs]="columnDefs"
+          rowSelection="single"
+          [rowModelType]="'clientSide'"
+          (gridReady)="onGridReady($event)"
+          (cellClicked)="onCellClicked($event)">
+    </ag-grid-angular>    
+    
     </div>
   </div>
 </div>

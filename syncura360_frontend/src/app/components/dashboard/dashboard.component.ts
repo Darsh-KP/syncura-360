@@ -116,9 +116,4 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  logoutAndRedirect() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    this.router.navigate(['/']); 
-  }
 }

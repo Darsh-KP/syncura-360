@@ -7,6 +7,9 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { CalendarModule, CalendarEvent, CalendarView, DateAdapter, CalendarEventTimesChangedEvent } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { Subject } from 'rxjs';
+import { ScheduleService, Schedule } from '../../services/schedule.service';
+import { ScheduleDialogComponent } from '../schedule-dialog/schedule-dialog.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-scheduling',
@@ -17,12 +20,19 @@ import { Subject } from 'rxjs';
     ReactiveFormsModule,
     NavbarComponent,
     CalendarModule,
+    MatDialogModule
+  ],
+  providers: [
+    {
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    },
   ],
   templateUrl: './scheduling.component.html',
   styleUrls: ['./scheduling.component.css'],
 })
 export class SchedulingComponent implements OnInit {
-  scheduleList: any[] = [];
+  scheduleList: Schedule[] = [];
   staffList: any[] = [];
   errorMessage = '';
   successMessage = '';
@@ -31,32 +41,64 @@ export class SchedulingComponent implements OnInit {
   loading = false;
 
   // 📅 Calendar properties
-  view: CalendarView = CalendarView.Week; // Show the week view by default
-  viewDate: Date = new Date(); // Current date
-  activeDayIsOpen: boolean = false; // For opening event details
-  refresh: Subject<void> = new Subject<void>(); // For updating calendar
+  view: CalendarView = CalendarView.Week;
+  viewDate: Date = new Date();
+  activeDayIsOpen: boolean = false;
+  refresh: Subject<void> = new Subject<void>();
   events: CalendarEvent[] = [];
 
   scheduleForm: FormGroup;
 
   columnDefs: ColDef[] = [
-    { headerName: 'Doctor/Nurse', field: 'staffName', sortable: true, filter: true },
-    { headerName: 'Date', field: 'date', sortable: true, filter: true },
-    { headerName: 'Start Time', field: 'startTime', sortable: true, filter: true },
-    { headerName: 'End Time', field: 'endTime', sortable: true, filter: true }
+    { headerName: 'Doctor/Nurse', field: 'username', sortable: true, filter: true },
+    { headerName: 'Date', field: 'start', sortable: true, filter: true },
+    { headerName: 'Start Time', field: 'start', sortable: true, filter: true },
+    { headerName: 'End Time', field: 'end', sortable: true, filter: true },
+    { headerName: 'Department', field: 'department', sortable: true, filter: true },
+    {
+      headerName: 'Actions',
+      cellRenderer: (params: any) => {
+        return `
+          <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2" data-action="edit">Edit</button>
+          <button class="bg-red-500 text-white px-2 py-1 rounded" data-action="delete">Delete</button>
+        `;
+      },
+      suppressSizeToFit: true,
+      minWidth: 140
+    }
   ];
+  
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private scheduleService: ScheduleService, private dialog: MatDialog) {
     this.scheduleForm = this.fb.group({
-      staffId: ['', Validators.required],
+      username: ['', Validators.required],
       date: ['', Validators.required],
       startTime: ['', Validators.required],
-      endTime: ['', Validators.required]
+      endTime: ['', Validators.required],
+      department: ['']
     });
   }
 
   ngOnInit() {
+    this.fetchSchedules();
     this.fetchStaff();
+  }
+
+  fetchSchedules() {
+    const start = new Date().toISOString().split('T')[0]; // Today's date
+    const end = new Date();
+    end.setDate(end.getDate() + 7); // One week from today
+
+    this.scheduleService.getSchedules(start, end.toISOString().split('T')[0]).subscribe({
+      next: (response) => {
+        this.scheduleList = response.scheduledShifts || [];
+        this.populateCalendarEvents();
+        if (this.gridApi) {
+          this.gridApi.setRowData(this.scheduleList);
+        }
+      },
+      error: (error) => this.errorMessage = error.message || 'Failed to load schedules.'
+    });
   }
 
   fetchStaff() {
@@ -67,33 +109,85 @@ export class SchedulingComponent implements OnInit {
     ];
   }
 
+  populateCalendarEvents() {
+    this.events = this.scheduleList.map((schedule) => ({
+      title: `Shift: ${schedule.username}`,
+      start: new Date(schedule.start),
+      end: new Date(schedule.end),
+      color: { primary: '#1e90ff', secondary: '#D1E8FF' },
+      draggable: true,
+    }));
+    this.refresh.next();
+  }
+
   setView(view: CalendarView) {
     this.view = view;
   }
 
   previousWeek() {
     this.viewDate = new Date(this.viewDate.setDate(this.viewDate.getDate() - 7));
+    this.fetchSchedules();
   }
 
   nextWeek() {
     this.viewDate = new Date(this.viewDate.setDate(this.viewDate.getDate() + 7));
+    this.fetchSchedules();
   }
 
-  addAppointment(event: any): void {
-    const newEvent: CalendarEvent = {
-      title: 'New Appointment',
-      start: event.date,
-      allDay: true,
-      color: { primary: '#1e90ff', secondary: '#D1E8FF' },
-      draggable: true,
+  createAppointment(newSchedule: any) {
+    this.loading = true;
+    const schedule: Schedule = {
+      username: newSchedule.username,
+      start: `${newSchedule.date}T${newSchedule.startTime}`,
+      end: `${newSchedule.date}T${newSchedule.endTime}`,
+      department: newSchedule.department
     };
-    this.events = [...this.events, newEvent];
-    this.refresh.next();
+
+    this.scheduleService.createSchedule([schedule]).subscribe({
+      next: (response) => {
+        this.successMessage = response.message;
+        this.fetchSchedules();
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Failed to schedule appointment.';
+        this.loading = false;
+      }
+    });
+  }
+
+  deleteAppointment(schedule: Schedule) {
+    this.scheduleService.deleteSchedule([{ start: schedule.start, username: schedule.username }]).subscribe({
+      next: (response) => {
+        this.successMessage = response.message;
+        this.fetchSchedules();
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Failed to delete schedule.';
+      }
+    });
+  }
+
+  updateAppointment(schedule: Schedule) {
+    this.scheduleService.updateSchedule([schedule]).subscribe({
+      next: (response) => {
+        this.successMessage = response.message;
+        this.fetchSchedules();
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Failed to update schedule.';
+      }
+    });
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
     console.log('Event clicked:', event);
-    alert(`Event: ${event.title}`);
+    if (confirm(`Delete event: ${event.title}?`)) {
+      const scheduleToDelete = this.scheduleList.find(s => new Date(s.start).getTime() === event.start.getTime());
+      if (scheduleToDelete) {
+        this.deleteAppointment(scheduleToDelete);
+      }
+    }
   }
 
   eventTimesChanged({
@@ -103,13 +197,19 @@ export class SchedulingComponent implements OnInit {
   }: CalendarEventTimesChangedEvent): void {
     event.start = newStart;
     event.end = newEnd;
+
+    const scheduleToUpdate = this.scheduleList.find(s => new Date(s.start).getTime() === event.start.getTime());
+    if (scheduleToUpdate) {
+      scheduleToUpdate.start = newStart.toISOString();
+      scheduleToUpdate.end = (newEnd ?? new Date()).toISOString();
+      this.updateAppointment(scheduleToUpdate);
+    }
+    
     this.refresh.next();
   }
-  
 
-  onCellClicked(event: any) {
-    console.log('Cell clicked:', event);
-    alert(`You clicked on: ${event.value}`);
+  toggleScheduleForm() {
+    this.showScheduleForm = !this.showScheduleForm;
   }
 
   onGridReady(params: any) {
@@ -121,32 +221,31 @@ export class SchedulingComponent implements OnInit {
     this.gridApi.setQuickFilter(filterValue);
   }
 
-  toggleScheduleForm() {
-    this.showScheduleForm = !this.showScheduleForm;
+  onCellClicked(event: any) {
+    const action = event.event.target?.getAttribute('data-action');
+    const schedule: Schedule = event.data;
+  
+    if (action === 'edit') {
+      this.openScheduleDialog(schedule);
+    } else if (action === 'delete') {
+      const confirmDelete = confirm(`Are you sure you want to delete this schedule for ${schedule.username}?`);
+      if (confirmDelete) {
+        this.deleteAppointment(schedule);
+      }
+    }
+  }  
+
+  openScheduleDialog(schedule: Schedule | null = null) {
+    const dialogRef = this.dialog.open(ScheduleDialogComponent, {
+      width: '500px',
+      data: { schedule }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.createAppointment(result);
+      }
+    });
   }
 
-  scheduleAppointment() {
-    if (this.scheduleForm.invalid) return;
-
-    this.loading = true;
-    setTimeout(() => {
-      this.successMessage = 'Appointment Scheduled Successfully!';
-      
-      // Add to AG Grid list
-      this.scheduleList.push(this.scheduleForm.value);
-      
-      // Add to Calendar View
-      this.events.push({
-        title: 'New Appointment',
-        start: new Date(this.scheduleForm.value.date + 'T' + this.scheduleForm.value.startTime),
-        end: new Date(this.scheduleForm.value.date + 'T' + this.scheduleForm.value.endTime),
-        color: { primary: '#1e90ff', secondary: '#D1E8FF' },
-        draggable: true
-      });
-
-      this.refresh.next();
-      this.toggleScheduleForm();
-      this.loading = false;
-    }, 1000);
-  }
 }
