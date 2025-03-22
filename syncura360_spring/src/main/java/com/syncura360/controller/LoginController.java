@@ -1,6 +1,8 @@
 package com.syncura360.controller;
 
 import com.syncura360.dto.LoginInfo;
+import com.syncura360.model.Staff;
+import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Handles all incoming login requests.
@@ -27,6 +30,9 @@ public class LoginController {
     JwtUtil jwtUtil;
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    StaffRepository staffRepository;
 
     /**
      * @param loginInfo DTO containing username and plaintext password.
@@ -50,7 +56,16 @@ public class LoginController {
             // Throws no element exception if the credentials are not linked to a role (has no permissions).
             role = authentication.getAuthorities().iterator().next().getAuthority();
 
-            String token = jwtUtil.generateJwtToken(authentication.getName(), role);
+            // Get the hospital ID where the staff works
+            Optional<Staff> staff = staffRepository.findByUsername(loginInfo.getUsername());
+            if (staff.isEmpty()) {
+                responseMessage = "Unable to load staff's details.";
+                role = "None";
+                return ResponseEntity.status(responseType).headers(headers).body(new LoginResponse(responseMessage, role));
+            }
+            String hospitalID = staff.get().getWorksAt().getId().toString();
+
+            String token = jwtUtil.generateJwtToken(authentication.getName(), role, hospitalID);
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
             responseType = HttpStatus.OK;
