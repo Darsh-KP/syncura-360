@@ -50,6 +50,10 @@ public class Drug {
         this.description = description;
         this.strength = strength;
         this.quantity = quantity;
+
+        if (price.precision() > 10 || price.scale() > 2) {
+            throw new IllegalArgumentException("Price must have a precision of 10 and a scale of 2.");
+        }
         this.price = price;
     }
 }
