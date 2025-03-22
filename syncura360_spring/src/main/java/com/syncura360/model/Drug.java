@@ -43,9 +43,10 @@ public class Drug {
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    public Drug(DrugId id, String name, DrugCategory drugCategory, String description, String strength, Integer quantity, BigDecimal price) {
+    public Drug(DrugId id, String name, DrugCategory category, String description, String strength, Integer quantity, BigDecimal price) {
         this.id = id;
         this.name = name;
+        this.category = category;
         this.description = description;
         this.strength = strength;
         this.quantity = quantity;

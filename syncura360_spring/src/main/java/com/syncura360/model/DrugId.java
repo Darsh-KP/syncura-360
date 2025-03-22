@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
+import java.io.Serial;
 import java.util.Objects;
 
 @NoArgsConstructor(force = true)
@@ -15,7 +16,9 @@ import java.util.Objects;
 @Setter
 @Embeddable
 public class DrugId implements java.io.Serializable {
+    @Serial
     private static final long serialVersionUID = 2419329460698846385L;
+
     @Column(name = "hospital_id", nullable = false)
     private final Integer hospitalId;
 
