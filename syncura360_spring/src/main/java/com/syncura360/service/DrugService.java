@@ -31,12 +31,20 @@ public class DrugService {
             throw new EntityExistsException("Drug with given ndc already exists.");
         }
 
+        // Handle missing fields
+        String category = drugFormDTO.getCategory();
+        DrugCategory drugCategory = null;
+        if (category != null && !category.trim().isEmpty()) drugCategory = DrugCategory.fromValue(category);
+
+        String description = drugFormDTO.getDescription();
+        if (description == null || description.trim().isEmpty()) description = null;
+
         // Create new drug and populate fields
         Drug newDrug = new Drug(
                 new DrugId(hospitalId, drugFormDTO.getNdc()),
                 drugFormDTO.getName(),
-                DrugCategory.fromValue(drugFormDTO.getCategory()),
-                drugFormDTO.getDescription(),
+                drugCategory,
+                description,
                 drugFormDTO.getStrength(),
                 drugFormDTO.getQuantity(),
                 drugFormDTO.getPrice());
@@ -53,7 +61,12 @@ public class DrugService {
             throw new EntityNotFoundException("Drug with given ndc does not exist.");
         }
 
-        // Check if price is given within constraints
+        // Check if fields are within constraints
+        int quantity = drugFormDTO.getQuantity();
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative.");
+        }
+
         BigDecimal price = drugFormDTO.getPrice();
         if (price.precision() > 10 || price.scale() > 2) {
             throw new IllegalArgumentException("Price must have a precision of 10 and a scale of 2.");
@@ -65,7 +78,7 @@ public class DrugService {
         if (drugFormDTO.getCategory() != null) drug.setCategory(DrugCategory.fromValue(drugFormDTO.getCategory()));
         if (drugFormDTO.getDescription() != null) drug.setDescription(drugFormDTO.getDescription());
         drug.setStrength(drugFormDTO.getStrength());
-        if (drugFormDTO.getQuantity() != null) drug.setQuantity(drugFormDTO.getQuantity());
+        if (drugFormDTO.getQuantity() != null) drug.setQuantity(quantity);
         drug.setPrice(price);
 
         // Save the drug to database
