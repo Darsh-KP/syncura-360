@@ -2,9 +2,9 @@ package com.syncura360.dto.Drug;
 
 import lombok.Getter;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Getter
@@ -24,6 +24,7 @@ public class DrugFormDTO {
     @Size(max = 50, message = "Max length for strength is 50 characters.")
     private String strength;
 
+    @NotNull(message = "Quantity is required.")
     private Integer quantity;
 
     @NotNull(message = "Price is required.")

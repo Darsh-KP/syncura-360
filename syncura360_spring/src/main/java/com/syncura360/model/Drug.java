@@ -37,8 +37,8 @@ public class Drug {
     private String strength;
 
     @ColumnDefault("0")
-    @Column(name = "quantity")
-    private Integer quantity;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity = 0;
 
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
@@ -49,6 +49,10 @@ public class Drug {
         this.category = category;
         this.description = description;
         this.strength = strength;
+
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative.");
+        }
         this.quantity = quantity;
 
         if (price.precision() > 10 || price.scale() > 2) {

@@ -7,6 +7,7 @@ import com.syncura360.dto.GenericMessageResponseDTO;
 import com.syncura360.security.JwtUtil;
 import com.syncura360.service.DrugService;
 import jakarta.persistence.EntityExistsException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,7 +32,7 @@ public class DrugController {
 
     @PostMapping
     public ResponseEntity<GenericMessageResponseDTO> addDrug(
-            @RequestHeader(name="Authorization") String authorization, @RequestBody DrugFormDTO drugFormDTO, BindingResult bindingResult) {
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody DrugFormDTO drugFormDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
@@ -55,7 +56,7 @@ public class DrugController {
 
     @PutMapping
     public ResponseEntity<GenericMessageResponseDTO> modifyDrug(
-            @RequestHeader(name="Authorization") String authorization, @RequestBody DrugFormDTO drugFormDTO, BindingResult bindingResult) {
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody DrugFormDTO drugFormDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
@@ -79,7 +80,7 @@ public class DrugController {
 
     @DeleteMapping
     public ResponseEntity<GenericMessageResponseDTO> removeDrug(
-            @RequestHeader(name="Authorization") String authorization, @RequestBody DrugDeletionDTO drugDeletionDTO, BindingResult bindingResult) {
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody DrugDeletionDTO drugDeletionDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
