@@ -1,5 +1,6 @@
 package com.syncura360.dto.Drug;
 
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 
 import jakarta.validation.constraints.Digits;
@@ -25,6 +26,7 @@ public class DrugFormDTO {
     private String strength;
 
     @NotNull(message = "Quantity is required.")
+    @PositiveOrZero(message = "Quantity cannot be negative.")
     private Integer quantity;
 
     @NotNull(message = "Price is required.")
