@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface StaffRepository extends JpaRepository<Staff, Integer> {
+public interface StaffRepository extends JpaRepository<Staff, String> {
 
     public interface StaffProjection {
         String getUsername();
@@ -29,10 +29,6 @@ public interface StaffRepository extends JpaRepository<Staff, Integer> {
     }
 
     Optional<Staff> findByUsername(String username);
-
-    List<Staff> findByEmail(String email);
-
-    List<Staff> findByPhone(String email);
 
     List<StaffProjection> findByWorksAt(Hospital worksAt);
 
