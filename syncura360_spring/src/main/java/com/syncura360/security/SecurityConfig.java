@@ -30,8 +30,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/register/**", "/login").permitAll()
-                        .requestMatchers("/staff/**", "/test_auth", "/staff").hasAnyAuthority("Admin", "Super Admin")
-                        .requestMatchers("/drug").hasAnyAuthority("Admin", "Super Admin")
+                        .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug").hasAnyAuthority("Admin", "Super Admin")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
