@@ -1,11 +1,11 @@
 package com.syncura360.dto.Drug;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Data
-public class DrugCreationDTO {
+@AllArgsConstructor
+public class DrugFetchDTO {
     private Integer ndc;
     private String name;
     private String category;
