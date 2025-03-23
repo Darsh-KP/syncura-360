@@ -20,7 +20,7 @@ public class DrugService {
     DrugRepository drugRepository;
 
     // Constructor injection
-    DrugService(DrugRepository drugRepository) {
+    public DrugService(DrugRepository drugRepository) {
         this.drugRepository = drugRepository;
     }
 
