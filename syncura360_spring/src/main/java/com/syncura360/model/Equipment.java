@@ -29,9 +29,9 @@ public class Equipment {
     @Column(name = "under_maintenance", nullable = false)
     private Boolean underMaintenance;
 
-    public Equipment(EquipmentId id, String name, Boolean underMaintenance) {
+    public Equipment(EquipmentId id, String name) {
         this.id = id;
         this.name = name;
-        this.underMaintenance = underMaintenance;
+        this.underMaintenance = false;
     }
 }
