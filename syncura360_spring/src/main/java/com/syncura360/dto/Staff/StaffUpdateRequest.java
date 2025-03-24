@@ -1,4 +1,4 @@
-package com.syncura360.dto;
+package com.syncura360.dto.Staff;
 
 import lombok.Data;
 
