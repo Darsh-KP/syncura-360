@@ -1,6 +1,5 @@
-package com.syncura360.dto;
+package com.syncura360.dto.Schedule;
 
-import com.syncura360.repository.ScheduleRepository;
 import lombok.Data;
 
 import java.util.ArrayList;

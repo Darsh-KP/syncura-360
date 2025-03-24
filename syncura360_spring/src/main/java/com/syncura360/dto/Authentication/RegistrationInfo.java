@@ -1,5 +1,7 @@
-package com.syncura360.dto;
+package com.syncura360.dto.Authentication;
 
+import com.syncura360.dto.Hospital.HospitalCreationDto;
+import com.syncura360.dto.Staff.StaffCreationDto;
 import lombok.Data;
 
 /**
