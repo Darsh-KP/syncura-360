@@ -58,7 +58,7 @@ export class ScheduleService {
    * @returns Observable of response message
    */
   updateSchedule(shifts: Schedule[]): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}/update`, { shifts }, { headers: this.getHeaders() });
+    return this.http.put<{ message: string }>(`${this.baseUrl}`, { shifts }, { headers: this.getHeaders() });
   }
 
   /**
@@ -67,7 +67,7 @@ export class ScheduleService {
    * @returns Observable of response message
    */
   deleteSchedule(shifts: { start: string; username: string }[]): Observable<{ message: string }> {
-    return this.http.request<{ message: string }>('delete', `${this.baseUrl}/delete`, {
+    return this.http.request<{ message: string }>('delete', `${this.baseUrl}`, {
       headers: this.getHeaders(),
       body: { shifts }
     });

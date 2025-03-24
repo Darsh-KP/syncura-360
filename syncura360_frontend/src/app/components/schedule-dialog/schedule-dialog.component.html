@@ -14,8 +14,9 @@
     >
       <mat-label style="font-size: 0.95rem; white-space: nowrap;">Username</mat-label>
       <mat-select formControlName="username">
-        <mat-option value="Dr. Smith">Dr. Smith</mat-option>
-        <mat-option value="Nurse Jane">Nurse Jane</mat-option>
+        <mat-option *ngFor="let username of usernamesList" [value]="username">
+          {{ username }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 

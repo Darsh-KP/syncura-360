@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { Schedule, ScheduleService } from '../../services/schedule.service';
+import { StaffService, Staff } from '../../services/staff.service';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -31,10 +32,12 @@ export class ScheduleDialogComponent implements AfterViewInit {
   successMessage = '';
   errorMessage = '';
   minDate = new Date();
+  usernamesList: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private scheduleService: ScheduleService,
+    private staffService: StaffService,
     public dialogRef: MatDialogRef<ScheduleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { schedule: Schedule | null }
   ) {
@@ -46,7 +49,11 @@ export class ScheduleDialogComponent implements AfterViewInit {
       department: [data.schedule?.department || '']
     }, { validators: this.validateTimeOrder });
   }
-
+  
+  ngOnInit(): void {
+    this.fetchUsernames();  
+  }
+  
   ngAfterViewInit(): void {
     setTimeout(() => {
       const inputEl = document.querySelector('input[formcontrolname="date"]') as HTMLElement;
@@ -54,6 +61,19 @@ export class ScheduleDialogComponent implements AfterViewInit {
     });
   }
 
+
+
+  fetchUsernames() {
+    this.staffService.getAllStaff().subscribe({
+      next: (staff) => {
+        this.usernamesList = staff.map(s => s.username);
+      },
+      error: (error) => {
+        this.errorMessage = error.message || 'Failed to load staff usernames.';
+      }
+    });
+  }
+  
   saveSchedule() {
     if (this.scheduleForm.invalid) {
       console.warn('Form is invalid:', this.scheduleForm.errors, this.scheduleForm.value);
@@ -69,6 +89,9 @@ export class ScheduleDialogComponent implements AfterViewInit {
       end: `${formattedDate}T${formValue.endTime}:00`,
       department: formValue.department
     };
+    
+    console.log('Final schedule object:', schedule); // ✅ Confirm payload
+
   
     this.loading = true;
   
