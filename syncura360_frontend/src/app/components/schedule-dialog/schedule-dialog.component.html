@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="text-lg font-bold text-gray-800">
-  {{ data.schedule ? 'Edit Appointment' : 'New Appointment' }}
+  {{ data.schedule ? 'Edit Schedule' : 'New Schedule' }}
 </h2>
 
 <div mat-dialog-content>
@@ -60,12 +60,12 @@
 
   <div class="flex space-x-2">
     <!-- Delete button shown only in edit mode -->
-    <button *ngIf="data.schedule"
+    <!-- <button *ngIf="data.schedule"
             mat-button
             (click)="deleteSchedule()"
             class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
       Delete
-    </button>
+    </button> -->
 
     <button mat-button
             [disabled]="scheduleForm.invalid"

@@ -77,8 +77,8 @@ export class SchedulingComponent implements OnInit {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
         return `
-          <button class="bg-blue-500 text-white px-2 py-1 rounded mr-2" data-action="edit">Edit</button>
-          <button class="bg-red-500 text-white px-2 py-1 rounded" data-action="delete">Delete</button>
+          <button class="edit-btn mr-6" data-action="edit">Edit</button>
+          <button class="delete-btn" data-action="delete">Delete</button>
         `;
       },
       suppressSizeToFit: true,
@@ -181,7 +181,7 @@ export class SchedulingComponent implements OnInit {
     this.fetchSchedules();
   }
 
-  createAppointment(newSchedule: any) {
+  createSchedule(newSchedule: any) {
     this.loading = true;
     const schedule: Schedule = {
       username: newSchedule.username,
@@ -197,13 +197,13 @@ export class SchedulingComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.errorMessage = error.message || 'Failed to schedule appointment.';
+        this.errorMessage = error.message || 'Failed to schedule.';
         this.loading = false;
       }
     });
   }
 
-  deleteAppointment(schedule: Schedule) {
+  deleteSchedule(schedule: Schedule) {
     this.scheduleService.deleteSchedule([{ start: schedule.start, username: schedule.username }]).subscribe({
       next: (response) => {
         this.successMessage = response.message;
@@ -215,7 +215,7 @@ export class SchedulingComponent implements OnInit {
     });
   }
 
-  updateAppointment(schedule: Schedule) {
+  updateSchedule(schedule: Schedule) {
     this.scheduleService.updateSchedule([schedule]).subscribe({
       next: (response) => {
         this.successMessage = response.message;
@@ -232,7 +232,7 @@ export class SchedulingComponent implements OnInit {
     if (confirm(`Delete event: ${event.title}?`)) {
       const scheduleToDelete = this.scheduleList.find(s => new Date(s.start).getTime() === event.start.getTime());
       if (scheduleToDelete) {
-        this.deleteAppointment(scheduleToDelete);
+        this.deleteSchedule(scheduleToDelete);
       }
     }
   }
@@ -249,7 +249,7 @@ export class SchedulingComponent implements OnInit {
     if (scheduleToUpdate) {
       scheduleToUpdate.start = newStart.toISOString();
       scheduleToUpdate.end = (newEnd ?? new Date()).toISOString();
-      this.updateAppointment(scheduleToUpdate);
+      this.updateSchedule(scheduleToUpdate);
     }
     
     this.refresh.next();
@@ -277,7 +277,7 @@ export class SchedulingComponent implements OnInit {
     } else if (action === 'delete') {
       const confirmDelete = confirm(`Are you sure you want to delete this schedule for ${schedule.username}?`);
       if (confirmDelete) {
-        this.deleteAppointment(schedule);
+        this.deleteSchedule(schedule);
       }
     }
   }  
