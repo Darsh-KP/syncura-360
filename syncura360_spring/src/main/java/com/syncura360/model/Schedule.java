@@ -21,4 +21,5 @@ public class Schedule {
 
     @Column(name = "department", nullable = false, length = 50)
     private String department;
+
 }

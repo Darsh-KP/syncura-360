@@ -1,6 +1,6 @@
 package com.syncura360.controller;
 
-import com.syncura360.dto.LoginInfo;
+import com.syncura360.dto.Authentication.LoginInfo;
 import com.syncura360.model.Staff;
 import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
