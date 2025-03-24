@@ -10,10 +10,14 @@ import java.util.List;
 public class ScheduleDto {
 
     private String message;
-    private List<ScheduleRepository> scheduledShifts;
+    private List<ShiftDto> scheduledShifts;
 
     public ScheduleDto() {
         scheduledShifts = new ArrayList<>();
+    }
+    public ScheduleDto(String message) {
+        scheduledShifts = new ArrayList<>();
+        this.message = message;
     }
 
 }

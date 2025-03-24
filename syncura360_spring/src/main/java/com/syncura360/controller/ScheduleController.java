@@ -1,6 +1,7 @@
 package com.syncura360.controller;
 
 import com.syncura360.dto.Operation;
+import com.syncura360.dto.ScheduleDto;
 import com.syncura360.dto.ShiftDto;
 import com.syncura360.dto.ShiftsRequest;
 import com.syncura360.model.Hospital;
@@ -36,6 +37,50 @@ public class ScheduleController {
     ScheduleRepository scheduleRepository;
     @Autowired
     JwtUtil jwtUtil;
+
+    @PostMapping()
+    public ResponseEntity<ScheduleDto> getAllShifts(
+            @RequestHeader(name="Authorization") String authorization,
+            @RequestBody ShiftDto shiftDto)
+    {
+
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        try {
+            start = LocalDateTime.parse(shiftDto.getStart());
+            end = LocalDateTime.parse(shiftDto.getEnd());
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ScheduleDto("Failed: Bad date format or missing dates."));
+        }
+
+        List<Schedule> shiftList = new ArrayList<>();
+        List<ShiftDto> dtoList = new ArrayList<>();
+
+        try {
+            shiftList = scheduleRepository.findSchedules(start, end, shiftDto.getUsername(), shiftDto.getDepartment());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ScheduleDto("Failed: Error fetching from database."));
+        }
+
+        if (shiftList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ScheduleDto("Failed: No shifts found."));
+        }
+
+        for (Schedule shift : shiftList) {
+            ShiftDto dto = new ShiftDto();
+            dto.setStart(String.valueOf(shift.getId().getStartDateTime()));
+            dto.setEnd(String.valueOf(shift.getEndDateTime()));
+            dto.setUsername(shift.getId().getStaffUsername());
+            dto.setDepartment(shift.getDepartment());
+            dtoList.add(dto);
+        }
+
+        ScheduleDto response = new ScheduleDto("Success.");
+        response.setScheduledShifts(dtoList);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 
     /**
      * Attempts to add a list of new shifts to the schedule;
