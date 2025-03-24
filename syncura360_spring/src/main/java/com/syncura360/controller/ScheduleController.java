@@ -178,18 +178,7 @@ public class ScheduleController {
             if (operation == Operation.CREATE || operation == Operation.UPDATE) {
                 scheduleRepository.saveAll(shifts);
             }
-            else { 
-                ArrayList<Schedule> toDelete = new ArrayList<>();
-                for (Schedule shift : shifts) {
-                    ScheduleId scheduleId = shift.getId();
-                    Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
-                    if (optionalSchedule.isPresent()) {
-                        toDelete.add(optionalSchedule.get());
-                    }
-                }
-                System.out.println("Deleting " + toDelete.toString() + " shifts.");
-                scheduleRepository.deleteAll(toDelete);
-            }
+            else { scheduleRepository.deleteAll(shifts); }
 
         }
         catch (Exception e) {
