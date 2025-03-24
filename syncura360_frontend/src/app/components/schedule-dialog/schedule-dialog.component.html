@@ -1,0 +1,59 @@
+<h2 mat-dialog-title class="text-lg font-bold text-gray-800">
+  {{ data.schedule ? 'Edit Appointment' : 'New Appointment' }}
+</h2>
+
+<div mat-dialog-content>
+  <form [formGroup]="scheduleForm" class="space-y-4">
+
+    <!-- Doctor/Nurse -->
+    <mat-form-field
+      appearance="outline"
+      floatLabel="always"
+      class="w-full"
+      style="margin-top: 1rem;"
+    >
+      <mat-label style="font-size: 0.95rem; white-space: nowrap;">Select Doctor/Nurse</mat-label>
+      <mat-select formControlName="username">
+        <mat-option value="Dr. Smith">Dr. Smith</mat-option>
+        <mat-option value="Nurse Jane">Nurse Jane</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Date -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Select Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Start Time -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Start Time</mat-label>
+      <input matInput type="time" formControlName="startTime">
+    </mat-form-field>
+
+    <!-- End Time -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>End Time</mat-label>
+      <input matInput type="time" formControlName="endTime">
+    </mat-form-field>
+
+    <!-- Department -->
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Department</mat-label>
+      <input matInput type="text" formControlName="department">
+    </mat-form-field>
+
+  </form>
+</div>
+
+<div mat-dialog-actions class="flex justify-end space-x-2 mt-4">
+  <button mat-button (click)="closeDialog()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+    Cancel
+  </button>
+  <button mat-button [disabled]="scheduleForm.invalid" (click)="saveSchedule()" 
+          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+    Save
+  </button>
+</div>

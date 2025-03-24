@@ -6,6 +6,7 @@ import { ColDef } from 'ag-grid-community';
 import { UserMaintComponent } from '../user-maint/user-maint.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 
 
@@ -14,9 +15,9 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [
     CommonModule,
-    AgGridModule
-
-  ],
+    AgGridModule,
+    NavbarComponent
+],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -115,9 +116,4 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  logoutAndRedirect() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    this.router.navigate(['/']); 
-  }
 }

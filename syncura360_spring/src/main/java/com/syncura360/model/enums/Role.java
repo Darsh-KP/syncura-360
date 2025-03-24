@@ -7,7 +7,7 @@ public enum Role {
     Doctor("Doctor"),
     Nurse("Nurse"),
     Admin("Admin"),
-    Super_Admin("Super Admin");;
+    Super_Admin("Super Admin");
 
     private final String value;
 

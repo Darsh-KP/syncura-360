@@ -38,7 +38,14 @@ public class JwtUtil {
 
     }
 
-    public String generateJwtToken(String username, String role) {
+    public String getHospitalID(String authHeader) {
+        String jwt = authHeader.substring(7);
+        Jws<Claims> jwsClaims = Jwts.parser().verifyWith(key).build().parseSignedClaims(jwt);
+        Claims claims = jwsClaims.getPayload();
+        return claims.get("hospitalID", String.class);
+    }
+
+    public String generateJwtToken(String username, String role, String hospitalID) {
 
         long currentMillis = System.currentTimeMillis();
         Date currentTime = new Date(currentMillis);
@@ -48,6 +55,7 @@ public class JwtUtil {
                 .issuedAt(currentTime)
                 .expiration(new Date(currentMillis + 3600000))
                 .claim("role", role)
+                .claim("hospitalID", hospitalID)
                 .signWith(key)
                 .compact();
     }

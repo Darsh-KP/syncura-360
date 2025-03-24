@@ -53,7 +53,7 @@ export class RegisterComponent {
   constructor(private fb: FormBuilder, private router: Router, private registerService: RegisterService) {
     this.registerForm = this.fb.group({
       // Hospital Information
-      hospitalName: ['NJ General Hospital', Validators.required],
+      name: ['NJ General Hospital', Validators.required],
       addressLine1: ['123 Main St', Validators.required],
       city: ['New Jersey', Validators.required],
       state: ['NJ', Validators.required],
@@ -62,16 +62,16 @@ export class RegisterComponent {
       type: ['General', Validators.required],
       traumaLevel: ['Level I', Validators.required],
       hasHelipad: [true],
-  
+
       // Admin (Staff) Information
       username: ['admin123', Validators.required],
       passwordHash: ['123456', [Validators.required, Validators.minLength(6)]],
-      role: ['Super_Admin'],
+      role: ['Super Admin'],
       firstName: ['John', Validators.required],
       lastName: ['Doe', Validators.required],
       email: ['john.doe@example.com', [Validators.required, Validators.email]],
       phone: ['2382838233', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      
+
       // Admin Address
       addressLine1Admin: ['456 Elm St', Validators.required],
       cityAdmin: ['Los Angeles', Validators.required],
@@ -81,7 +81,7 @@ export class RegisterComponent {
       dateOfBirth: ['1990-01-01', Validators.required] // Make sure date format matches what your input expects
     });
   }
-  
+
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
@@ -97,30 +97,30 @@ export class RegisterComponent {
     }
     return invalid;
   }
-  
+
 
   /**
    * Handles form submission, validates data, and sends the registration request.
    */
   onSubmit() {
     this.submitted = true;
-    
+
     // Log form values for debugging
     console.log('Form Values:', this.registerForm.value);
-    
-  
+
+
     if (this.registerForm.invalid) {
       console.log('Form Errors:', this.getInvalidControls());
       this.errorMessage = 'All fields must be correctly filled to register';
       return;
     }
-  
+
     this.loading = true;
     this.errorMessage = '';
-  
+
     const requestBody = {
       hospital: {
-        hospitalName: this.registerForm.value.hospitalName,
+        name: this.registerForm.value.name,
         addressLine1: this.registerForm.value.addressLine1,
         city: this.registerForm.value.city,
         state: this.registerForm.value.state,
@@ -133,7 +133,7 @@ export class RegisterComponent {
       staff: {
         username: this.registerForm.value.username,
         passwordHash: this.registerForm.value.passwordHash,
-        role: 'Super_Admin',
+        role: 'Super Admin',
         firstName: this.registerForm.value.firstName,
         lastName: this.registerForm.value.lastName,
         email: this.registerForm.value.email,
@@ -146,15 +146,15 @@ export class RegisterComponent {
         dateOfBirth: this.registerForm.value.dateOfBirth
       }
     };
-  
+
     console.log('Submitting Request:', requestBody);
-  
+
     this.registerService.registerHospital(requestBody).subscribe({
       next: (response) => {
         console.log('Response:', response);
         this.successMessage = 'Registration successful! Redirecting to login page...';
         this.loading = false;
-  
+
         setTimeout(() => {
           this.registerForm.reset();
           this.router.navigate(['/']);
@@ -168,8 +168,8 @@ export class RegisterComponent {
       }
     });
   }
-  
-  
+
+
   /**
    * Navigates back to the login page.
    */
