@@ -138,8 +138,8 @@ export class SchedulingComponent implements OnInit {
     this.loading = true;
     const schedule: Schedule = {
       username: newSchedule.username,
-      start: `${newSchedule.date}T${newSchedule.startTime}`,
-      end: `${newSchedule.date}T${newSchedule.endTime}`,
+      start: `${newSchedule.date}T${newSchedule.startTime}:00`,
+      end: `${newSchedule.date}T${newSchedule.endTime}:00`,
       department: newSchedule.department
     };
 
@@ -237,13 +237,15 @@ export class SchedulingComponent implements OnInit {
 
   openScheduleDialog(schedule: Schedule | null = null) {
     const dialogRef = this.dialog.open(ScheduleDialogComponent, {
+      autoFocus: false, 
+      restoreFocus: true,
       width: '500px',
       data: { schedule }
     });
-
+  
     dialogRef.afterClosed().subscribe((result: any) => {
-      if (result) {
-        this.createAppointment(result);
+      if (result === 'updated' || result === 'deleted') {
+        this.fetchSchedules(); 
       }
     });
   }
