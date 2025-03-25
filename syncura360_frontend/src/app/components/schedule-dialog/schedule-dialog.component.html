@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="text-lg font-bold text-gray-800">
-  {{ data.schedule ? 'Edit Appointment' : 'New Appointment' }}
+  {{ data.schedule ? 'Edit Schedule' : 'New Schedule' }}
 </h2>
 
 <div mat-dialog-content>
@@ -12,17 +12,18 @@
       class="w-full"
       style="margin-top: 1rem;"
     >
-      <mat-label style="font-size: 0.95rem; white-space: nowrap;">Select Doctor/Nurse</mat-label>
+      <mat-label style="font-size: 0.95rem; white-space: nowrap;">Username</mat-label>
       <mat-select formControlName="username">
-        <mat-option value="Dr. Smith">Dr. Smith</mat-option>
-        <mat-option value="Nurse Jane">Nurse Jane</mat-option>
+        <mat-option *ngFor="let username of usernamesList" [value]="username">
+          {{ username }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
     <!-- Date -->
     <mat-form-field appearance="outline" class="w-full">
       <mat-label>Select Date</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="date">
+      <input matInput [matDatepicker]="picker" formControlName="date" [min]="minDate">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -45,6 +46,10 @@
       <input matInput type="text" formControlName="department">
     </mat-form-field>
 
+    <div *ngIf="scheduleForm.hasError('invalidTimeOrder')" class="text-red-600 text-sm">
+      End time must be after start time.
+    </div>
+
   </form>
 </div>
 
@@ -52,8 +57,22 @@
   <button mat-button (click)="closeDialog()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
     Cancel
   </button>
-  <button mat-button [disabled]="scheduleForm.invalid" (click)="saveSchedule()" 
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-    Save
-  </button>
+
+  <div class="flex space-x-2">
+    <!-- Delete button shown only in edit mode -->
+    <!-- <button *ngIf="data.schedule"
+            mat-button
+            (click)="deleteSchedule()"
+            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+      Delete
+    </button> -->
+
+    <button mat-button
+            [disabled]="scheduleForm.invalid"
+            (click)="saveSchedule()"
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      Save
+    </button>
+  </div>
+
 </div>
