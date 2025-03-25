@@ -4,11 +4,14 @@ import com.syncura360.model.enums.BloodType;
 import com.syncura360.model.enums.BloodTypeConvertor;
 import com.syncura360.model.enums.Gender;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@NoArgsConstructor(force = true)
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "PatientInfo", schema = "syncura360")
 public class PatientInfo {
@@ -66,4 +69,35 @@ public class PatientInfo {
 
     @Column(name = "emergency_contact_phone", length = 15)
     private String emergencyContactPhone;
+
+    public PatientInfo(String firstName, String lastName, LocalDate dateOfBirth, Gender gender,
+                       BloodType bloodType, Integer height, Integer weight,
+                       String phone, String addressLine1, String addressLine2, String city, String state, String postal, String country,
+                       String emergencyContactName, String emergencyContactPhone) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.bloodType = bloodType;
+
+        if (height != null && height < 0) {
+            throw new IllegalArgumentException("Height must be a positive integer.");
+        }
+        this.height = height;
+
+        if (weight != null && weight < 0) {
+            throw new IllegalArgumentException("Weight must be a positive integer.");
+        }
+        this.weight = weight;
+
+        this.phone = phone;
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.city = city;
+        this.state = state;
+        this.postal = postal;
+        this.country = country;
+        this.emergencyContactName = emergencyContactName;
+        this.emergencyContactPhone = emergencyContactPhone;
+    }
 }
