@@ -4,7 +4,9 @@ package com.syncura360.repository;
 import com.syncura360.model.Hospital;
 import com.syncura360.model.Schedule;
 import com.syncura360.model.ScheduleId;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,5 +29,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, ScheduleId> 
             @Param("department") String department,
             @Param("hospitalId") int hospitalId
     );
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Schedule s WHERE s.id IN :scheduleIds")
+    void deleteByIds(@Param("scheduleIds") Iterable<ScheduleId> scheduleIds);
 
 }
