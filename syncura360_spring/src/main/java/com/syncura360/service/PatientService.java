@@ -41,13 +41,13 @@ public class PatientService {
 
         // Check for patient uniqueness
         if (patientInfoRepository.existsByFirstNameAndLastNameAndDateOfBirthAndGenderAndAddressLine1AndPostalAndCountry(
-                patientFormDTO.getFirstName().trim(),
-                patientFormDTO.getLastName().trim(),
+                patientFormDTO.getFirstName(),
+                patientFormDTO.getLastName(),
                 dateOfBirth,
                 gender,
-                patientFormDTO.getAddressLine1().trim(),
-                patientFormDTO.getPostal().trim(),
-                patientFormDTO.getCountry().trim())) {
+                patientFormDTO.getAddressLine1(),
+                patientFormDTO.getPostal(),
+                patientFormDTO.getCountry())) {
             throw new EntityExistsException("Patient already exists.");
         }
 
@@ -63,20 +63,20 @@ public class PatientService {
 
         // Create new patient
         PatientInfo newPatientInfo = new PatientInfo(
-                patientFormDTO.getFirstName().trim(),
-                patientFormDTO.getLastName().trim(),
+                patientFormDTO.getFirstName(),
+                patientFormDTO.getLastName(),
                 dateOfBirth,
                 gender,
                 bloodType,
                 patientFormDTO.getHeight(),
                 patientFormDTO.getWeight(),
-                patientFormDTO.getPhone().trim(),
-                patientFormDTO.getAddressLine1().trim(),
+                patientFormDTO.getPhone(),
+                patientFormDTO.getAddressLine1(),
                 addressLine2,
-                patientFormDTO.getCity().trim(),
-                patientFormDTO.getState().trim(),
-                patientFormDTO.getPostal().trim(),
-                patientFormDTO.getCountry().trim(),
+                patientFormDTO.getCity(),
+                patientFormDTO.getState(),
+                patientFormDTO.getPostal(),
+                patientFormDTO.getCountry(),
                 emergencyContactName,
                 emergencyContactPhone
         );

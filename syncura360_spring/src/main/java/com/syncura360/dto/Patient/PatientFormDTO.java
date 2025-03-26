@@ -1,10 +1,9 @@
 package com.syncura360.dto.Patient;
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-
-import javax.validation.constraints.NotNull;
 
 @Getter
 public class PatientFormDTO {
