@@ -46,6 +46,7 @@ public class DrugService {
                 drugCategory,
                 description,
                 drugFormDTO.getStrength(),
+                drugFormDTO.getPpq(),
                 drugFormDTO.getQuantity(),
                 drugFormDTO.getPrice());
 
@@ -78,6 +79,7 @@ public class DrugService {
         if (drugFormDTO.getCategory() != null) drug.setCategory(DrugCategory.fromValue(drugFormDTO.getCategory()));
         if (drugFormDTO.getDescription() != null) drug.setDescription(drugFormDTO.getDescription());
         drug.setStrength(drugFormDTO.getStrength());
+        drug.setPpq((drugFormDTO.getPpq()));
         if (drugFormDTO.getQuantity() != null) drug.setQuantity(quantity);
         drug.setPrice(price);
 
@@ -102,6 +104,6 @@ public class DrugService {
         // Return a list of all the drugs for the hospital
         return new DrugFetchListDTO(drugRepository.findAllById_HospitalId(hospitalId).stream().map(drug ->
                 new DrugFetchDTO(drug.getId().getNdc(), drug.getName(), drug.getCategory().getValue(), drug.getDescription(),
-                        drug.getStrength(), drug.getQuantity(), drug.getPrice())).toList());
+                        drug.getStrength(), drug.getPpq(), drug.getQuantity(), drug.getPrice())).toList());
     }
 }
