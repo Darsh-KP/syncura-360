@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -28,8 +29,7 @@ public class Schedule {
         this.staff = staff;
         this.endDateTime = endDateTime;
 
-        if (this.department == null) { this.department = "None"; }
-        else { this.department = department; }
+        this.department = Objects.requireNonNullElse(department, "None");
 
     }
 
