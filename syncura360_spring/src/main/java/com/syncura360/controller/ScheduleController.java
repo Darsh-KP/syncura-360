@@ -132,50 +132,28 @@ public class ScheduleController {
         @RequestBody ShiftsRequest deleteShiftsRequest)
     {
 
-        ArrayList<Schedule> toDelete = new ArrayList<>();
-
-        Optional<Staff> optionalAccessingUser = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
-        Staff accessingUser = null;
-        if (optionalAccessingUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Unknown accessing user."));
-        }
-
-        accessingUser = optionalAccessingUser.get();
-        Hospital hospital = accessingUser.getWorksAt(); // will be replaced by jwtUtil.getHospital(authorization);
+        ArrayList<ScheduleId> toDelete = new ArrayList<>();
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
 
         for (ShiftDto dto : deleteShiftsRequest.getShifts()) {
 
             Optional<Staff> staff = staffRepository.findByUsername(dto.getUsername());
-
             if (staff.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Failed: Unknown staff member."));
             }
 
-            if (hospital != staff.get().getWorksAt()) {
+            if (hospitalId != staff.get().getWorksAt().getId()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Unknown staff member."));
             }
 
-            ScheduleId scheduleId = new ScheduleId();
-
-            try {
-                scheduleId.setStartDateTime(LocalDateTime.parse(dto.getStart()));
-            } catch (Exception e) {
+            try { toDelete.add(new ScheduleId(dto.getUsername(), LocalDateTime.parse(dto.getStart()))); }
+            catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Failed: Error parsing date."));
             }
 
-            scheduleId.setStaffUsername(dto.getUsername());
-
-            Optional<Schedule> optionalShift = scheduleRepository.findById(scheduleId);
-            if (optionalShift.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Failed: Shift not found."));
-            }
-
-            toDelete.add(optionalShift.get());
         }
 
-        try {
-            scheduleRepository.deleteAll(toDelete);
-        } catch (Exception e) {
+        try { scheduleRepository.deleteByIds(toDelete); } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed. Error deleting from database."));
         }
 
