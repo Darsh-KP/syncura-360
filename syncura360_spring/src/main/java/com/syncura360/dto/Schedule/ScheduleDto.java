@@ -19,4 +19,9 @@ public class ScheduleDto {
         this.message = message;
     }
 
+    public ScheduleDto(String message, List<ShiftDto> shifts) {
+        this.message = message;
+        this.scheduledShifts = shifts;
+    }
+
 }

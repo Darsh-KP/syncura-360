@@ -37,4 +37,12 @@ public class ScheduleId implements java.io.Serializable {
     public int hashCode() {
         return Objects.hash(startDateTime, staffUsername);
     }
+
+    public ScheduleId(String staffUsername, LocalDateTime startDateTime) {
+        this.staffUsername = staffUsername;
+        this.startDateTime = startDateTime;
+    }
+
+    public ScheduleId() {}
+
 }
