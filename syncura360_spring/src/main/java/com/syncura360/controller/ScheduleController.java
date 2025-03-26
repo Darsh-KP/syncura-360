@@ -12,8 +12,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -36,6 +39,45 @@ public class ScheduleController {
     ScheduleRepository scheduleRepository;
     @Autowired
     JwtUtil jwtUtil;
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity<MessageResponse> updateShifts(
+            @RequestHeader(name="Authorization") String authorization,
+            @RequestBody ShiftUpdateRequestDto shiftUpdateRequestDto)
+    {
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+
+            for (ShiftUpdateDto dto : shiftUpdateRequestDto.getUpdates()) {
+
+                Schedule shiftToModify = getShiftToModify(dto, hospitalId);
+                Schedule newShift = getNewShift(dto.getUpdates(), shiftToModify);
+
+                try {
+                    scheduleRepository.delete(shiftToModify);
+                    scheduleRepository.save(newShift);
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed: Error querying database."));
+                }
+
+            }
+
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Failed: Bad date format or missing dates."));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Failed: Shift not found."));
+        } catch (InsufficientAuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Shift not found."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed: Error querying database."));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Changes Applied."));
+
+    }
 
     @PostMapping
     @Transactional
@@ -162,7 +204,6 @@ public class ScheduleController {
     }
 
     private List<ShiftDto> createShiftDTOs(List<Schedule> shifts) {
-
         List<ShiftDto> result = new ArrayList<>();
         if (shifts.isEmpty()) { throw new NoSuchElementException("Shift list is empty."); }
 
@@ -175,6 +216,54 @@ public class ScheduleController {
             result.add(dto);
         }
         return result;
+    }
+
+    private Schedule getShiftToModify(ShiftUpdateDto dto, int hospitalId) {
+
+        Optional<Schedule> optionalShift = scheduleRepository.findById(
+                new ScheduleId(dto.getId().username(), LocalDateTime.parse(dto.getId().start()))
+        );
+
+        if (optionalShift.isEmpty()) {
+            throw new NoSuchElementException("Shift not found.");
+        }
+        else if (optionalShift.get().getStaff().getWorksAt().getId() != hospitalId) {
+            throw new InsufficientAuthenticationException("Shift not found.");
+        }
+
+        return optionalShift.get();
+
+    }
+
+    @SuppressWarnings("OptionalIsPresent")
+    private Schedule getNewShift (ShiftDto updates, Schedule shiftToModify) throws SQLIntegrityConstraintViolationException {
+
+        ScheduleId newId = new ScheduleId();
+        Schedule newShift = new Schedule();
+
+        if (updates.getUsername() != null) { newId.setStaffUsername(updates.getUsername()); }
+        else { newId.setStaffUsername(shiftToModify.getId().getStaffUsername()); }
+
+        Optional<Staff> staff = staffRepository.findByUsername(newId.getStaffUsername());
+        if (staff.isPresent()) { newShift.setStaff(staff.get()); }
+
+        if (updates.getStart() != null) { newId.setStartDateTime(LocalDateTime.parse(updates.getStart())); }
+        else { newId.setStartDateTime(shiftToModify.getId().getStartDateTime()); }
+
+        newShift.setId(newId);
+
+        if (updates.getEnd() != null) { newShift.setEndDateTime(LocalDateTime.parse(updates.getEnd())); }
+        else { newShift.setEndDateTime(shiftToModify.getEndDateTime()); }
+
+        if (updates.getDepartment() != null) { newShift.setDepartment(updates.getDepartment()); }
+        else { newShift.setDepartment(shiftToModify.getDepartment()); }
+
+        if (newShift.getId().getStartDateTime().isAfter(newShift.getEndDateTime())) {
+            throw new SQLIntegrityConstraintViolationException("Impossible shift.");
+        }
+
+        return newShift;
+
     }
 
     /**
