@@ -14,13 +14,13 @@ import { HttpClientModule } from '@angular/common/http';
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule,
-    HttpClientModule, 
-    MatInputModule, 
-    MatButtonModule, 
-    MatCardModule, 
-    MatFormFieldModule, 
+    HttpClientModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
     MatIconModule,
     RouterLink
   ],
@@ -67,11 +67,18 @@ export class LoginComponent implements OnInit {
     this.loginService.login(username, password).subscribe({
       next: (response) => {
         this.loading = false;
-        if (response.body?.message == "Authentication successful.") {
-          this.successMessage = 'Login Successful! Redirecting...';
+
+        const role = localStorage.getItem('role');
+
+        this.successMessage = 'Login Successful! Redirecting...';
+
+        if (role === 'Nurse') {
+          this.router.navigate(['/nurse']);
+        } else if (role === 'Admin' || role === 'Super_Admin') {
           this.router.navigate(['/dashboard']);
+        } else {
+          this.router.navigate(['/']);
         }
-        
       },
       error: (error) => {
         this.loading = false;

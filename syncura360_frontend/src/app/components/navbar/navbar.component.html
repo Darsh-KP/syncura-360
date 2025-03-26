@@ -1,30 +1,39 @@
 <div class="h-screen w-60 bg-gray-800 text-white flex flex-col p-4 shadow-lg fixed left-0 top-0">
     <!-- App Title -->
     <h2 class="text-2xl font-bold mb-6 text-center">Dashboard</h2>
-  
+
     <!-- Navigation Links -->
     <nav class="flex flex-col space-y-4">
       <a routerLink="/dashboard"
          class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
         🏠 <span class="ml-3">Home</span>
       </a>
-  
+    <ng-container *ngIf="role === 'Admin' || role === 'Super Admin'">
       <a routerLink="/scheduling"
          class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
         📅 <span class="ml-3">Scheduling</span>
       </a>
-  
+
       <a routerLink="/inventory"
          class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
         📦 <span class="ml-3">Inventory</span>
       </a>
-  
+
       <a routerLink="/account"
          class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
         👤 <span class="ml-3">Account Details</span>
       </a>
+    </ng-container>
+
+      <!-- Nurse-only links -->
+      <ng-container *ngIf="role === 'Nurse'">
+        <a routerLink="/register-patient"
+           class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+            <span class="ml-3">Register Patient</span>
+        </a>
+      </ng-container>
     </nav>
-  
+
     <!-- Logout Button -->
     <div class="mt-auto">
       <button (click)="logoutAndRedirect()"
@@ -35,4 +44,3 @@
     </div>
     
   </div>
-  
