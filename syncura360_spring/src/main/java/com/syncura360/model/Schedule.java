@@ -22,4 +22,18 @@ public class Schedule {
     @Column(name = "department", nullable = false, length = 50)
     private String department;
 
+    public Schedule(ScheduleId id, Staff staff, LocalDateTime endDateTime, String department) {
+
+        this.id = id;
+        this.staff = staff;
+        this.endDateTime = endDateTime;
+
+        if (this.department == null) { this.department = "None"; }
+        else { this.department = department; }
+
+    }
+
+    public Schedule() {}
+
+
 }
