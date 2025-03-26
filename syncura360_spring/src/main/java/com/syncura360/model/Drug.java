@@ -33,8 +33,11 @@ public class Drug {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "strength", nullable = false, length = 50)
+    @Column(name = "strength", length = 50)
     private String strength;
+
+    @Column(name = "PPQ")
+    private Integer ppq;
 
     @ColumnDefault("0")
     @Column(name = "quantity", nullable = false)
@@ -43,12 +46,17 @@ public class Drug {
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    public Drug(DrugId id, String name, DrugCategory category, String description, String strength, Integer quantity, BigDecimal price) {
+    public Drug(DrugId id, String name, DrugCategory category, String description, String strength, Integer ppq, Integer quantity, BigDecimal price) {
         this.id = id;
-        this.name = name;
+        this.name = name == null ? null : name.trim();
         this.category = category;
-        this.description = description;
-        this.strength = strength;
+        this.description = description == null ? null : description.trim();
+        this.strength = strength == null ? null : strength.trim();
+
+        if (ppq != null && ppq < 0) {
+            throw new IllegalArgumentException("PPQ cannot be negative.");
+        }
+        this.ppq = ppq;
 
         if (quantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative.");
