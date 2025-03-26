@@ -17,13 +17,17 @@ public class DrugFormDTO {
     @Size(max = 250, message = "Max length for name is 250 characters.")
     private String name;
 
+    @Size(max = 50, message = "Category cannot be longer than 50 characters.")
     private String category;
 
+    @Size(max = 65535, message = "Max length for description is 65,535 characters.")
     private String description;
 
-    @NotNull(message = "Strength is required.")
     @Size(max = 50, message = "Max length for strength is 50 characters.")
     private String strength;
+
+    @PositiveOrZero(message = "PPQ cannot be negative.")
+    private Integer ppq;
 
     @NotNull(message = "Quantity is required.")
     @PositiveOrZero(message = "Quantity cannot be negative.")

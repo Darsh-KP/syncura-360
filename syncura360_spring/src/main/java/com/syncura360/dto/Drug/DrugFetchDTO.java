@@ -13,6 +13,7 @@ public class DrugFetchDTO {
     private String category;
     private String description;
     private String strength;
+    private Integer ppq;
     private Integer quantity;
     private BigDecimal price;
 }
