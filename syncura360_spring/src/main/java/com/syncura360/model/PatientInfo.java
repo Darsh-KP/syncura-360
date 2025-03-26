@@ -74,8 +74,8 @@ public class PatientInfo {
                        BloodType bloodType, Integer height, Integer weight,
                        String phone, String addressLine1, String addressLine2, String city, String state, String postal, String country,
                        String emergencyContactName, String emergencyContactPhone) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = firstName == null ? null : firstName.trim();
+        this.lastName = lastName == null ? null : lastName.trim();
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.bloodType = bloodType;
@@ -90,14 +90,14 @@ public class PatientInfo {
         }
         this.weight = weight;
 
-        this.phone = phone;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
-        this.city = city;
-        this.state = state;
-        this.postal = postal;
-        this.country = country;
-        this.emergencyContactName = emergencyContactName;
-        this.emergencyContactPhone = emergencyContactPhone;
+        this.phone = phone == null ? null : phone.trim();
+        this.addressLine1 = addressLine1 == null ? null : addressLine1.trim();
+        this.addressLine2 = addressLine2 == null ? null : addressLine2.trim();
+        this.city = city == null ? null : city.trim();
+        this.state = state == null ? null : state.trim();
+        this.postal = postal == null ? null : postal.trim();
+        this.country = country == null ? null : country.trim();
+        this.emergencyContactName = emergencyContactName == null ? null : emergencyContactName.trim();
+        this.emergencyContactPhone = emergencyContactPhone == null ? null : emergencyContactPhone.trim();
     }
 }

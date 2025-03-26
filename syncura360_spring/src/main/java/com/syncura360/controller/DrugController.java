@@ -3,6 +3,7 @@ package com.syncura360.controller;
 import com.syncura360.dto.Drug.DrugDeletionDTO;
 import com.syncura360.dto.Drug.DrugFetchListDTO;
 import com.syncura360.dto.Drug.DrugFormDTO;
+import com.syncura360.dto.ErrorConvertor;
 import com.syncura360.dto.GenericMessageResponseDTO;
 import com.syncura360.security.JwtUtil;
 import com.syncura360.service.DrugService;
@@ -35,7 +36,7 @@ public class DrugController {
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody DrugFormDTO drugFormDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
         }
 
         // Get the hospital id the logged in staff works at
@@ -59,7 +60,7 @@ public class DrugController {
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody DrugFormDTO drugFormDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
         }
 
         // Get the hospital id the logged in staff works at
@@ -83,7 +84,7 @@ public class DrugController {
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody DrugDeletionDTO drugDeletionDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
         }
 
         // Get the hospital id the logged in staff works at

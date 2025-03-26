@@ -1,8 +1,8 @@
 package com.syncura360.controller;
 
+import com.syncura360.dto.ErrorConvertor;
 import com.syncura360.dto.GenericMessageResponseDTO;
 import com.syncura360.dto.Patient.PatientFormDTO;
-import com.syncura360.security.JwtUtil;
 import com.syncura360.service.PatientService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.validation.Valid;
@@ -15,12 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RequestMapping("/patient")
 public class NewPatientController {
-    JwtUtil jwtUtil;
     PatientService patientService;
 
     // Constructor injection
-    public NewPatientController(JwtUtil jwtUtil, PatientService patientService) {
-        this.jwtUtil = jwtUtil;
+    public NewPatientController(PatientService patientService) {
         this.patientService = patientService;
     }
 
@@ -29,7 +27,7 @@ public class NewPatientController {
             @Valid @RequestBody PatientFormDTO patientFormDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
         }
 
         // Attempt to add new patient
@@ -38,6 +36,7 @@ public class NewPatientController {
         } catch (EntityExistsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
         }
 
