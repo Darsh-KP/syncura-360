@@ -41,13 +41,20 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Redirect if user is already logged in
-    if (this.loginService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+    if (typeof window !== 'undefined' && this.loginService.isAuthenticated()) {
+      const role = localStorage.getItem('role');
+      if (role === 'Nurse') {
+        this.router.navigate(['/nurse']);
+      } else if (role === 'Admin' || role === 'Super_Admin') {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.router.navigate(['/']);
+      }
     }
-  }
+    }
 
-  passwordVisible: boolean = false;
+
+    passwordVisible: boolean = false;
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
