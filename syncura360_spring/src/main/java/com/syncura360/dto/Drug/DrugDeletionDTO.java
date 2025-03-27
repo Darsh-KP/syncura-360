@@ -7,5 +7,5 @@ import jakarta.validation.constraints.NotNull;
 @Getter
 public class DrugDeletionDTO {
     @NotNull(message = "NDC is required.")
-    private Integer ndc;
+    private Long ndc;
 }
