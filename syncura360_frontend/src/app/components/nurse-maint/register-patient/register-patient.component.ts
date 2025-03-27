@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
+import {NavbarComponent} from "../../navbar/navbar.component";
 
 @Component({
   selector: 'app-register-patient',
@@ -19,6 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+      NavbarComponent,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -32,7 +34,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./register-patient.component.css']
 })
 export class RegisterPatientComponent {
-  registerForm: FormGroup;
+  patientForm: FormGroup;
   successMessage: string = '';
   errorMessage: string = '';
   loading = false;
@@ -41,7 +43,7 @@ export class RegisterPatientComponent {
   genders: string[] = ['Male', 'Female'];
 
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
-    this.registerForm = this.fb.group({
+    this.patientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
@@ -62,7 +64,7 @@ export class RegisterPatientComponent {
   }
 
   onSubmit() {
-    if (this.registerForm.invalid) {
+    if (this.patientForm.invalid) {
       this.errorMessage = 'Please fill all required fields correctly.';
       return;
     }
@@ -71,13 +73,13 @@ export class RegisterPatientComponent {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    const patientData = this.registerForm.value;
+    const patientData = this.patientForm.value;
 
-    this.http.post('/patient', patientData, { headers }).subscribe({
+    this.http.post('http://localhost:8080/patient', patientData, { headers }).subscribe({
       next: (response: any) => {
         this.successMessage = response?.message || 'Patient registered successfully.';
         this.loading = false;
-        this.registerForm.reset();
+        this.patientForm.reset();
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'An error occurred while registering the patient.';
