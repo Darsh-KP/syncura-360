@@ -13,6 +13,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import {NavbarComponent} from "../../navbar/navbar.component";
+import { FormsModule } from '@angular/forms';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar} from "@angular/material/snack-bar";
+import { MatSnackBarModule} from "@angular/material/snack-bar";
+
+
+
 
 @Component({
   selector: 'app-register-patient',
@@ -21,6 +28,9 @@ import {NavbarComponent} from "../../navbar/navbar.component";
     CommonModule,
     ReactiveFormsModule,
       NavbarComponent,
+      FormsModule,
+      MatSlideToggleModule,
+      MatSnackBarModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -42,7 +52,17 @@ export class RegisterPatientComponent {
   bloodTypes: string[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   genders: string[] = ['Male', 'Female'];
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+  darkMode = false;
+
+  toggleDarkMode() {
+    if (this.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private snackBar: MatSnackBar) {
     this.patientForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -69,20 +89,32 @@ export class RegisterPatientComponent {
       return;
     }
 
+    const snackBarRef = this.snackBar.open('Submit this patient info?', 'Confirm', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    });
+    snackBarRef.onAction().subscribe(() => {
+      this.submitPatient();
+    });
+  }
+
+  submitPatient() {
     this.loading = true;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
     const patientData = this.patientForm.value;
 
-    this.http.post('http://localhost:8080/patient', patientData, { headers }).subscribe({
+    this.http.post('http://localhost:8080/patient', patientData, {headers}).subscribe({
       next: (response: any) => {
         this.successMessage = response?.message || 'Patient registered successfully.';
+        this.snackBar.open('Patient added successfully!', 'Close', {duration: 3000});
         this.loading = false;
         this.patientForm.reset();
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'An error occurred while registering the patient.';
+        this.snackBar.open('Error adding patient', 'Close', {duration: 3000});
         this.loading = false;
       }
     });
