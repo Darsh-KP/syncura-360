@@ -63,6 +63,11 @@ public class DrugService {
         }
 
         // Check if fields are within constraints
+        int ppq = drugFormDTO.getPpq();
+        if (ppq < 0) {
+            throw new IllegalArgumentException("PPQ cannot be negative.");
+        }
+
         int quantity = drugFormDTO.getQuantity();
         if (quantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative.");
@@ -80,7 +85,7 @@ public class DrugService {
         if (drugFormDTO.getDescription() != null) drug.setDescription(drugFormDTO.getDescription());
         drug.setStrength(drugFormDTO.getStrength());
         drug.setPpq((drugFormDTO.getPpq()));
-        if (drugFormDTO.getQuantity() != null) drug.setQuantity(quantity);
+        drug.setQuantity(quantity);
         drug.setPrice(price);
 
         // Save the drug to database
