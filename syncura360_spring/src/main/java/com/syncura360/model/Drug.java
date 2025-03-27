@@ -36,7 +36,8 @@ public class Drug {
     @Column(name = "strength", length = 50)
     private String strength;
 
-    @Column(name = "PPQ")
+    @ColumnDefault("0")
+    @Column(name = "PPQ", nullable = false)
     private Integer ppq;
 
     @ColumnDefault("0")
@@ -53,7 +54,7 @@ public class Drug {
         this.description = description == null ? null : description.trim();
         this.strength = strength == null ? null : strength.trim();
 
-        if (ppq != null && ppq < 0) {
+        if (ppq < 0) {
             throw new IllegalArgumentException("PPQ cannot be negative.");
         }
         this.ppq = ppq;
