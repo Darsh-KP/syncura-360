@@ -99,13 +99,27 @@ export class RegisterPatientComponent {
     });
   }
 
+  formatDate(date: any): string {
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
+  }
+  
   submitPatient() {
     this.loading = true;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    const patientData = this.patientForm.value;
-
-    this.http.post('http://localhost:8080/patient', patientData, {headers}).subscribe({
+  
+    const formValue = {...this.patientForm.value};
+    formValue.dateOfBirth = this.formatDate(formValue.dateOfBirth);
+  
+    // Convert empty strings to null
+    Object.keys(formValue).forEach(key => {
+      if (formValue[key] === '') {
+        formValue[key] = null;
+      }
+    });
+  
+    this.http.post('http://localhost:8080/patient', formValue, {headers}).subscribe({
       next: (response: any) => {
         this.successMessage = response?.message || 'Patient registered successfully.';
         this.snackBar.open('Patient added successfully!', 'Close', {duration: 3000});
@@ -119,4 +133,5 @@ export class RegisterPatientComponent {
       }
     });
   }
+  
 }
