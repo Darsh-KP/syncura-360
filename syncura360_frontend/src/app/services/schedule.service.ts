@@ -54,12 +54,19 @@ export class ScheduleService {
 
   /**
    * Update scheduled shifts
-   * @param shifts Array of Schedule objects with updated fields
+   * @param updates Array of update objects, each containing old shift id and new data
    * @returns Observable of response message
    */
-  updateSchedule(shifts: Schedule[]): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}`, { shifts }, { headers: this.getHeaders() });
+  updateSchedule(updates: { 
+    id: { username: string; start: string }; 
+    updates: { username?: string; start?: string; end?: string; department?: string } 
+  }[]): Observable<{ message: string }> {
+    const payload = { updates };
+    return this.http.put<{ message: string }>(`${this.baseUrl}`, payload, {
+      headers: this.getHeaders()
+    });
   }
+
 
   /**
    * Delete scheduled shifts
