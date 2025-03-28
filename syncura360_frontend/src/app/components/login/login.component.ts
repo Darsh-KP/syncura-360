@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
       const role = localStorage.getItem('role');
       if (role === 'Nurse') {
         this.router.navigate(['/nurse']);
-      } else if (role === 'Admin' || role === 'Super_Admin') {
+      } else if (role === 'Admin' || role === 'Super Admin') {
         this.router.navigate(['/dashboard']);
       } else {
         this.router.navigate(['/']);
@@ -80,7 +80,7 @@ export class LoginComponent implements OnInit {
           const role = response.body?.role;
           if (role === 'Nurse') {
             this.router.navigate(['/nurse']);
-          } else if (role === 'Admin' || role === 'Super_Admin') {
+          } else if (role === 'Admin' || role === 'Super Admin') {
             this.router.navigate(['/dashboard']);
           } else {
             this.router.navigate(['/']);
