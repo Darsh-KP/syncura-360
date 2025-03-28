@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Getter
 public class DrugFormDTO {
     @NotNull(message = "NDC is required.")
-    private Integer ndc;
+    private Long ndc;
 
     @NotNull(message = "Name is required.")
     @Size(max = 250, message = "Max length for name is 250 characters.")
@@ -26,6 +26,7 @@ public class DrugFormDTO {
     @Size(max = 50, message = "Max length for strength is 50 characters.")
     private String strength;
 
+    @NotNull(message = "PPQ is required.")
     @PositiveOrZero(message = "PPQ cannot be negative.")
     private Integer ppq;
 

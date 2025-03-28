@@ -108,11 +108,11 @@ export class RegisterPatientComponent {
     return `${month}/${day}/${year}`;
   }
   
+
   submitPatient() {
     this.loading = true;
     const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);  
     const formValue = {...this.patientForm.value};
     formValue.dateOfBirth = this.formatDate(formValue.dateOfBirth);
   
@@ -137,5 +137,4 @@ export class RegisterPatientComponent {
       }
     });
   }
-  
 }

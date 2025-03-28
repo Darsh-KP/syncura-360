@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DrugRepository extends JpaRepository<Drug, DrugId> {
-    boolean existsById_HospitalIdAndId_Ndc(int hospitalId, int ndc);
+    boolean existsById_HospitalIdAndId_Ndc(Integer hospitalId, Long ndc);
 
-    Optional<Drug> findById_HospitalIdAndId_Ndc(int hospitalID, int ndc);
+    Optional<Drug> findById_HospitalIdAndId_Ndc(Integer hospitalID, Long ndc);
 
-    List<Drug> findAllById_HospitalId(int hospitalId);
+    List<Drug> findAllById_HospitalId(Integer hospitalId);
 }
