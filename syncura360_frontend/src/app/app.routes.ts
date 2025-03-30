@@ -6,13 +6,15 @@ import { RegisterPatientComponent} from './components/nurse-maint/register-patie
 import { AuthGuard } from './guards/auth.guard';
 import { SchedulingComponent } from './components/scheduling/scheduling.component';
 import {InventoryComponent} from './components/inventory/inventory.component';
+import { RoomManagementComponent } from './components/room-management/room-management.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'scheduling', component: SchedulingComponent, canActivate: [AuthGuard] },
-  { path: 'inventory', component: InventoryComponent },
+  { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
+  {path: 'room-management', component: RoomManagementComponent, canActivate: [AuthGuard] },
   {
     path: 'nurse',
     component: RegisterPatientComponent,
