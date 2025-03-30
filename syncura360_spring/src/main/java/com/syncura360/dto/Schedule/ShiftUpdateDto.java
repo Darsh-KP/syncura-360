@@ -7,6 +7,12 @@ public class ShiftUpdateDto {
 
     private ScheduleIdDto id;
     private ShiftDto updates;
+
+
+
+
+
+
     public record ScheduleIdDto(String username, String start) {}
 
 }
