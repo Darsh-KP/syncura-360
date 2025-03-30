@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/register/**", "/login").permitAll()
-                        .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug").hasAnyAuthority("Admin", "Super Admin")
+                        .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug", "/service/**", "/service").hasAnyAuthority("Admin", "Super Admin")
                         .requestMatchers("/patient").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
                         .anyRequest().authenticated()
                 )
