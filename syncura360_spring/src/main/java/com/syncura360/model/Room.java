@@ -18,7 +18,11 @@ public class Room {
     @JoinColumn(name = "hospital_id", referencedColumnName = "hospital_id", nullable = false, insertable = false, updatable = false)
     private Hospital hospital;
 
-    public Room(RoomId id) {
+    @Column(name = "department", nullable = false, length = 100)
+    private String department;
+
+    public Room(RoomId id, String department) {
         this.id = id;
+        this.department = department.trim();
     }
 }

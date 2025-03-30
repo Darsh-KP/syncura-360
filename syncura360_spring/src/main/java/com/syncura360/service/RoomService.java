@@ -10,16 +10,20 @@ import jakarta.persistence.EntityExistsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class RoomService {
     RoomRepository roomRepository;
     BedRepository bedRepository;
     EquipmentRepository equipmentRepository;
+    BedService bedService;
 
-    public RoomService(RoomRepository roomRepository, BedRepository bedRepository, EquipmentRepository equipmentRepository) {
+    public RoomService(RoomRepository roomRepository, BedRepository bedRepository, EquipmentRepository equipmentRepository, BedService bedService) {
         this.roomRepository = roomRepository;
         this.bedRepository = bedRepository;
         this.equipmentRepository = equipmentRepository;
+        this.bedService = bedService;
     }
 
     @Transactional
@@ -31,7 +35,7 @@ public class RoomService {
         }
 
         // Create new room
-        Room room = new Room(new RoomId(hospitalId, roomFormDTO.getRoomName()));
+        Room room = new Room(new RoomId(hospitalId, roomFormDTO.getRoomName()), roomFormDTO.getRoomName());
 
         // Save the new room to database
         roomRepository.save(room);
@@ -41,7 +45,7 @@ public class RoomService {
             // Create a new bed and attach it to the new room
             Bed newBed = new Bed(room);
 
-            // Save thew new bed to the database
+            // Save the new bed to the database
             bedRepository.save(newBed);
         }
 
@@ -59,17 +63,42 @@ public class RoomService {
     }
 
     // TODO
-    public void updateRoom(Room room) {
+    @Transactional
+    public void updateRoom(int hospitalId, RoomFormDTO roomFormDTO) {
+        // Find the room if it already exists
+        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomFormDTO.getRoomName());
+        if (optionalRoom.isEmpty()) {
+            // Room not found
+            throw new EntityExistsException("Room with given name does not exist.");
+        }
 
+        // Extract the room
+        Room room = optionalRoom.get();
+
+        // Update the department
+        room.setDepartment(roomFormDTO.getDepartment().trim());
+
+        // Update the beds
+        bedService.updateBedsForRoom(room, roomFormDTO.getBeds());
+
+        // Update the equipments
+
+
+        // Save the room
     }
 
     // TODO
-    public void deleteRoom(Room room) {
+    public void deleteRoom(int hospitalId, RoomFormDTO roomFormDTO) {
 
     }
 
     // TODO
     public void fetchRooms() {
+
+    }
+
+    // TODO
+    public void fetchRoom() {
 
     }
 }
