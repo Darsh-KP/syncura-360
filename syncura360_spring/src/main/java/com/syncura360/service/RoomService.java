@@ -93,6 +93,7 @@ public class RoomService {
         roomRepository.save(room);
     }
 
+    @Transactional
     public void deleteRoom(int hospitalId, RoomDeletionDTO roomDeletionDTO) {
         // Find the room if it already exists
         Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomDeletionDTO.getRoomName().trim());
@@ -115,7 +116,7 @@ public class RoomService {
         bedRepository.deleteAllByRoom(room);
 
         // Delete all the equipments in the room
-        equipmentRepository.deleteAllById_HospitalIdAndId_RoomName(hospitalId, roomDeletionDTO.getRoomName().trim());
+        equipmentService.deleteEquipmentsForRoom(hospitalId, roomDeletionDTO.getRoomName().trim());
 
         // Delete the room
         roomRepository.delete(room);

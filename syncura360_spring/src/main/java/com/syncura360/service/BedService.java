@@ -18,6 +18,9 @@ public class BedService {
         // Get total number of beds
         int totalBeds = bedRepository.countByRoom(room);
 
+        // Check if number of beds even changes
+        if (beds == totalBeds) return;
+
         // Check if beds needs to be added
         if (beds > totalBeds) {
             // Create each new bed
@@ -43,7 +46,7 @@ public class BedService {
         int vacantBeds = bedRepository.countByRoomAndStatus(room, BedStatus.Vacant);
 
         // Check if there are enough vacant beds to remove
-        if (bedsToDelete < vacantBeds) {
+        if (bedsToDelete > vacantBeds) {
             throw new IllegalArgumentException("Not enough vacant beds available to delete.");
         }
 

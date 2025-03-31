@@ -3,7 +3,6 @@ package com.syncura360.service;
 import com.syncura360.dto.Room.EquipmentFormDTO;
 import com.syncura360.model.Equipment;
 import com.syncura360.model.EquipmentId;
-import com.syncura360.model.Room;
 import com.syncura360.repository.EquipmentRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +19,12 @@ public class EquipmentService {
     }
 
     public void setEquipmentsForRoom(Integer hospitalId, String roomName, List<EquipmentFormDTO> equipments) {
+        // Check if there are any equipments
+        if (equipments == null || equipments.isEmpty()) {
+            deleteEquipmentsForRoom(hospitalId, roomName.trim());
+            return;
+        }
+
         // Store all the new equipment in a list
         Set<Equipment> newEquipments = new HashSet<>();
 
@@ -48,7 +53,7 @@ public class EquipmentService {
         }
     }
 
-    public void deleteEquipmentsForRoom(Room room) {
-
+    public void deleteEquipmentsForRoom(Integer hospitalId, String roomName) {
+        equipmentRepository.deleteAllById_HospitalIdAndId_RoomName(hospitalId, roomName.trim());
     }
 }

@@ -14,7 +14,7 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     Integer countByRoomAndStatus(Room room, BedStatus bedStatus);
 
     @Modifying
-    @Query(value = "DELETE FROM Bed b WHERE b.hospital_id = :hospitalId AND b.room_name = :roomName AND status = 'Vacant' LIMIT :x", nativeQuery = true)
+    @Query(value = "DELETE FROM Bed WHERE hospital_id = :hospitalId AND room_name = :roomName AND status = 'Vacant' LIMIT :x;", nativeQuery = true)
     void deleteXVacantBedsInRoom(@Param("hospitalId") Integer hospitalId,@Param("roomName") String roomName,@Param("x") int x);
 
     void deleteAllByRoom(Room room);
