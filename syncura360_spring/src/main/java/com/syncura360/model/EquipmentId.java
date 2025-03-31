@@ -29,8 +29,8 @@ public class EquipmentId implements java.io.Serializable {
 
     public EquipmentId(Integer hospitalId, String roomName, String serialNo) {
         this.hospitalId = hospitalId;
-        this.roomName = roomName;
-        this.serialNo = serialNo;
+        this.roomName = roomName.trim();
+        this.serialNo = serialNo.trim();
     }
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
