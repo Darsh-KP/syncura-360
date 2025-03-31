@@ -1,4 +1,4 @@
-package com.syncura360.dto;
+package com.syncura360.dto.Authentication;
 
 import lombok.Data;
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -21,4 +22,18 @@ public class Schedule {
 
     @Column(name = "department", nullable = false, length = 50)
     private String department;
+
+    public Schedule(ScheduleId id, Staff staff, LocalDateTime endDateTime, String department) {
+
+        this.id = id;
+        this.staff = staff;
+        this.endDateTime = endDateTime;
+
+        this.department = Objects.requireNonNullElse(department, "None");
+
+    }
+
+    public Schedule() {}
+
+
 }

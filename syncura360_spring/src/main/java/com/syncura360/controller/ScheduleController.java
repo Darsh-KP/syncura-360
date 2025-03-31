@@ -1,8 +1,6 @@
 package com.syncura360.controller;
 
-import com.syncura360.dto.Operation;
-import com.syncura360.dto.ShiftDto;
-import com.syncura360.dto.ShiftsRequest;
+import com.syncura360.dto.Schedule.*;
 import com.syncura360.model.Hospital;
 import com.syncura360.model.Schedule;
 import com.syncura360.model.ScheduleId;
@@ -10,15 +8,20 @@ import com.syncura360.model.Staff;
 import com.syncura360.repository.ScheduleRepository;
 import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -37,6 +40,77 @@ public class ScheduleController {
     @Autowired
     JwtUtil jwtUtil;
 
+    @PutMapping
+    @Transactional
+    public ResponseEntity<MessageResponse> updateShifts(
+            @RequestHeader(name="Authorization") String authorization,
+            @RequestBody ShiftUpdateRequestDto shiftUpdateRequestDto)
+    {
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+
+            for (ShiftUpdateDto dto : shiftUpdateRequestDto.getUpdates()) {
+
+                Schedule shiftToModify = getShiftToModify(dto, hospitalId);
+                Schedule newShift = getNewShift(dto.getUpdates(), shiftToModify);
+
+                try {
+                    scheduleRepository.delete(shiftToModify);
+                    scheduleRepository.save(newShift);
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed: Error querying database."));
+                }
+
+            }
+
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Failed: Bad date format or missing dates."));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Failed: Shift not found."));
+        } catch (InsufficientAuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Shift not found."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed: Error querying database."));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Changes Applied."));
+
+    }
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity<ScheduleDto> getAllShifts(
+            @RequestHeader(name="Authorization") String authorization,
+            @RequestBody ShiftDto shiftDto)
+    {
+
+        LocalDateTime start, end;
+        List<ShiftDto> dtoList;
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+
+            start = LocalDateTime.parse(shiftDto.getStart());
+            end = LocalDateTime.parse(shiftDto.getEnd());
+            dtoList = createShiftDTOs(
+                    scheduleRepository.findSchedules(start, end, shiftDto.getUsername(), shiftDto.getDepartment(), hospitalId)
+            );
+
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ScheduleDto("Failed: Bad date format or missing dates."));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ScheduleDto("Failed: No shifts found."));
+        } catch (Exception e) { // Database exception.
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ScheduleDto("Failed: Error fetching from database."));
+        }
+
+        ScheduleDto response = new ScheduleDto("Success.", dtoList);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
     /**
      * Attempts to add a list of new shifts to the schedule;
      * @param authorization JWT.
@@ -44,67 +118,17 @@ public class ScheduleController {
      * @return MessageResponse DTO containing a success or failure message.
      */
     @PostMapping("/new")
+    @Transactional
     public ResponseEntity<MessageResponse> addShifts(
             @RequestHeader(name="Authorization") String authorization,
             @RequestBody ShiftsRequest newShiftsRequest)
-    { return modifyShifts(authorization, newShiftsRequest, Operation.CREATE); }
+    {
 
-    /**
-     * Attempts to apply a list of shift modifications.
-     * @param authorization JWT.
-     * @param updateShiftsRequest DTO to model the list of shift modifications.
-     * @return MessageResponse DTO containing a success or failure message.
-     */
-    @PutMapping
-    public ResponseEntity<MessageResponse> updateShifts(
-            @RequestHeader(name="Authorization") String authorization,
-            @RequestBody ShiftsRequest updateShiftsRequest)
-    { return modifyShifts(authorization, updateShiftsRequest, Operation.UPDATE); }
-
-    /**
-     * Attempts to delete a list of shifts from the schedule.
-     * @param authorization JWT.
-     * @param deleteShiftsRequest DTO to model the list of shifts to delete.
-     * @return MessageResponse DTO containing a success or failure message.
-     */
-    @DeleteMapping
-    public ResponseEntity<MessageResponse> deleteShifts(
-        @RequestHeader(name="Authorization") String authorization,
-        @RequestBody ShiftsRequest deleteShiftsRequest)
-    { return modifyShifts(authorization, deleteShiftsRequest, Operation.DELETE); }
-
-
-    private ResponseEntity<MessageResponse> modifyShifts(String authorization, ShiftsRequest shiftsRequest, Operation operation) {
-
-        Optional<Staff> optionalAccessingUser = staffRepository.findByUsername(jwtUtil.getUsername(authorization));
-        Staff accessingUser = null;
-        if (optionalAccessingUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Unknown accessing user."));
-        }
-
-        accessingUser = optionalAccessingUser.get();
-        Hospital hospital = accessingUser.getWorksAt(); // will be replaced by jwtUtil.getHospital(authorization);
-
+        LocalDateTime start, end;
         List<Schedule> shifts = new ArrayList<>();
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
 
-        for (ShiftDto dto : shiftsRequest.getShifts()) {
-
-            Optional<Staff> optionalStaff = staffRepository.findByUsername(dto.getUsername());
-
-            if (optionalStaff.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(new MessageResponse("Failed: Unknown staff username."));
-            }
-
-            // Shift staff member
-            Staff staff = optionalStaff.get();
-
-            // Return an error if the accessing user and staff member do not work at the same hospital.
-            if (hospital != staff.getWorksAt()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Unknown staff username."));
-            }
-
-            LocalDateTime start = null;
-            LocalDateTime end = null;
+        for (ShiftDto dto : newShiftsRequest.getShifts()) {
 
             try {
                 start = LocalDateTime.parse(dto.getStart());
@@ -113,34 +137,132 @@ public class ScheduleController {
                 return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(new MessageResponse("Failed: Bad date format"));
             }
 
-            ScheduleId id = new ScheduleId();
-            id.setStaffUsername(dto.getUsername());
-            id.setStartDateTime(start);
-            Schedule shift = new Schedule();
-            shift.setId(id);
-            shift.setStaff(staff);
-            shift.setEndDateTime(end);
+            Optional<Staff> optionalStaff = staffRepository.findByUsername(dto.getUsername());
+            if (optionalStaff.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(new MessageResponse("Failed: Unknown staff username."));
+            }
 
-            if (dto.getDepartment() != null) { shift.setDepartment(dto.getDepartment()); }
-            else { shift.setDepartment("None"); }
+            // Return an error if the accessing user and staff member do not work at the same hospital.
+            if (hospitalId != optionalStaff.get().getWorksAt().getId()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Unknown staff username."));
+            }
 
+            Schedule shift = new Schedule(new ScheduleId(dto.getUsername(), start), optionalStaff.get(), end, dto.getDepartment());
             shifts.add(shift);
 
         }
 
-        try {
-
-            if (operation == Operation.CREATE || operation == Operation.UPDATE) {
-                scheduleRepository.saveAll(shifts);
-            }
-            else { scheduleRepository.deleteAll(shifts); }
-
-        }
+        try { scheduleRepository.saveAll(shifts); }
         catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed: Error applying changes to database"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed: Error adding shifts to database."));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Success."));
+
+    }
+
+    /**
+     * Attempts to delete a list of shifts from the schedule.
+     * @param authorization JWT.
+     * @param deleteShiftsRequest DTO to model the list of shifts to delete.
+     * @return MessageResponse DTO containing a success or failure message.
+     */
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity<MessageResponse> deleteShifts(
+        @RequestHeader(name="Authorization") String authorization,
+        @RequestBody ShiftsRequest deleteShiftsRequest)
+    {
+
+        ArrayList<ScheduleId> toDelete = new ArrayList<>();
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        for (ShiftDto dto : deleteShiftsRequest.getShifts()) {
+
+            Optional<Staff> staff = staffRepository.findByUsername(dto.getUsername());
+            if (staff.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Failed: Unknown staff member."));
+            }
+
+            if (hospitalId != staff.get().getWorksAt().getId()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Failed: Unknown staff member."));
+            }
+
+            try { toDelete.add(new ScheduleId(dto.getUsername(), LocalDateTime.parse(dto.getStart()))); }
+            catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Failed: Error parsing date."));
+            }
+
+        }
+
+        try { scheduleRepository.deleteByIds(toDelete); } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Failed. Error deleting from database."));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Success."));
+
+    }
+
+    private List<ShiftDto> createShiftDTOs(List<Schedule> shifts) {
+        List<ShiftDto> result = new ArrayList<>();
+        if (shifts.isEmpty()) { throw new NoSuchElementException("Shift list is empty."); }
+
+        for (Schedule shift : shifts) {
+            ShiftDto dto = new ShiftDto();
+            dto.setStart(String.valueOf(shift.getId().getStartDateTime()));
+            dto.setEnd(String.valueOf(shift.getEndDateTime()));
+            dto.setUsername(shift.getId().getStaffUsername());
+            dto.setDepartment(shift.getDepartment());
+            result.add(dto);
+        }
+        return result;
+    }
+
+    private Schedule getShiftToModify(ShiftUpdateDto dto, int hospitalId) {
+
+        Optional<Schedule> optionalShift = scheduleRepository.findById(
+                new ScheduleId(dto.getId().username(), LocalDateTime.parse(dto.getId().start()))
+        );
+
+        if (optionalShift.isEmpty()) {
+            throw new NoSuchElementException("Shift not found.");
+        }
+        else if (optionalShift.get().getStaff().getWorksAt().getId() != hospitalId) {
+            throw new InsufficientAuthenticationException("Shift not found.");
+        }
+
+        return optionalShift.get();
+
+    }
+
+    @SuppressWarnings("OptionalIsPresent")
+    private Schedule getNewShift (ShiftDto updates, Schedule shiftToModify) throws SQLIntegrityConstraintViolationException {
+
+        ScheduleId newId = new ScheduleId();
+        Schedule newShift = new Schedule();
+
+        if (updates.getUsername() != null) { newId.setStaffUsername(updates.getUsername()); }
+        else { newId.setStaffUsername(shiftToModify.getId().getStaffUsername()); }
+
+        Optional<Staff> staff = staffRepository.findByUsername(newId.getStaffUsername());
+        if (staff.isPresent()) { newShift.setStaff(staff.get()); }
+
+        if (updates.getStart() != null) { newId.setStartDateTime(LocalDateTime.parse(updates.getStart())); }
+        else { newId.setStartDateTime(shiftToModify.getId().getStartDateTime()); }
+
+        newShift.setId(newId);
+
+        if (updates.getEnd() != null) { newShift.setEndDateTime(LocalDateTime.parse(updates.getEnd())); }
+        else { newShift.setEndDateTime(shiftToModify.getEndDateTime()); }
+
+        if (updates.getDepartment() != null) { newShift.setDepartment(updates.getDepartment()); }
+        else { newShift.setDepartment(shiftToModify.getDepartment()); }
+
+        if (newShift.getId().getStartDateTime().isAfter(newShift.getEndDateTime())) {
+            throw new SQLIntegrityConstraintViolationException("Impossible shift.");
+        }
+
+        return newShift;
 
     }
 
