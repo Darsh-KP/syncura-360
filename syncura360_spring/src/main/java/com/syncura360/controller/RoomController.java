@@ -1,8 +1,7 @@
 package com.syncura360.controller;
 
 import com.syncura360.dto.GenericMessageResponseDTO;
-import com.syncura360.dto.Room.RoomDeletionDTO;
-import com.syncura360.dto.Room.RoomFormDTO;
+import com.syncura360.dto.Room.*;
 import com.syncura360.security.JwtUtil;
 import com.syncura360.service.RoomService;
 import jakarta.persistence.EntityExistsException;
@@ -12,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -101,5 +102,53 @@ public class RoomController {
 
         // Successfully deleted the existing room
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully deleted the room."));
+    }
+
+    @GetMapping
+    public ResponseEntity<RoomFetchContainerDTO> getRooms(
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomFetchRequestDTO roomFetchRequestDTO, BindingResult bindingResult) {
+        // Response container
+        RoomFetchContainerDTO roomFetchContainerDTO = new RoomFetchContainerDTO();
+
+        // Basic DTO validation
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult.getAllErrors());
+            roomFetchContainerDTO.setMessage("Invalid request: ");
+            //roomFetchContainerDTO.setMessage("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult));
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(roomFetchContainerDTO);
+        }
+
+        // Get the hospital id the logged in staff works at
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        // Check if a specific room is requested
+        if (roomFetchRequestDTO.getRoomName() != null && !roomFetchRequestDTO.getRoomName().trim().isEmpty()) {
+            RoomFetchDTO roomFetchDTO = roomService.fetchRoom(hospitalId, roomFetchRequestDTO);
+
+            // Fill the container properly
+            roomFetchContainerDTO.setRoomName(roomFetchDTO.getRoomName());
+            roomFetchContainerDTO.setDepartment(roomFetchDTO.getDepartment());
+            roomFetchContainerDTO.setBeds(roomFetchDTO.getBeds());
+            roomFetchContainerDTO.setEquipments(roomFetchDTO.getEquipments());
+            roomFetchContainerDTO.setRooms(null);
+
+            // Fetch a specific room
+            return ResponseEntity.status(HttpStatus.OK).body(roomFetchContainerDTO);
+        }
+
+        // Get all the rooms
+        List<RoomFetchDTO> roomFetchDTOList = roomService.fetchRooms(hospitalId);
+
+        // Check if no rooms found
+        if (roomFetchDTOList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        // Fill the container with the fetched rooms
+        roomFetchContainerDTO.setRooms(roomFetchDTOList);
+
+        // Success, return the list of rooms
+        return ResponseEntity.status(HttpStatus.OK).body(roomFetchContainerDTO);
     }
 }

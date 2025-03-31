@@ -1,9 +1,6 @@
 package com.syncura360.service;
 
-import com.syncura360.dto.Room.EquipmentFormDTO;
-import com.syncura360.dto.Room.RoomDeletionDTO;
-import com.syncura360.dto.Room.RoomFetchRequestDTO;
-import com.syncura360.dto.Room.RoomFormDTO;
+import com.syncura360.dto.Room.*;
 import com.syncura360.model.*;
 import com.syncura360.model.enums.BedStatus;
 import com.syncura360.repository.BedRepository;
@@ -14,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -122,13 +120,41 @@ public class RoomService {
         roomRepository.delete(room);
     }
 
-    // TODO
-    public void fetchRooms() {
-
+    public List<RoomFetchDTO> fetchRooms(int hospitalId) {
+        // Get a list of rooms
+        return roomRepository.findById_HospitalId(hospitalId).stream().map(
+                room -> fetchRoom(hospitalId, new RoomFetchRequestDTO(room.getId().getRoomName().trim()))).toList();
     }
 
-    // TODO
-    public void fetchRoom(int hospitalId, RoomFetchRequestDTO roomFetchRequestDTO) {
+    public RoomFetchDTO fetchRoom(int hospitalId, RoomFetchRequestDTO roomFetchRequestDTO) {
+        // Find the room if it already exists
+        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomFetchRequestDTO.getRoomName().trim());
+        if (optionalRoom.isEmpty()) {
+            // Room not found
+            throw new EntityNotFoundException("Room with given name does not exist.");
+        }
 
+        // Extract the room
+        Room room = optionalRoom.get();
+
+        // Get the numbers of beds in the room
+        int totalBeds = bedRepository.countByRoom(room);
+        int bedsVacant = bedRepository.countByRoomAndStatus(room, BedStatus.Vacant);
+        int bedsOccupied = bedRepository.countByRoomAndStatus(room, BedStatus.Occupied);
+        int bedsMaintenance = bedRepository.countByRoomAndStatus(room, BedStatus.Under_Maintenance);
+
+        // Get all the equipments
+        List<EquipmentFetchDTO> fetchedEquipments = equipmentRepository.findById_HospitalIdAndId_RoomName(hospitalId, room.getId().getRoomName().trim()).stream().map(equipment ->
+                new EquipmentFetchDTO(equipment.getId().getSerialNo().trim(), equipment.getName().trim(), equipment.getUnderMaintenance())).toList();
+
+        return new RoomFetchDTO(
+                room.getId().getRoomName().trim(),
+                room.getDepartment().trim(),
+                totalBeds,
+                bedsVacant,
+                bedsOccupied,
+                bedsMaintenance,
+                fetchedEquipments
+        );
     }
 }
