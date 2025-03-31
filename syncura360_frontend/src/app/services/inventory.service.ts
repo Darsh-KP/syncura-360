@@ -45,7 +45,6 @@ export class inventoryService {
       .pipe(
         map(response => {
           if (response && response.drugs) {
-            console.log(response.message);
             return response.drugs;
           } else {
             // Handle 204 or bad response gracefully
@@ -68,22 +67,24 @@ export class inventoryService {
     return this.http.post<{ message: string }>(this.baseUrl, drug, { headers });
   }
 
-  deleteInventory(ndc: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.baseUrl}/${ndc}`, {
-      headers: this.getHeaders()
+  deleteInventory(drug: inventory): Observable<{ message: string }> {
+    const headers = this.getHeaders();
+
+    return this.http.delete<{ message: string }>(this.baseUrl, {
+      headers,
+      body: drug // ✅ send the full inventory object in the body
     }).pipe(
-        catchError(error => {
-          console.error('Error deleting inventory item:', error);
-          return throwError(() => new Error(error.message || 'Failed to delete inventory item.'));
-        })
+      catchError(error => {
+        console.error('Error deleting inventory item:', error);
+        return throwError(() => new Error(error.message || 'Failed to delete inventory item.'));
+      })
     );
   }
 
 
-  updateInventoryQuantities(updates: inventoryUpdateDto[]): Observable<{ message: string; ndc: string[] }> {
-    const requestBody: inventoryUpdateRequest = { updates };
 
-    return this.http.put<{ message: string; ndc: string[] }>(`${this.baseUrl}`, requestBody, { headers: this.getHeaders() });
-
+  updateInventoryQuantities(drug: inventory): Observable<{ message: string }> {
+    const headers = this.getHeaders();
+    return this.http.put<{ message: string }>(this.baseUrl, drug, { headers });
   }
 }

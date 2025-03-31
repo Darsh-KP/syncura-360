@@ -109,11 +109,11 @@ export class ItemFormComponent {
       price: Number(rawFormData.price),
     };
 
-    console.log('Submitting form data:', formData); // ✅ Debug log
 
     if (this.isEditing) {
       // ✅ Edit flow: send single object
       this.inventoryService.updateInventoryQuantities(formData).subscribe({
+
         next: () => this.dialogRef.close(true),
         error: (error) => {
           console.error('Backend error:', error);
@@ -123,7 +123,6 @@ export class ItemFormComponent {
       });
     } else {
       // ✅ Create flow: send single item wrapped if needed
-      console.log('Submitting payload to /drug:', formData);
       this.inventoryService.createInventory(formData).subscribe({
         next: () => this.dialogRef.close(true),
         error: (error) => {

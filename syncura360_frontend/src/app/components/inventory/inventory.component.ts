@@ -29,6 +29,8 @@ export class InventoryComponent implements OnInit {
 
   inventoryList: inventory[] = [];
   gridApi: any;
+  public themeClass: string = 'ag-theme-alpine';
+
   editedQuantities: { [ndc: number]: number } = {};
 
   errorMessage = '';
@@ -43,19 +45,22 @@ export class InventoryComponent implements OnInit {
     {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
-        return `<button class="edit-btn">Edit</button>
- <button class="delete-btn" style="margin-left: 5px;">Delete</button>`;
-
+        return `
+      <button class="edit-btn">Edit</button>
+      <button class="delete-btn">Delete</button>
+    `;
       },
       onCellClicked: (params: any) => {
-        const clickedElement = params.event.target as HTMLElement;
-        if (clickedElement.classList.contains('edit-btn')) {
-          this.openItemForm(params.data);
-        } else if (clickedElement.classList.contains('delete-btn')) {
-          this.deleteItem(params.data.ndc);
+        const targetClass = params.event.target.className;
+
+        if (targetClass.includes('edit-btn')) {
+          this.openItemForm(params.data); // already works
+        } else if (targetClass.includes('delete-btn')) {
+          this.onDelete(params.data); //
         }
       }
     }
+
   ];
 
   ngOnInit(): void {
@@ -66,8 +71,11 @@ export class InventoryComponent implements OnInit {
     this.inventorySvc.getInventory().subscribe({
       next: data => {
         if (data && data.length > 0) {
-          this.inventoryList = data;
-          this.errorMessage = ''; // Clear any previous error
+          this.inventoryList = [...data]; // keep this if you're using rowData binding too
+          if (this.gridApi) {
+
+            this.gridApi.setRowData(this.inventoryList); // ✅ this will 100% force UI refresh
+          }          this.errorMessage = ''; // Clear any previous error
         } else {
           // Do nothing — or show a message if you want
           this.errorMessage = '';
@@ -103,19 +111,24 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  deleteItem(ndc: number): void {
-    if (confirm('Are you sure you want to delete this item?')) {
-      this.inventorySvc.deleteInventory(ndc).subscribe({
-        next: () => {
-          this.successMessage = 'Item deleted successfully.';
-          this.loadInventory();
-        },
-        error: () => {
-          this.errorMessage = 'Failed to delete item.';
-        }
-      });
-    }
-  }
+  onDelete(item: inventory): void {
+    if (!item || !item.ndc) return;
 
+    const confirmDelete = confirm(`Are you sure you want to delete ${item.name}?`);
+    if (!confirmDelete) return;
+
+
+    this.inventorySvc.deleteInventory(item).subscribe({
+      next: () => {
+        this.successMessage = `${item.name} deleted successfully.`;
+        this.loadInventory();
+        this.gridApi.setRowData(this.inventoryList);
+      },
+      error: (err) => {
+        console.error('Error deleting inventory item:', err);
+        this.errorMessage = err.message || 'Failed to delete inventory item.';
+      }
+    });
+  }
 
 }
