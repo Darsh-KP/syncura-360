@@ -1,12 +1,16 @@
 package com.syncura360.service;
 
 import com.syncura360.dto.Room.EquipmentFormDTO;
+import com.syncura360.dto.Room.RoomDeletionDTO;
+import com.syncura360.dto.Room.RoomFetchRequestDTO;
 import com.syncura360.dto.Room.RoomFormDTO;
 import com.syncura360.model.*;
+import com.syncura360.model.enums.BedStatus;
 import com.syncura360.repository.BedRepository;
 import com.syncura360.repository.EquipmentRepository;
 import com.syncura360.repository.RoomRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +22,14 @@ public class RoomService {
     BedRepository bedRepository;
     EquipmentRepository equipmentRepository;
     BedService bedService;
+    EquipmentService equipmentService;
 
-    public RoomService(RoomRepository roomRepository, BedRepository bedRepository, EquipmentRepository equipmentRepository, BedService bedService) {
+    public RoomService(RoomRepository roomRepository, BedRepository bedRepository, EquipmentRepository equipmentRepository, BedService bedService, EquipmentService equipmentService) {
         this.roomRepository = roomRepository;
         this.bedRepository = bedRepository;
         this.equipmentRepository = equipmentRepository;
         this.bedService = bedService;
+        this.equipmentService = equipmentService;
     }
 
     @Transactional
@@ -35,7 +41,7 @@ public class RoomService {
         }
 
         // Create new room
-        Room room = new Room(new RoomId(hospitalId, roomFormDTO.getRoomName()), roomFormDTO.getRoomName());
+        Room room = new Room(new RoomId(hospitalId, roomFormDTO.getRoomName().trim()), roomFormDTO.getDepartment().trim());
 
         // Save the new room to database
         roomRepository.save(room);
@@ -54,7 +60,7 @@ public class RoomService {
             // Create each new equipment
             for (EquipmentFormDTO equipmentFormDTO : roomFormDTO.getEquipments()) {
                 // Create a new equipment and attach it to the new room
-                Equipment newEquipment = new Equipment(new EquipmentId(hospitalId, room.getId().getRoomName(), equipmentFormDTO.getSerialNo()), equipmentFormDTO.getName());
+                Equipment newEquipment = new Equipment(new EquipmentId(hospitalId, room.getId().getRoomName(), equipmentFormDTO.getSerialNo().trim()), equipmentFormDTO.getName().trim());
 
                 // Save the new equipment to the database
                 equipmentRepository.save(newEquipment);
@@ -62,14 +68,13 @@ public class RoomService {
         }
     }
 
-    // TODO
     @Transactional
     public void updateRoom(int hospitalId, RoomFormDTO roomFormDTO) {
         // Find the room if it already exists
-        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomFormDTO.getRoomName());
+        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomFormDTO.getRoomName().trim());
         if (optionalRoom.isEmpty()) {
             // Room not found
-            throw new EntityExistsException("Room with given name does not exist.");
+            throw new EntityNotFoundException("Room with given name does not exist.");
         }
 
         // Extract the room
@@ -82,14 +87,38 @@ public class RoomService {
         bedService.updateBedsForRoom(room, roomFormDTO.getBeds());
 
         // Update the equipments
-
+        equipmentService.setEquipmentsForRoom(hospitalId, room.getId().getRoomName(), roomFormDTO.getEquipments());
 
         // Save the room
+        roomRepository.save(room);
     }
 
-    // TODO
-    public void deleteRoom(int hospitalId, RoomFormDTO roomFormDTO) {
+    public void deleteRoom(int hospitalId, RoomDeletionDTO roomDeletionDTO) {
+        // Find the room if it already exists
+        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomDeletionDTO.getRoomName().trim());
+        if (optionalRoom.isEmpty()) {
+            // Room not found
+            throw new EntityNotFoundException("Room with given name does not exist.");
+        }
 
+        // Extract the room
+        Room room = optionalRoom.get();
+
+        // Check if any beds are occupied
+        int occupiedBeds = bedRepository.countByRoomAndStatus(room, BedStatus.Occupied);
+
+        if (occupiedBeds > 0) {
+            throw new IllegalArgumentException("There are occupied beds in the room.");
+        }
+
+        // Delete all the beds in the room
+        bedRepository.deleteAllByRoom(room);
+
+        // Delete all the equipments in the room
+        equipmentRepository.deleteAllById_HospitalIdAndId_RoomName(hospitalId, roomDeletionDTO.getRoomName().trim());
+
+        // Delete the room
+        roomRepository.delete(room);
     }
 
     // TODO
@@ -98,7 +127,7 @@ public class RoomService {
     }
 
     // TODO
-    public void fetchRoom() {
+    public void fetchRoom(int hospitalId, RoomFetchRequestDTO roomFetchRequestDTO) {
 
     }
 }
