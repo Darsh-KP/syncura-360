@@ -31,7 +31,7 @@ public class Equipment {
 
     public Equipment(EquipmentId id, String name) {
         this.id = id;
-        this.name = name;
+        this.name = name.trim();
         this.underMaintenance = false;
     }
 }
