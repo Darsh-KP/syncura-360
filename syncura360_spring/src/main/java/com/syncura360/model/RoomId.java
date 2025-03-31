@@ -26,7 +26,7 @@ public class RoomId implements java.io.Serializable {
 
     public RoomId(Integer hospitalId, String roomName) {
         this.hospitalId = hospitalId;
-        this.roomName = roomName;
+        this.roomName = roomName.trim();
     }
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")

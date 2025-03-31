@@ -14,6 +14,10 @@ public class RoomFormDTO {
     @Size(max = 50, message = "Max length for room name is 50 characters.")
     String roomName;
 
+    @NotNull(message = "Department is required.")
+    @Size(max = 100, message = "Max length for department name is 100 characters.")
+    String department;
+
     @NotNull(message = "Number of beds is required.")
     @PositiveOrZero(message = "Number of beds cannot be negative.")
     @Max(value = 100, message = "Whoa, over 100 beds? Are you opening a mattress factory or a hospital? (Max 100)")
