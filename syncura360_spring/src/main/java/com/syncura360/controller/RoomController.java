@@ -124,17 +124,26 @@ public class RoomController {
 
         // Check if a specific room is requested
         if (roomFetchRequestDTO.getRoomName() != null && !roomFetchRequestDTO.getRoomName().trim().isEmpty()) {
-            RoomFetchDTO roomFetchDTO = roomService.fetchRoom(hospitalId, roomFetchRequestDTO);
+            // Fetch the room
+            try {
+                RoomFetchDTO roomFetchDTO = roomService.fetchRoom(hospitalId, roomFetchRequestDTO);
 
-            // Fill the container properly
-            roomFetchContainerDTO.setRoomName(roomFetchDTO.getRoomName());
-            roomFetchContainerDTO.setDepartment(roomFetchDTO.getDepartment());
-            roomFetchContainerDTO.setBeds(roomFetchDTO.getBeds());
-            roomFetchContainerDTO.setEquipments(roomFetchDTO.getEquipments());
-            roomFetchContainerDTO.setRooms(null);
+                // Fill the container properly
+                roomFetchContainerDTO.setRoomName(roomFetchDTO.getRoomName());
+                roomFetchContainerDTO.setDepartment(roomFetchDTO.getDepartment());
+                roomFetchContainerDTO.setBeds(roomFetchDTO.getBeds());
+                roomFetchContainerDTO.setEquipments(roomFetchDTO.getEquipments());
+                roomFetchContainerDTO.setRooms(null);
 
-            // Fetch a specific room
-            return ResponseEntity.status(HttpStatus.OK).body(roomFetchContainerDTO);
+                // Fetch a specific room
+                return ResponseEntity.status(HttpStatus.OK).body(roomFetchContainerDTO);
+            } catch (EntityExistsException | EntityNotFoundException | IllegalArgumentException e) {
+                roomFetchContainerDTO.setMessage(e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(roomFetchContainerDTO);
+            } catch (Exception e) {
+                roomFetchContainerDTO.setMessage("An unexpected error occurred.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(roomFetchContainerDTO);
+            }
         }
 
         // Get all the rooms
