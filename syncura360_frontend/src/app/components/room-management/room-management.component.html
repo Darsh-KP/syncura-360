@@ -1,6 +1,6 @@
 <div class="relative min-h-screen bg-gray-50 pt-8 px-4 sm:px-8 md:px-12 lg:pl-64 lg:pr-72 flex flex-col gap-8">
 
-    <div class="space-y-1 mb-4">
+    <div class="space-y-1">
         <h1 class="text-4xl text-gray-800 tracking-tight">Room Management</h1>
         <p class="text-base text-gray-500">Manage rooms, beds, and equipment effectively</p>
     </div>
@@ -10,106 +10,135 @@
         <app-navbar></app-navbar>
     </div>
 
-    <!-- Status Keys -->
-    <div class="w-full lg:fixed lg:top-6 lg:right-8 lg:w-60 space-y-4 lg:z-50 mb-6 lg:mb-0">
+<!-- Status Keys -->
+<div class="w-full lg:fixed lg:top-6 lg:right-8 lg:w-60 space-y-4 lg:z-50 mb-6 lg:mb-0">
 
-        <!-- Bed Key -->
-        <div class="bg-white border rounded-lg shadow p-3 text-sm space-y-2">
-            <div class="flex items-center gap-2 mb-1 text-sm uppercase text-gray-500 tracking-wide">
-                <mat-icon class="text-blue-400">hotel</mat-icon>
-                <span>Bed Status Key</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="h-4 w-4 rounded-sm bg-green-500 shadow-sm"></div>
-                <span>Vacant</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="h-4 w-4 rounded-sm bg-red-500 shadow-sm"></div>
-                <span>Occupied</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="h-4 w-4 rounded-sm bg-blue-500 shadow-sm"></div>
-                <span>Maintenance</span>
-            </div>
+    <!-- Bed Key -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg shadow-sm p-3 text-sm space-y-2">
+        <div class="flex items-center gap-2 mb-1 text-sm uppercase text-blue-500 tracking-wide">
+            <mat-icon class="text-blue-400">hotel</mat-icon>
+            <span>Bed Status Key</span>
         </div>
-
-        <!-- Equipment Key -->
-        <div class="bg-white border rounded-lg shadow p-3 text-sm space-y-2">
-            <div class="flex items-center gap-2 text-sm uppercase text-gray-500 tracking-wide">
-                <mat-icon class="text-yellow-400">construction</mat-icon>
-                <span>Equipment Status Key</span>
-            </div>
-    
-            <div class="flex items-center gap-2">
-                <div class="h-4 w-4 rounded-sm bg-gray-400 shadow-sm"></div>
-                <span>Available</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <div class="h-4 w-4 rounded-sm bg-yellow-400 shadow-sm"></div>
-                <span>Under Maintenance</span>
-            </div>
+        <div class="flex items-center gap-2">
+            <div class="h-4 w-4 rounded-sm bg-green-500 shadow-sm"></div>
+            <span>Vacant</span>
         </div>
-
+        <div class="flex items-center gap-2">
+            <div class="h-4 w-4 rounded-sm bg-red-500 shadow-sm"></div>
+            <span>Occupied</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="h-4 w-4 rounded-sm bg-blue-500 shadow-sm"></div>
+            <span>Maintenance</span>
+        </div>
     </div>
+
+    <!-- Equipment Key -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm p-3 text-sm space-y-2">
+        <div class="flex items-center gap-2 text-sm uppercase text-yellow-500 tracking-wide">
+            <mat-icon class="text-yellow-400">construction</mat-icon>
+            <span>Equipment Status Key</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <div class="h-4 w-4 rounded-sm bg-gray-400 shadow-sm"></div>
+            <span>Available</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="h-4 w-4 rounded-sm bg-yellow-400 shadow-sm"></div>
+            <span>Under Maintenance</span>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Action Bar -->
+<div class="flex items-center gap-4 mb-6">
+
+    <!-- Add Room Button -->
+    <button (click)="openAddRoomDialog()"
+        class="h-12 px-5 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg
+               transition-all duration-300 hover:bg-blue-700 active:scale-95 focus:ring-4 focus:ring-blue-300 cursor-pointer">
+        + Add Room
+    </button>
+
+    <!-- Search Bar -->
+    <mat-form-field appearance="outline" class="flex-1 max-w-xs !h-12 flex items-center">
+        <mat-label>Search Room by Name</mat-label>
+        <input matInput [(ngModel)]="searchQuery" placeholder="Search rooms..." class="h-10">
+        <button *ngIf="searchQuery" matSuffix mat-icon-button aria-label="Clear" (click)="searchQuery=''">
+            <mat-icon class="mr-2">close</mat-icon>
+        </button>
+    </mat-form-field>
+
+</div>
 
 <!-- Room Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
 
-    <div *ngFor="let room of rooms" 
+    <div *ngFor="let room of filteredRooms" 
         (click)="openRoomDetailsDialog(room)"
-        class="rounded-2xl border bg-white p-5 shadow hover:shadow-lg transition hover:-translate-y-1 hover:border-blue-400 cursor-pointer group space-y-4 duration-200">
+        class="rounded-2xl border bg-white p-5 shadow hover:shadow-lg transition hover:-translate-y-1 hover:border-blue-400 cursor-pointer group space-y-5 duration-200">
 
-        <div class="flex justify-between items-center">
-            <div class="space-y-0.5">
-                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">{{ room.roomName }}</h3>
-                <p class="text-sm text-gray-500">Dept: {{ room.department }}</p>
+        <!-- Room Title -->
+        <div class="space-y-1 mb-2 border-b pb-2">
+            <h3 class="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition leading-snug">
+                Room: {{ room.roomName }}
+            </h3>
+            <p class="text-sm text-gray-500 italic">Department: {{ room.department }}</p>
+        </div>
+
+        <!-- Beds Section -->
+        <div>
+            <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Beds</h4>
+            <div class="grid grid-cols-3 gap-2">
+
+                <!-- Vacant Beds -->
+                <div matTooltip="Vacant Beds" class="flex flex-col items-center space-y-1">
+                    <div class="h-8 w-8 rounded-md bg-green-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
+                        {{ room.bedsVacant }}
+                    </div>
+                </div>
+
+                <!-- Occupied Beds -->
+                <div matTooltip="Occupied Beds" class="flex flex-col items-center space-y-1">
+                    <div class="h-8 w-8 rounded-md bg-red-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
+                        {{ room.bedsOccupied }}
+                    </div>
+                </div>
+
+                <!-- Maintenance Beds -->
+                <div matTooltip="Beds Under Maintenance" class="flex flex-col items-center space-y-1">
+                    <div class="h-8 w-8 rounded-md bg-blue-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
+                        {{ room.bedsMaintenance }}
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- Beds Visualization -->
-        <div class="grid grid-cols-3 gap-2 mt-2">
-            <div class="flex flex-col items-center space-y-1">
-                <div class="h-8 w-8 rounded-md bg-green-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
-                    {{ room.bedsVacant }}
+        <!-- Equipment Section -->
+        <div>
+            <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Equipment</h4>
+            <div class="space-y-1 text-sm max-h-24 overflow-y-auto">
+
+                <div *ngIf="room.equipments.length === 0" class="text-xs text-gray-400 italic">No equipment added.</div>
+
+                <div *ngFor="let eq of room.equipments" 
+                    class="flex items-center justify-between gap-2 px-2 py-1 bg-gray-50 rounded">
+
+                    <div class="flex items-center gap-2 truncate">
+                        <span class="truncate">{{ eq.name }}</span>
+                    </div>
+                    <span class="text-gray-400 text-xs truncate">SN: {{ eq.serialNo }}</span>
                 </div>
-                <span class="text-xs text-gray-500">Vacant</span>
-            </div>
-            <div class="flex flex-col items-center space-y-1">
-                <div class="h-8 w-8 rounded-md bg-red-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
-                    {{ room.bedsOccupied }}
-                </div>
-                <span class="text-xs text-gray-500">Occupied</span>
-            </div>
-            <div class="flex flex-col items-center space-y-1">
-                <div class="h-8 w-8 rounded-md bg-blue-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
-                    {{ room.bedsMaintenance }}
-                </div>
-                <span class="text-xs text-gray-500">Maintenance</span>
             </div>
         </div>
 
-        <!-- Equipment List -->
-        <div class="mt-2 space-y-1 text-sm">
-            <div *ngFor="let eq of room.equipments" 
-                class="flex items-center justify-between gap-2 px-2 py-1 bg-gray-50 rounded">
-                <div class="flex items-center gap-2">
-                    <span>{{ eq.name }}</span>
-                </div>
-                <span class="text-gray-400 text-xs">SN: {{ eq.serialNo }}</span>
-            </div>
-        </div>
     </div>
 </div>
 
-
-    <div>
-        <button (click)="openAddRoomDialog()"
-        class="p-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:shadow-lg
-               transition-all duration-300 hover:bg-blue-600 active:scale-95 focus:ring-4 focus:ring-blue-300 cursor-pointer">
-               Add Room
-      </button>
-    </div>
-</div>
 
 
 <!-- Add Room Dialog -->
@@ -186,24 +215,30 @@
             </div>
         </div>
 
-        <!-- Equipment Input -->
+        <!-- Equipment Inputs -->
         <div class="space-y-2">
             <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Equipment Name</mat-label>
-                <input matInput [(ngModel)]="equipmentInput">
+                <input matInput [(ngModel)]="equipmentNameInput">
             </mat-form-field>
         
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Serial Number</mat-label>
+                <input matInput [(ngModel)]="equipmentSerialInput">
+            </mat-form-field>
+
             <div class="flex gap-2">
                 <button (click)="addEquipmentToSelectedRoom()" 
                         class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-400 transition">
-                    + Add
+                    + Add Equipment
                 </button>
-                <button (click)="clearEquipmentInput()" 
+                <!-- <button (click)="clearEquipmentInput()" 
                         class="flex-1 bg-gray-300 py-2 rounded hover:bg-gray-400 transition">
                     Clear
-                </button>
+                </button> -->
             </div>
 
+            <!-- Equipment List -->
             <ul class="space-y-1 max-h-24 overflow-y-auto text-sm text-gray-600 mt-2">
                 <li *ngFor="let eq of selectedRoom?.equipments; let i = index" class="flex justify-between items-center">
                     <span>{{ eq.name }} (SN: {{ eq.serialNo }})</span>
