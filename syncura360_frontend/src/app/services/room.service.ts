@@ -5,14 +5,17 @@ import { Observable } from 'rxjs';
 export interface Equipment {
   serialNo: string;
   name: string;
-  status: 'available' | 'maintenance';
+  inMaintenance: boolean;
 }
 
 export interface Room {
   roomName: string;
   department: string;
   beds: number;
-  equipment: Equipment[];
+  bedsVacant?: number;
+  bedsOccupied?: number;
+  bedsMaintenance?: number;
+  equipments: Equipment[];
 }
 
 @Injectable({
@@ -24,21 +27,30 @@ export class RoomService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    return new HttpHeaders({ 'Content-Type': 'application/json' });
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    });
   }
 
   /**
    * Get all rooms
    */
-  getAllRooms(): Observable<{ drugs: Room[] }> {
-    return this.http.get<{ drugs: Room[] }>(`${this.baseUrl}`);
+  getAllRooms(): Observable<{ rooms: Room[] }> {
+    return this.http.get<{ rooms: Room[] }>(`${this.baseUrl}`, {
+      headers: this.getHeaders()
+    });
   }
 
   /**
    * Get a specific room by roomName
    */
   getRoomByName(roomName: string): Observable<Room> {
-    return this.http.get<Room>(`${this.baseUrl}?roomName=${encodeURIComponent(roomName)}`);
+    return this.http.request<Room>('GET', `${this.baseUrl}`, {
+      headers: this.getHeaders(),
+      body: { roomName }
+    });
   }
 
   /**
@@ -63,7 +75,7 @@ export class RoomService {
    * Delete a room by roomName
    */
   deleteRoom(roomName: string): Observable<{ message: string }> {
-    return this.http.request<{ message: string }>('delete', `${this.baseUrl}`, {
+    return this.http.request<{ message: string }>('DELETE', `${this.baseUrl}`, {
       headers: this.getHeaders(),
       body: { roomName }
     });

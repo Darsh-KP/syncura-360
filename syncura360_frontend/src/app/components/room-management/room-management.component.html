@@ -52,33 +52,55 @@
 
     </div>
 
-    <!-- Room Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<!-- Room Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-        <div *ngFor="let room of rooms" 
-            (click)="openRoomDetailsDialog(room)"
-            class="rounded-2xl border bg-white p-5 shadow hover:shadow-lg transition hover:-translate-y-1 hover:border-blue-400 cursor-pointer group space-y-4 duration-200">
+    <div *ngFor="let room of rooms" 
+        (click)="openRoomDetailsDialog(room)"
+        class="rounded-2xl border bg-white p-5 shadow hover:shadow-lg transition hover:-translate-y-1 hover:border-blue-400 cursor-pointer group space-y-4 duration-200">
 
-            <div class="flex justify-between items-center">
-                <div class="space-y-0.5">
-                    <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">{{ room.roomName }}</h3>
-                    <p class="text-sm text-gray-500">Dept: {{ room.department }}</p>
-                </div>
+        <div class="flex justify-between items-center">
+            <div class="space-y-0.5">
+                <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">{{ room.roomName }}</h3>
+                <p class="text-sm text-gray-500">Dept: {{ room.department }}</p>
             </div>
+        </div>
 
-            <div class="text-sm text-gray-500">Beds: {{ room.beds }}</div>
-
-            <div class="mt-2 space-y-1 text-sm">
-                <div *ngFor="let eq of room.equipment" 
-                    class="flex items-center justify-between gap-2 px-2 py-1 bg-gray-50 rounded">
-                    <div class="flex items-center gap-2">
-                        <span>{{ eq.name }}</span>
-                    </div>
-                    <span class="text-gray-400 text-xs">SN: {{ eq.serialNo }}</span>
+        <!-- Beds Visualization -->
+        <div class="grid grid-cols-3 gap-2 mt-2">
+            <div class="flex flex-col items-center space-y-1">
+                <div class="h-8 w-8 rounded-md bg-green-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
+                    {{ room.bedsVacant }}
                 </div>
+                <span class="text-xs text-gray-500">Vacant</span>
+            </div>
+            <div class="flex flex-col items-center space-y-1">
+                <div class="h-8 w-8 rounded-md bg-red-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
+                    {{ room.bedsOccupied }}
+                </div>
+                <span class="text-xs text-gray-500">Occupied</span>
+            </div>
+            <div class="flex flex-col items-center space-y-1">
+                <div class="h-8 w-8 rounded-md bg-blue-500 shadow-sm flex items-center justify-center text-white text-xs font-semibold">
+                    {{ room.bedsMaintenance }}
+                </div>
+                <span class="text-xs text-gray-500">Maintenance</span>
+            </div>
+        </div>
+
+        <!-- Equipment List -->
+        <div class="mt-2 space-y-1 text-sm">
+            <div *ngFor="let eq of room.equipments" 
+                class="flex items-center justify-between gap-2 px-2 py-1 bg-gray-50 rounded">
+                <div class="flex items-center gap-2">
+                    <span>{{ eq.name }}</span>
+                </div>
+                <span class="text-gray-400 text-xs">SN: {{ eq.serialNo }}</span>
             </div>
         </div>
     </div>
+</div>
+
 
     <div>
         <button (click)="openAddRoomDialog()"
@@ -151,7 +173,7 @@
 <ng-template #roomDetailsDialog let-dialogRef>
     <div class="p-6 space-y-4 bg-white rounded-xl shadow-xl w-96">
 
-        <h2 class="text-xl font-semibold text-gray-800">{{ selectedRoom?.roomName}}</h2>
+        <h2 class="text-xl font-semibold text-gray-800">{{ selectedRoom?.roomName }}</h2>
         <p class="text-sm text-gray-500">Department: {{ selectedRoom?.department }}</p>
         
         <!-- Beds Management -->
@@ -159,7 +181,7 @@
             <span class="font-medium">Beds:</span>
             <div class="flex items-center gap-3">
                 <button (click)="decrementSelectedRoomBeds()" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
-                <span class="w-6 text-center">{{ selectedRoom?.beds}}</span>
+                <span class="w-6 text-center">{{ selectedRoom?.beds }}</span>
                 <button (click)="incrementSelectedRoomBeds()" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
             </div>
         </div>
@@ -167,34 +189,43 @@
         <!-- Equipment Input -->
         <div class="space-y-2">
             <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Equipment Name</mat-label>
-            <input matInput [(ngModel)]="equipmentInput">
+                <mat-label>Equipment Name</mat-label>
+                <input matInput [(ngModel)]="equipmentInput">
             </mat-form-field>
         
             <div class="flex gap-2">
-            <button (click)="addEquipmentToSelectedRoom()" 
-                    class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-400 transition">
-                + Add
-            </button>
-            <button (click)="clearEquipmentInput()" 
-                    class="flex-1 bg-gray-300 py-2 rounded hover:bg-gray-400 transition">
-                Clear
-            </button>
+                <button (click)="addEquipmentToSelectedRoom()" 
+                        class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-400 transition">
+                    + Add
+                </button>
+                <button (click)="clearEquipmentInput()" 
+                        class="flex-1 bg-gray-300 py-2 rounded hover:bg-gray-400 transition">
+                    Clear
+                </button>
             </div>
-        
+
             <ul class="space-y-1 max-h-24 overflow-y-auto text-sm text-gray-600 mt-2">
-            <li *ngFor="let eq of selectedRoom?.equipment; let i = index" class="flex justify-between items-center">
-                <span>{{ eq.name }} (SN: {{ eq.serialNo }})</span>
-                <button (click)="removeEquipmentFromSelectedRoom(i)" class="text-red-500 hover:text-red-700">✕</button>
-            </li>
+                <li *ngFor="let eq of selectedRoom?.equipments; let i = index" class="flex justify-between items-center">
+                    <span>{{ eq.name }} (SN: {{ eq.serialNo }})</span>
+                    <button (click)="removeEquipmentFromSelectedRoom(i)" class="text-red-500 hover:text-red-700">✕</button>
+                </li>
             </ul>
         </div>
-        
 
-        <button (click)="dialogRef.close()" 
-                class="w-full mt-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition">
-            Close
-        </button>
-
+        <!-- Actions -->
+        <div class="flex gap-2 mt-4">
+            <button (click)="updateRoom(selectedRoom!)" 
+                    class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-500 transition">
+                Save Changes
+            </button>
+            <button (click)="deleteSelectedRoom()"
+                    class="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-400 transition">
+                Delete Room
+            </button>
+            <button (click)="dialogRef.close()" 
+                    class="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition">
+                Close
+            </button>
+        </div>
     </div>
 </ng-template>

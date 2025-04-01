@@ -40,7 +40,7 @@ export class RoomManagementComponent implements OnInit {
 
   loadRooms() {
     this.roomService.getAllRooms().subscribe(response => {
-      this.rooms = response.drugs;
+      this.rooms = response.rooms || [];
     });
   }
 
@@ -54,20 +54,15 @@ export class RoomManagementComponent implements OnInit {
     this.dialog.open(this.addRoomDialog);
   }
 
-  incrementBeds() {
-    this.bedCount++;
-  }
-
-  decrementBeds() {
-    if (this.bedCount >= 1) this.bedCount--;
-  }
+  incrementBeds() { this.bedCount++; }
+  decrementBeds() { if (this.bedCount > 0) this.bedCount--; }
 
   addEquipment() {
     if (this.equipmentNameInput.trim() && this.equipmentSerialInput.trim()) {
       this.equipmentList.push({
         name: this.equipmentNameInput.trim(),
         serialNo: this.equipmentSerialInput.trim(),
-        status: "available"
+        inMaintenance: false
       });
       this.equipmentNameInput = '';
       this.equipmentSerialInput = '';
@@ -76,10 +71,10 @@ export class RoomManagementComponent implements OnInit {
 
   saveRoom() {
     const newRoom: Room = {
-      roomName: this.newRoomName || 'Unnamed Room',
-      department: this.newRoomDepartment || 'Unknown Department',
+      roomName: this.newRoomName,
+      department: this.newRoomDepartment,
       beds: this.bedCount,
-      equipment: [...this.equipmentList]
+      equipments: [...this.equipmentList]
     };
     this.roomService.createRoom(newRoom).subscribe(() => {
       this.loadRooms();
@@ -88,7 +83,7 @@ export class RoomManagementComponent implements OnInit {
   }
 
   openRoomDetailsDialog(room: Room) {
-    this.selectedRoom = room;
+    this.selectedRoom = JSON.parse(JSON.stringify(room));
     this.dialog.open(this.roomDetailsDialog);
   }
 
@@ -108,10 +103,10 @@ export class RoomManagementComponent implements OnInit {
 
   addEquipmentToSelectedRoom() {
     if (this.selectedRoom && this.equipmentInput.trim()) {
-      this.selectedRoom.equipment.push({
+      this.selectedRoom.equipments.push({
         name: this.equipmentInput.trim(),
         serialNo: 'N/A',
-        status: 'available'
+        inMaintenance: false
       });
       this.equipmentInput = '';
       this.updateRoom(this.selectedRoom);
@@ -120,7 +115,7 @@ export class RoomManagementComponent implements OnInit {
 
   removeEquipmentFromSelectedRoom(index: number) {
     if (this.selectedRoom) {
-      this.selectedRoom.equipment.splice(index, 1);
+      this.selectedRoom.equipments.splice(index, 1);
       this.updateRoom(this.selectedRoom);
     }
   }
@@ -138,7 +133,5 @@ export class RoomManagementComponent implements OnInit {
     }
   }
 
-  clearEquipmentInput() {
-    this.equipmentInput = '';
-  }
+  clearEquipmentInput() { this.equipmentInput = ''; }
 }
