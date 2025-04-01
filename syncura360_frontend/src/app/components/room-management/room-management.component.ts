@@ -61,8 +61,8 @@ export class RoomManagementComponent implements OnInit {
     if (this.equipmentNameInput.trim() && this.equipmentSerialInput.trim()) {
       this.equipmentList.push({
         name: this.equipmentNameInput.trim(),
-        serialNo: this.equipmentSerialInput.trim(),
-        inMaintenance: false
+        serialNo: this.equipmentSerialInput.trim()
+        // inMaintenance: false
       });
       this.equipmentNameInput = '';
       this.equipmentSerialInput = '';
@@ -76,10 +76,13 @@ export class RoomManagementComponent implements OnInit {
       beds: this.bedCount,
       equipments: [...this.equipmentList]
     };
+    // console.log(newRoom);
     this.roomService.createRoom(newRoom).subscribe(() => {
       this.loadRooms();
       this.dialog.closeAll();
     });
+
+    this.dialog.closeAll();
   }
 
   openRoomDetailsDialog(room: Room) {
@@ -90,48 +93,65 @@ export class RoomManagementComponent implements OnInit {
   incrementSelectedRoomBeds() {
     if (this.selectedRoom) {
       this.selectedRoom.beds++;
-      this.updateRoom(this.selectedRoom);
     }
-  }
+}
 
-  decrementSelectedRoomBeds() {
+decrementSelectedRoomBeds() {
     if (this.selectedRoom && this.selectedRoom.beds > 0) {
       this.selectedRoom.beds--;
-      this.updateRoom(this.selectedRoom);
     }
-  }
+}
 
-  addEquipmentToSelectedRoom() {
-    if (this.selectedRoom && this.equipmentInput.trim()) {
-      this.selectedRoom.equipments.push({
-        name: this.equipmentInput.trim(),
-        serialNo: 'N/A',
-        inMaintenance: false
-      });
-      this.equipmentInput = '';
-      this.updateRoom(this.selectedRoom);
-    }
-  }
 
-  removeEquipmentFromSelectedRoom(index: number) {
-    if (this.selectedRoom) {
-      this.selectedRoom.equipments.splice(index, 1);
-      this.updateRoom(this.selectedRoom);
-    }
+addEquipmentToSelectedRoom() {
+  if (this.selectedRoom && this.equipmentNameInput.trim() && this.equipmentSerialInput.trim()) {
+    this.selectedRoom.equipments.push({
+      name: this.equipmentNameInput.trim(),
+      serialNo: this.equipmentSerialInput.trim()
+    });
+    this.equipmentNameInput = '';
+    this.equipmentSerialInput = '';
   }
+}
+
+
+removeEquipmentFromSelectedRoom(index: number) {
+  if (this.selectedRoom) {
+    this.selectedRoom.equipments.splice(index, 1);
+  }
+}
+
 
   updateRoom(room: Room) {
-    this.roomService.updateRoom(room).subscribe(() => this.loadRooms());
+    this.roomService.updateRoom(room).subscribe(() => {
+      this.loadRooms();
+      this.dialog.closeAll(); 
+    });
   }
+  
 
   deleteSelectedRoom() {
     if (this.selectedRoom) {
-      this.roomService.deleteRoom(this.selectedRoom.roomName).subscribe(() => {
-        this.loadRooms();
-        this.dialog.closeAll();
-      });
+      const confirmDelete = confirm(`Are you sure you want to delete the room "${this.selectedRoom.roomName}"?`);
+      if (confirmDelete) {
+        this.roomService.deleteRoom(this.selectedRoom.roomName).subscribe(() => {
+          this.loadRooms();
+          this.dialog.closeAll();
+        });
+      }
     }
-  }
+  }  
 
   clearEquipmentInput() { this.equipmentInput = ''; }
+
+  searchQuery: string = '';
+  get filteredRooms(): Room[] {
+    if (!this.searchQuery.trim()) {
+      return this.rooms;
+    }
+    return this.rooms.filter(room => 
+      room.roomName.toLowerCase().includes(this.searchQuery.trim().toLowerCase())
+    );
+  }
+
 }
