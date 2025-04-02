@@ -101,7 +101,7 @@ public class RoomController {
 
     @GetMapping
     public ResponseEntity<RoomFetchContainerDTO> getRooms(
-            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomFetchRequestDTO roomFetchRequestDTO, BindingResult bindingResult) {
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody(required = false) RoomFetchRequestDTO roomFetchRequestDTO, BindingResult bindingResult) {
         // Response container
         RoomFetchContainerDTO roomFetchContainerDTO = new RoomFetchContainerDTO();
 
@@ -115,7 +115,7 @@ public class RoomController {
         int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
 
         // Check if a specific room is requested
-        if (roomFetchRequestDTO.getRoomName() != null && !roomFetchRequestDTO.getRoomName().trim().isEmpty()) {
+        if (roomFetchRequestDTO != null && roomFetchRequestDTO.getRoomName() != null && !roomFetchRequestDTO.getRoomName().trim().isEmpty()) {
             // Fetch the room
             try {
                 RoomFetchDTO roomFetchDTO = roomService.fetchRoom(hospitalId, roomFetchRequestDTO);
