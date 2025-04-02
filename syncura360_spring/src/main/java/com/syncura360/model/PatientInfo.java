@@ -70,6 +70,9 @@ public class PatientInfo {
     @Column(name = "emergency_contact_phone", length = 15)
     private String emergencyContactPhone;
 
+    @Column(name = "medical_notes", length = 65535)
+    private String medicalNotes;
+
     public PatientInfo(String firstName, String lastName, LocalDate dateOfBirth, Gender gender,
                        BloodType bloodType, Integer height, Integer weight,
                        String phone, String addressLine1, String addressLine2, String city, String state, String postal, String country,
@@ -99,5 +102,6 @@ public class PatientInfo {
         this.country = country == null ? null : country.trim();
         this.emergencyContactName = emergencyContactName == null ? null : emergencyContactName.trim();
         this.emergencyContactPhone = emergencyContactPhone == null ? null : emergencyContactPhone.trim();
+        this.medicalNotes = null;
     }
 }

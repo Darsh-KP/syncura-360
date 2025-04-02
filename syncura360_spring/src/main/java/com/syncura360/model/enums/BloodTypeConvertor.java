@@ -14,6 +14,6 @@ public class BloodTypeConvertor implements AttributeConverter<BloodType, String>
     @Override
     public BloodType convertToEntityAttribute(String dbValue) {
         if (dbValue == null) return null;
-        return BloodType.valueOf(dbValue);
+        return BloodType.fromValue(dbValue);
     }
 }
