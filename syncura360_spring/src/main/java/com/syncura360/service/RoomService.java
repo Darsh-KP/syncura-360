@@ -67,9 +67,9 @@ public class RoomService {
     }
 
     @Transactional
-    public void updateRoom(int hospitalId, RoomFormDTO roomFormDTO) {
+    public void updateRoom(int hospitalId, RoomUpdateDTO roomUpdateDTO) {
         // Find the room if it already exists
-        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomFormDTO.getRoomName().trim());
+        Optional<Room> optionalRoom = roomRepository.findById_HospitalIdAndId_RoomName(hospitalId, roomUpdateDTO.getRoomName().trim());
         if (optionalRoom.isEmpty()) {
             // Room not found
             throw new EntityNotFoundException("Room with given name does not exist.");
@@ -79,13 +79,13 @@ public class RoomService {
         Room room = optionalRoom.get();
 
         // Update the department
-        room.setDepartment(roomFormDTO.getDepartment().trim());
+        room.setDepartment(roomUpdateDTO.getDepartment().trim());
 
         // Update the beds
-        bedService.updateBedsForRoom(room, roomFormDTO.getBeds());
+        bedService.updateBedsForRoom(room, roomUpdateDTO.getBeds());
 
         // Update the equipments
-        equipmentService.setEquipmentsForRoom(hospitalId, room.getId().getRoomName(), roomFormDTO.getEquipments());
+        equipmentService.setEquipmentsForRoom(hospitalId, room.getId().getRoomName(), roomUpdateDTO.getEquipments());
 
         // Save the room
         roomRepository.save(room);
