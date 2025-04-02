@@ -67,4 +67,7 @@ public class PatientUpdateDTO {
 
     @Size(max = 15, message = "Emergency contact phone cannot be longer than 15 characters.")
     private String emergencyContactPhone;
+
+    @Size(max = 65535, message = "Medical notes has a max limit of 65,535 characters.")
+    private String medicalNotes;
 }
