@@ -126,12 +126,13 @@
                 <div *ngIf="room.equipments.length === 0" class="text-xs text-gray-400 italic">No equipment added.</div>
 
                 <div *ngFor="let eq of room.equipments" 
-                    class="flex items-center justify-between gap-2 px-2 py-1 bg-gray-50 rounded">
+                    class="flex items-center justify-between gap-2 px-2 py-1 rounded"
+                    [ngClass]="eq.inMaintenance ? 'bg-yellow-400' : 'bg-gray-400'">
 
-                    <div class="flex items-center gap-2 truncate">
+                    <div class="flex items-center gap-2 truncate text-white">
                         <span class="truncate">{{ eq.name }}</span>
                     </div>
-                    <span class="text-gray-400 text-xs truncate">SN: {{ eq.serialNo }}</span>
+                    <span class="text-xs truncate text-white">SN: {{ eq.serialNo }}</span>
                 </div>
             </div>
         </div>
@@ -149,17 +150,19 @@
       <!-- Room Name -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Room Name</mat-label>
-        <input matInput [(ngModel)]="newRoomName">
+        <input matInput [(ngModel)]="newRoomName" required>
+        <mat-error>Room is required</mat-error>
       </mat-form-field>
   
       <!-- Department -->
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Department Name</mat-label>
-        <input matInput [(ngModel)]="newRoomDepartment">
+        <input matInput [(ngModel)]="newRoomDepartment" required>
+        <mat-error>Department is required</mat-error>
       </mat-form-field>
   
       <!-- Beds Counter -->
-      <div class="flex items-center justify-between border rounded p-2 bg-gray-50">
+      <div class="flex items-center justify-between border rounded p-2 bg-gray-50 mb-8">
         <span class="font-medium">Beds:</span>
         <div class="flex items-center gap-3">
           <button (click)="decrementBeds()" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
@@ -167,7 +170,9 @@
           <button (click)="incrementBeds()" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">+</button>
         </div>
       </div>
-  
+
+      <hr class="mb-8">
+    
       <!-- Equipment Input -->
       <div class="space-y-0">
         <mat-form-field appearance="outline" class="w-full">
@@ -206,7 +211,7 @@
         <p class="text-sm text-gray-500">Department: {{ selectedRoom?.department }}</p>
         
         <!-- Beds Management -->
-        <div class="flex items-center justify-between border rounded p-2 bg-gray-50">
+        <div class="flex items-center justify-between border rounded p-2 bg-gray-50 mb-8">
             <span class="font-medium">Beds:</span>
             <div class="flex items-center gap-3">
                 <button (click)="decrementSelectedRoomBeds()" class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">-</button>
@@ -215,13 +220,16 @@
             </div>
         </div>
 
+        <hr class="mb-8">
+
         <!-- Equipment Inputs -->
         <div class="space-y-2">
+
             <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Equipment Name</mat-label>
                 <input matInput [(ngModel)]="equipmentNameInput">
             </mat-form-field>
-        
+
             <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Serial Number</mat-label>
                 <input matInput [(ngModel)]="equipmentSerialInput">
@@ -232,17 +240,29 @@
                         class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-400 transition">
                     + Add Equipment
                 </button>
-                <!-- <button (click)="clearEquipmentInput()" 
-                        class="flex-1 bg-gray-300 py-2 rounded hover:bg-gray-400 transition">
-                    Clear
-                </button> -->
             </div>
 
+
             <!-- Equipment List -->
-            <ul class="space-y-1 max-h-24 overflow-y-auto text-sm text-gray-600 mt-2">
-                <li *ngFor="let eq of selectedRoom?.equipments; let i = index" class="flex justify-between items-center">
-                    <span>{{ eq.name }} (SN: {{ eq.serialNo }})</span>
-                    <button (click)="removeEquipmentFromSelectedRoom(i)" class="text-red-500 hover:text-red-700">✕</button>
+            <ul class="space-y-2 max-h-32 overflow-y-auto text-sm text-gray-700 mt-2">
+                <li *ngFor="let eq of selectedRoom?.equipments; let i = index" class="flex justify-between items-center bg-gray-50 rounded p-2">
+
+                    <div class="flex flex-col">
+
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium">{{ eq.name }}</span>
+                            <span class="text-xs text-gray-400">(SN: {{ eq.serialNo }})</span>
+                        </div>
+
+                        <div class="flex items-center gap-1 text-xs text-gray-600 mt-1">
+                            <mat-checkbox [(ngModel)]="eq.inMaintenance" color="warn">
+                                In Maintenance
+                            </mat-checkbox>
+                        </div>
+
+                    </div>
+
+                    <button (click)="removeEquipmentFromSelectedRoom(i)" class="text-red-500 hover:text-red-700 text-lg">✕</button>
                 </li>
             </ul>
         </div>
@@ -257,10 +277,10 @@
                     class="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-400 transition">
                 Delete Room
             </button>
-            <button (click)="dialogRef.close()" 
-                    class="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition">
-                Close
-            </button>
+            <button (click)="closeAllDialogs()" 
+            class="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition">
+            Close
+            </button>    
         </div>
     </div>
 </ng-template>

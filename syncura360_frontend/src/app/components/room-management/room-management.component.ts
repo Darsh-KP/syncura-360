@@ -7,11 +7,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
 import { RoomService, Room, Equipment } from '../../services/room.service';
 import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-room-management',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FormsModule, MatIconModule, MatTooltipModule, MatInputModule],
+  imports: [CommonModule, NavbarComponent, FormsModule, MatIconModule, MatTooltipModule, MatInputModule, MatCheckboxModule],
   templateUrl: './room-management.component.html',
   styleUrls: ['./room-management.component.css']
 })
@@ -61,8 +62,8 @@ export class RoomManagementComponent implements OnInit {
     if (this.equipmentNameInput.trim() && this.equipmentSerialInput.trim()) {
       this.equipmentList.push({
         name: this.equipmentNameInput.trim(),
-        serialNo: this.equipmentSerialInput.trim()
-        // inMaintenance: false
+        serialNo: this.equipmentSerialInput.trim(),
+        inMaintenance: false
       });
       this.equipmentNameInput = '';
       this.equipmentSerialInput = '';
@@ -70,6 +71,10 @@ export class RoomManagementComponent implements OnInit {
   }
 
   saveRoom() {
+    if (this.newRoomName.trim() === '' || this.newRoomDepartment.trim() === '') {
+      return;
+    }
+    
     const newRoom: Room = {
       roomName: this.newRoomName,
       department: this.newRoomDepartment,
@@ -107,7 +112,8 @@ addEquipmentToSelectedRoom() {
   if (this.selectedRoom && this.equipmentNameInput.trim() && this.equipmentSerialInput.trim()) {
     this.selectedRoom.equipments.push({
       name: this.equipmentNameInput.trim(),
-      serialNo: this.equipmentSerialInput.trim()
+      serialNo: this.equipmentSerialInput.trim(),
+      inMaintenance: false
     });
     this.equipmentNameInput = '';
     this.equipmentSerialInput = '';
@@ -123,6 +129,7 @@ removeEquipmentFromSelectedRoom(index: number) {
 
 
   updateRoom(room: Room) {
+    console.log("Updated Room Payload: ", room);
     this.roomService.updateRoom(room).subscribe(() => {
       this.loadRooms();
       this.dialog.closeAll(); 
@@ -154,4 +161,7 @@ removeEquipmentFromSelectedRoom(index: number) {
     );
   }
 
+  public closeAllDialogs(): void {
+    this.dialog.closeAll();
+  }
 }
