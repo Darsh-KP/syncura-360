@@ -1,16 +1,18 @@
 package com.syncura360.service;
 
-import com.syncura360.dto.Patient.PatientFormDTO;
-import com.syncura360.dto.Patient.PatientUpdateDTO;
+import com.syncura360.dto.Patient.*;
 import com.syncura360.model.PatientInfo;
 import com.syncura360.model.enums.BloodType;
 import com.syncura360.model.enums.Gender;
 import com.syncura360.repository.PatientInfoRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -134,6 +136,10 @@ public class PatientService {
         if (emergencyContactPhone == null || emergencyContactPhone.trim().isEmpty()) emergencyContactPhone = null;
         else emergencyContactPhone = emergencyContactPhone.trim();
 
+        String medicalNotes = patientUpdateDTO.getMedicalNotes();
+        if (medicalNotes == null || medicalNotes.trim().isEmpty()) medicalNotes = null;
+        else medicalNotes = medicalNotes.trim();
+
         // Update patient info
         PatientInfo patientInfo = optionalPatientInfo.get();
         patientInfo.setFirstName(patientUpdateDTO.getFirstName().trim());
@@ -152,8 +158,63 @@ public class PatientService {
         patientInfo.setCountry(patientUpdateDTO.getCountry().trim());
         patientInfo.setEmergencyContactName(emergencyContactName);
         patientInfo.setEmergencyContactPhone(emergencyContactPhone);
+        patientInfo.setMedicalNotes(medicalNotes);
 
         // Save the updates to the database
         patientInfoRepository.save(patientInfo);
+    }
+
+    public PatientViewFetchContainer fetchPatients() {
+        // Return a list of all the patients
+        List<PatientViewFetchDTO> patientsList = new ArrayList<>();
+        patientInfoRepository.findAll().forEach(patientInfo -> patientsList.add(
+                new PatientViewFetchDTO(
+                        patientInfo.getId(),
+                        patientInfo.getFirstName(),
+                        patientInfo.getLastName(),
+                        patientInfo.getDateOfBirth().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                        patientInfo.getGender().toString(),
+                        patientInfo.getPhone(),
+                        patientInfo.getAddressLine1(),
+                        patientInfo.getAddressLine2(),
+                        patientInfo.getCity(),
+                        patientInfo.getState(),
+                        patientInfo.getPostal(),
+                        patientInfo.getCountry()
+                )));
+        return new PatientViewFetchContainer(patientsList);
+    }
+
+    public SpecificPatientFetchDTO fetchPatient(Integer patientId) {
+        // Find the patient if they already exists
+        Optional<PatientInfo> optionalPatientInfo = patientInfoRepository.findById(patientId);
+        if (optionalPatientInfo.isEmpty()) {
+            // Patient not found
+            throw new EntityNotFoundException("Given patient id does not exist.");
+        }
+
+        // Extract the patient
+        PatientInfo patientInfo = optionalPatientInfo.get();
+
+        return new SpecificPatientFetchDTO(
+                patientInfo.getId(),
+                patientInfo.getFirstName(),
+                patientInfo.getLastName(),
+                patientInfo.getDateOfBirth().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                patientInfo.getGender().toString(),
+                patientInfo.getBloodType().getValue(),
+                patientInfo.getHeight(),
+                patientInfo.getWeight(),
+                patientInfo.getPhone(),
+                patientInfo.getAddressLine1(),
+                patientInfo.getAddressLine2(),
+                patientInfo.getCity(),
+                patientInfo.getState(),
+                patientInfo.getPostal(),
+                patientInfo.getCountry(),
+                patientInfo.getEmergencyContactName(),
+                patientInfo.getEmergencyContactPhone(),
+                patientInfo.getMedicalNotes()
+        );
     }
 }

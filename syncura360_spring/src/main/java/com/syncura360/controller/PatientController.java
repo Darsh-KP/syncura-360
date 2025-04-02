@@ -4,6 +4,8 @@ import com.syncura360.dto.ErrorConvertor;
 import com.syncura360.dto.GenericMessageResponseDTO;
 import com.syncura360.dto.Patient.PatientFormDTO;
 import com.syncura360.dto.Patient.PatientUpdateDTO;
+import com.syncura360.dto.Patient.PatientViewFetchContainer;
+import com.syncura360.dto.Patient.SpecificPatientFetchDTO;
 import com.syncura360.service.PatientService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -66,5 +68,40 @@ public class PatientController {
 
         // Successfully updated the existing patient
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully updated the patient."));
+    }
+
+    @GetMapping
+    public ResponseEntity<PatientViewFetchContainer> getPatients() {
+        // Retrieve the list of patients
+        PatientViewFetchContainer patientViewFetchContainer = patientService.fetchPatients();
+
+        // Check if no patients exists
+        if (patientViewFetchContainer.getPatients().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        // Success, return the list of patients
+        return ResponseEntity.status(HttpStatus.OK).body(patientViewFetchContainer);
+    }
+
+    @GetMapping("/patient/{patient-id}")
+    public ResponseEntity<SpecificPatientFetchDTO> getPatientById(@PathVariable("patient-id") Integer patientId) {
+        // Basic path variable check
+        if (patientId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        // Attempt to fetch the specific patient
+        SpecificPatientFetchDTO specificPatientFetchDTO;
+        try {
+            specificPatientFetchDTO = patientService.fetchPatient(patientId);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        // Success, return the patient
+        return ResponseEntity.status(HttpStatus.OK).body(specificPatientFetchDTO);
     }
 }
