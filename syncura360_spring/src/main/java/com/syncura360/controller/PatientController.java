@@ -84,7 +84,7 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.OK).body(patientViewFetchContainer);
     }
 
-    @GetMapping("/patient/{patient-id}")
+    @GetMapping("/{patient-id}")
     public ResponseEntity<SpecificPatientFetchDTO> getPatientById(@PathVariable("patient-id") Integer patientId) {
         // Basic path variable check
         if (patientId == null) {
