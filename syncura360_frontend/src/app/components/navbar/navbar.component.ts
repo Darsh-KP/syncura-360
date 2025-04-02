@@ -9,18 +9,21 @@ import { CommonModule } from '@angular/common';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent { 
-
+export class NavbarComponent {
+  role: string | null = null;
 
   constructor(
     @Inject(Router) private router: Router
   ) {}
 
+    ngOnInit() {
+    this.role = localStorage.getItem('role');
+    }
 
   logoutAndRedirect() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    this.router.navigate(['/']); 
+    this.router.navigate(['/']);
   }
 
 }

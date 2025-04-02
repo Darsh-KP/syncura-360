@@ -43,11 +43,11 @@ export class ScheduleDialogComponent implements AfterViewInit {
   ) {
     this.scheduleForm = this.fb.group({
       username: [data.schedule?.username || '', Validators.required],
-      date: [data.schedule?.start.split('T')[0] || '', Validators.required],
-      startTime: [data.schedule?.start.split('T')[1] || '', Validators.required],
-      endTime: [data.schedule?.end.split('T')[1] || '', Validators.required],
+      date: [data.schedule ? new Date(data.schedule.start) : '', Validators.required],
+      startTime: [data.schedule ? this.extractTime(data.schedule.start) : '', Validators.required],
+      endTime: [data.schedule ? this.extractTime(data.schedule.end) : '', Validators.required],
       department: [data.schedule?.department || '']
-    }, { validators: this.validateTimeOrder });
+    }, { validators: this.validateTimeOrder });    
   }
   
   ngOnInit(): void {
@@ -61,7 +61,10 @@ export class ScheduleDialogComponent implements AfterViewInit {
     });
   }
 
-
+  extractTime(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+  }  
 
   fetchUsernames() {
     this.staffService.getAllStaff().subscribe({
@@ -81,38 +84,41 @@ export class ScheduleDialogComponent implements AfterViewInit {
     }
   
     const formValue = this.scheduleForm.value;
-  
     const formattedDate = this.formatDate(formValue.date);
-    const schedule: Schedule = {
+    const updatedSchedule: Schedule = {
       username: formValue.username,
       start: `${formattedDate}T${formValue.startTime}:00`,
       end: `${formattedDate}T${formValue.endTime}:00`,
       department: formValue.department
     };
-    
-    console.log('Final schedule object:', schedule); // ✅ Confirm payload
-
   
     this.loading = true;
   
     const request$ = this.data.schedule
-      ? this.scheduleService.updateSchedule([schedule])
-      : this.scheduleService.createSchedule([schedule]);
+      ? this.scheduleService.updateSchedule([
+          {
+            id: {
+              username: this.data.schedule.username,
+              start: this.data.schedule.start
+            },
+            updates: updatedSchedule
+          }
+        ])
+      : this.scheduleService.createSchedule([updatedSchedule]);
   
     request$.subscribe({
       next: (res) => {
-        // console.log('Response from server:', res);
         this.successMessage = res.message;
         this.dialogRef.close('updated');
         this.loading = false;
       },
       error: (err) => {
-        // console.error('Schedule creation failed:', err); 
         this.errorMessage = err.message || 'Failed to save schedule.';
         this.loading = false;
       }
     });
   }
+  
 
   deleteSchedule() {
     if (!this.data.schedule) return;
