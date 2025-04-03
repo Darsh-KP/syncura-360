@@ -32,13 +32,33 @@
       </a>
     </ng-container>
 
+
+
       <!-- Nurse-only links -->
       <ng-container *ngIf="role === 'Nurse'">
         <a routerLink="/register-patient"
            class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
             <span class="ml-3">Register Patient</span>
         </a>
+
+        <a routerLink="/schedule"
+          class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+          <span class="ml-3">Schedules</span>
+        </a>
+
       </ng-container>
+
+
+
+      <!-- Nurse-only links -->
+      <ng-container *ngIf="role === 'Doctor'">
+        <!-- <a routerLink="/register-patient"
+           class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+            <span class="ml-3">Register Patient</span>
+        </a> -->
+
+      </ng-container>
+
     </nav>
 
     <!-- Logout Button -->
