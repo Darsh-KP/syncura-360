@@ -26,7 +26,6 @@
   text-decoration: underline;
 }
 
-/* Delete button remains a regular button */
 ::ng-deep .delete-btn {
   background: none;
   border: none;
