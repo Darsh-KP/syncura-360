@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ServiceMgmtService, service} from '../../services/service-mgmt.service';
+import { ServiceMgmtService, service,serviceUpdateDto} from '../../services/service-mgmt.service';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -62,6 +62,7 @@ export class ServiceFormComponent {
 
   ngOnInit():void {
   }
+
   submit(): void {
     if (this.serviceForm.invalid) {
       this.createServiceError = 'All fields are required.';
@@ -70,20 +71,28 @@ export class ServiceFormComponent {
 
     this.loading = true;
     this.createServiceError = '';
-
-    const rawFormData = this.serviceForm.getRawValue(); // ✅ includes disabled fields
-
-    const formData = {
-      ...rawFormData,
-      name: String(rawFormData.name),
-      cost: Number(rawFormData.cost),
-    };
-
+    const rawFormData = this.serviceForm.getRawValue();
 
     if (this.isEditing) {
-      // ✅ Edit flow: send single object
-      this.service_mgmtSCV.updateServiceQuantities(formData).subscribe({
+      // Ensure we have the original name - this should always exist in edit mode
+      const originalName = this.data?.name;
+      if (!originalName) {
+        this.createServiceError = 'Cannot update: Original service name not found';
+        this.loading = false;
+        return;
+      }
 
+      const updateRequest = {
+        name: originalName, // This is now guaranteed to be a string
+        updates: {
+          name: rawFormData.name,
+          category: rawFormData.category,
+          description: rawFormData.description,
+          cost: rawFormData.cost
+        }
+      };
+
+      this.service_mgmtSCV.updateServices([updateRequest]).subscribe({
         next: () => this.dialogRef.close(true),
         error: (error) => {
           console.error('Backend error:', error);
@@ -92,8 +101,13 @@ export class ServiceFormComponent {
         }
       });
     } else {
-      // ✅ Create flow: send single Service wrapped if needed
-      this.service_mgmtSCV.createService(formData).subscribe({
+      // Create logic remains the same
+      this.service_mgmtSCV.createService([{
+        name: String(rawFormData.name),
+        category: rawFormData.category,
+        description: rawFormData.description,
+        cost: Number(rawFormData.cost)
+      }]).subscribe({
         next: () => this.dialogRef.close(true),
         error: (error) => {
           console.error('Backend error:', error);

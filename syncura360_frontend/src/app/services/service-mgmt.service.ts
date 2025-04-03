@@ -4,10 +4,10 @@ import { catchError, map, Observable, throwError, tap } from 'rxjs';
 import {response} from 'express';
 
 export interface service {
-  name?: string;
-  category?: string;
-  description?: string;
-  cost?: number;
+  name: string;
+  category: string;
+  description: string;
+  cost: number;
 }
 
 export interface serviceUpdateDto {
@@ -40,19 +40,14 @@ export class ServiceMgmtService {
   }
 
   getService(): Observable<service[]> {
-    const body = {
-      name: '',
-      category: ''
-    };
-
-    return this.http.post<{ message: string; services: service[] } | null>(
+    // Remove the filtering or make it optional
+    return this.http.post<{ message: string; services: service[] }>(
       `${this.baseUrl}`,
-      body,
+      {}, // Empty body to get all services
       {
         headers: this.getHeaders()
       }
     ).pipe(
-      tap(response => console.log('API Response:', response)), // Log the full response
       map(response => response?.services || []),
       catchError(error => {
         console.error('Error fetching services:', error);
@@ -62,30 +57,51 @@ export class ServiceMgmtService {
   }
 
 
-
-  createService(services: service): Observable<{ message: string }> {
+  createService(services: service[]): Observable<{ message: string }> {
     const headers = this.getHeaders();
-    tap(response => console.log('API Response:', response)); // Log the full response
-    const base = 'http://localhost:8080/services/new';
-    return this.http.post<{ message: string }>(base, services, { headers });
+    const body = { services }; // Wrap in services property
+    return this.http.post<{ message: string }>(
+      `${this.baseUrl}/new`,
+      body,
+      { headers }
+    ).pipe(
+      tap(response => console.log('API Response:', response)),
+      catchError(error => {
+        console.error('Error creating service:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  deleteService(services: service): Observable<{ message: string }> {
+  deleteService(serviceNames: string[]): Observable<{ message: string }> {
     const headers = this.getHeaders();
+    const body = { names: serviceNames }; // Match backend's DeleteServicesDTO
+
     return this.http.delete<{ message: string }>(this.baseUrl, {
       headers,
-      body: services // ✅ send the full Service object in the body
+      body, // ✅ Correct body format: { names: ["service1", "service2"] }
     }).pipe(
       catchError(error => {
-        console.error('Error deleting Service item:', error);
-        return throwError(() => new Error(error.message || 'Failed to delete Service item.'));
+        console.error('Error deleting services:', error);
+        return throwError(() => new Error(error.message || 'Failed to delete services.'));
       })
     );
   }
 
 
-  updateServiceQuantities(services: service): Observable<{ message: string }> {
+  // Corrected update service method
+  updateServices(updates: { name: string, updates: serviceUpdateDto }[]): Observable<{ message: string }> {
     const headers = this.getHeaders();
-    return this.http.put<{ message: string }>(this.baseUrl, services, { headers });
+    const body: serviceUpdateRequest = { updates }; // This matches the backend's UpdateServicesRequest structure
+    return this.http.put<{ message: string }>(
+      `${this.baseUrl}/update`,
+      body,
+      { headers }
+    ).pipe(
+      catchError(error => {
+        console.error('Error updating services:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }
