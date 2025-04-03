@@ -44,6 +44,7 @@ export class ServiceMgmtComponent {
       flex: 1,
       cellRenderer: (params: any) => `
         <button class="edit-btn" data-id="${params.data.id}">Edit</button>
+        <button class="delete-btn ml-2" data-id="${params.data.name}">Delete</button>
       `
     }
   ];
@@ -56,12 +57,28 @@ export class ServiceMgmtComponent {
   }
   onCellClicked(event: any) {
     if (event.column.colId === 'actions') {
-      const serviceId = event.data.id;
+      const serviceId = event.data.name;
       if (event.event.target.classList.contains('edit-btn')) {
         this.openServiceDialog(event.data);
       } else if (event.event.target.classList.contains('delete-btn')) {
-        //this.deleteStaff(staffId);
+        this.deleteService(serviceId);
       }
+    }
+  }
+
+  deleteService(serviceName: string) {
+    if (confirm(`Are you sure you want to delete "${serviceName}"?`)) {
+      this.service_mgmtSvc.deleteService([serviceName]).subscribe({
+        next: () => {
+          this.successMessage = 'Service deleted successfully';
+          this.loadServices();
+          setTimeout(() => this.successMessage = '', 3000);
+        },
+        error: (err) => {
+          this.errorMessage = err.message || 'Failed to delete service';
+          setTimeout(() => this.errorMessage = '', 3000);
+        }
+      });
     }
   }
   openServiceDialog(service?: service) {
@@ -73,7 +90,7 @@ export class ServiceMgmtComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      //if (result) this.fetchStaff();
+      if (result) this.loadServices();
     });
   }
 
