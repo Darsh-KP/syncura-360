@@ -8,7 +8,6 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { ItemFormComponent } from '../item-form/item-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-inventory',
@@ -99,17 +98,6 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  onQuantityEdit(): void {
-    const editedRows = this.gridApi.getRenderedNodes();
-    this.editedQuantities = {};
-
-    editedRows.forEach((row: any) => {
-      const original = this.inventoryList.find(i => i.ndc === row.data.ndc);
-      if (original && row.data.quantity !== original.quantity) {
-        this.editedQuantities[row.data.ndc] = row.data.quantity;
-      }
-    });
-  }
 
   onDelete(item: inventory): void {
     if (!item || !item.ndc) return;
