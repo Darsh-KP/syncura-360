@@ -9,6 +9,7 @@ import {InventoryComponent} from './components/inventory/inventory.component';
 import { RoomManagementComponent } from './components/room-management/room-management.component';
 import { NurseScheduleComponent} from './components/nurse-maint/nurse-schedule/nurse-schedule.component';
 import { DoctorScheduleComponent} from './components/doctor-maint/doctor-schedule/doctor-schedule.component';
+import {ServiceMgmtComponent} from './components/service-mgmt/service-mgmt.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: {roles:['Super Admin','Admin']} },
   { path: 'scheduling', component: SchedulingComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin']} },
   { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin']} },
+  { path: 'service-mgmt', component: ServiceMgmtComponent, canActivate: [AuthGuard] },
   {path: 'room-management', component: RoomManagementComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin']} },
   
   // nurse routes
