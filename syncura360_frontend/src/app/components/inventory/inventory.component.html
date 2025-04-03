@@ -21,6 +21,8 @@
         class="ag-theme-alpine"
         [rowData]="inventoryList"
         [columnDefs]="columnDefs"
+        rowSelection="single"
+        [rowModelType]="'clientSide'"
         (gridReady)="gridApi = $event.api">
       </ag-grid-angular>
 
