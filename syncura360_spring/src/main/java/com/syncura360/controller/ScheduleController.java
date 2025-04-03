@@ -1,28 +1,27 @@
 package com.syncura360.controller;
 
+import com.syncura360.dto.ErrorConvertor;
 import com.syncura360.dto.Schedule.*;
-import com.syncura360.model.Hospital;
 import com.syncura360.model.Schedule;
 import com.syncura360.model.ScheduleId;
 import com.syncura360.model.Staff;
 import com.syncura360.repository.ScheduleRepository;
 import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
+import com.syncura360.service.ScheduleService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Handles CRUD operations for staff scheduling.
@@ -38,7 +37,49 @@ public class ScheduleController {
     @Autowired
     ScheduleRepository scheduleRepository;
     @Autowired
+    ScheduleService scheduleService;
+    @Autowired
     JwtUtil jwtUtil;
+
+    @PostMapping("/staff")
+    @Transactional
+    public ResponseEntity<ScheduleDto> getStaffSchedule(
+            @RequestHeader(name="Authorization") String authorization,
+            @Valid @RequestBody StaffScheduleRequestDTO staffScheduleRequestDTO,
+            BindingResult bindingResult) {
+
+        List<ShiftDto> scheduledShifts;
+        LocalDateTime start, end;
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+        String username = jwtUtil.getUsername(authorization);
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ScheduleDto("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
+        }
+
+        try {
+            start = LocalDateTime.parse(staffScheduleRequestDTO.getStart());
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ScheduleDto("Invalid request: bad start date format."));
+        }
+
+        try {
+            end = LocalDateTime.parse(staffScheduleRequestDTO.getEnd());
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ScheduleDto("Invalid request: bad end date format."));
+        }
+
+        try {
+            scheduledShifts = scheduleService.getShifts(start, end, username, hospitalId);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ScheduleDto("Success: no shifts found."));
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ScheduleDto("Database Error."));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ScheduleDto("Success.", scheduledShifts));
+
+    }
 
     @PutMapping
     @Transactional
