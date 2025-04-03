@@ -5,8 +5,8 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 
-html, body { 
-    height: 100%; 
+html, body {
+    height: 100%;
     overflow-x: hidden; /* Prevents horizontal scrolling */
     min-height: 100vh; /* Ensures the page fills the viewport */
     background-color: #f3f4f6; /* Keeps background consistent */
@@ -17,13 +17,13 @@ body { margin: 0; font-family: "Open Sans", "Helvetica Neue", sans-serif; }
   mat-form-field {
       width: 100%;
     }
-    
+
   /* Ensure proper background color */
   .mat-mdc-text-field-wrapper {
     background-color: white !important;
     border-radius: 4px;
   }
-  
+
   /* Override Material's error padding */
   .mat-mdc-form-field-error-wrapper {
     padding: 0 !important;
@@ -35,9 +35,101 @@ body { margin: 0; font-family: "Open Sans", "Helvetica Neue", sans-serif; }
     display: flex;
     align-items: center;
   }
-  
+
   /* Remove hover background */
   .mdc-text-field--filled:not(.mdc-text-field--disabled):hover {
     background-color: transparent !important;
   }
-  
+
+/* === DARK MODE === */
+/* === DARK MODE POLISH === */
+html.dark {
+  background-color: #1f2937;
+  color: white;
+}
+
+html.dark body {
+  background-color: #1f2937;
+  color: white;
+}
+
+html.dark .bg-white {
+  background-color: #374151 !important; /* Darken card backgrounds */
+}
+
+html.dark .mat-form-field-infix,
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1f2937 !important;  /* input field background */
+  color: white !important;
+  border-color: #4b5563;
+}
+
+html.dark .mat-form-field-label {
+  color: #d1d5db !important; /* light label */
+}
+
+html.dark .mat-mdc-form-field-error-wrapper {
+  color: #f87171 !important; /* red-400 */
+}
+
+html.dark .mat-select-arrow,
+html.dark .mat-datepicker-toggle-default-icon {
+  color: white !important;
+  filter: invert(1);
+}
+
+/* Make navbar white in dark mode */
+html.dark .navbar-dark {
+  background-color: white !important;
+  color: #1f2937 !important;
+}
+/* Sidebar background */
+.sidebar {
+  background-color: #1f2937; /* Light mode: dark blue-gray */
+}
+
+/* In dark mode, make sidebar light */
+html.dark .sidebar {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Optional: change link colors in dark mode */
+html.dark .sidebar a {
+  color: #1f2937 !important;
+}
+
+html.dark .sidebar a:hover {
+  background-color: #e5e7eb !important; /* Tailwind gray-200 */
+}
+/* Completely dark form fields in dark mode */
+html.dark .mat-mdc-text-field-wrapper {
+  background-color: #374151 !important; /* Dark blue-gray */
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+/* Make input background match wrapper */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #374151 !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Fix label color */
+html.dark .mat-mdc-floating-label,
+html.dark .mat-form-field-label {
+  color: #d1d5db !important; /* Tailwind gray-300 */
+}
+
+/* Optional: fix placeholder color if any */
+html.dark ::placeholder {
+  color: #9ca3af !important;
+}
+
+

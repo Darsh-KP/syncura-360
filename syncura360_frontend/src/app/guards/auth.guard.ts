@@ -10,18 +10,21 @@ export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: object
-  ) {}
+  ) {
+  }
 
-  canActivate(): boolean {
+  canActivate(route: any): boolean {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
-      if (token) {
+      const role = localStorage.getItem('role');
+      const allowedRoles = route.data?.['roles'];
+
+      if (token && (!allowedRoles || allowedRoles.includes(role))) {
         return true;
       }
       this.router.navigate(['/']);
       return false;
-    } else {
-      return false;
     }
+    return false;
   }
 }

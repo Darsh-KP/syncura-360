@@ -1,6 +1,6 @@
 package com.syncura360.service;
 
-import com.syncura360.dto.Room.EquipmentFormDTO;
+import com.syncura360.dto.Room.EquipmentUpdateDTO;
 import com.syncura360.model.Equipment;
 import com.syncura360.model.EquipmentId;
 import com.syncura360.repository.EquipmentRepository;
@@ -18,7 +18,7 @@ public class EquipmentService {
         this.equipmentRepository = equipmentRepository;
     }
 
-    public void setEquipmentsForRoom(Integer hospitalId, String roomName, List<EquipmentFormDTO> equipments) {
+    public void setEquipmentsForRoom(int hospitalId, String roomName, List<EquipmentUpdateDTO> equipments) {
         // Check if there are any equipments
         if (equipments == null || equipments.isEmpty()) {
             deleteEquipmentsForRoom(hospitalId, roomName.trim());
@@ -29,9 +29,12 @@ public class EquipmentService {
         Set<Equipment> newEquipments = new HashSet<>();
 
         // For each equipment, update it in the database
-        for (EquipmentFormDTO equipment : equipments) {
+        for (EquipmentUpdateDTO equipment : equipments) {
             // Extract the equipment
             Equipment newEquipment = new Equipment(new EquipmentId(hospitalId, roomName.trim(), equipment.getSerialNo().trim()), equipment.getName().trim());
+
+            // Update the in maintenance status
+            newEquipment.setUnderMaintenance(equipment.getInMaintenance());
 
             // Add new equipment to list
             newEquipments.add(newEquipment);

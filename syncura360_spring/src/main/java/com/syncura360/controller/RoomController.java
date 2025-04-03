@@ -53,7 +53,7 @@ public class RoomController {
 
     @PutMapping
     public ResponseEntity<GenericMessageResponseDTO> modifyRoom(
-            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomFormDTO roomFormDTO, BindingResult bindingResult) {
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomUpdateDTO roomUpdateDTO, BindingResult bindingResult) {
         // Basic DTO validation
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
@@ -64,7 +64,7 @@ public class RoomController {
 
         // Attempt to update the existing room
         try {
-            roomService.updateRoom(hospitalId, roomFormDTO);
+            roomService.updateRoom(hospitalId, roomUpdateDTO);
         } catch (EntityExistsException | EntityNotFoundException | IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class RoomController {
 
     @GetMapping
     public ResponseEntity<RoomFetchContainerDTO> getRooms(
-            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomFetchRequestDTO roomFetchRequestDTO, BindingResult bindingResult) {
+            @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody(required = false) RoomFetchRequestDTO roomFetchRequestDTO, BindingResult bindingResult) {
         // Response container
         RoomFetchContainerDTO roomFetchContainerDTO = new RoomFetchContainerDTO();
 
@@ -115,7 +115,7 @@ public class RoomController {
         int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
 
         // Check if a specific room is requested
-        if (roomFetchRequestDTO.getRoomName() != null && !roomFetchRequestDTO.getRoomName().trim().isEmpty()) {
+        if (roomFetchRequestDTO != null && roomFetchRequestDTO.getRoomName() != null && !roomFetchRequestDTO.getRoomName().trim().isEmpty()) {
             // Fetch the room
             try {
                 RoomFetchDTO roomFetchDTO = roomService.fetchRoom(hospitalId, roomFetchRequestDTO);

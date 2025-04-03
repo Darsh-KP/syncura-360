@@ -163,9 +163,15 @@ export class SchedulingComponent implements OnInit {
       end: new Date(schedule.end),
       color: { primary: '#1e90ff', secondary: '#D1E8FF' },
       draggable: true,
+      meta: {
+        originalStart: schedule.start,
+        originalUsername: schedule.username,
+        department: schedule.department
+      }
     }));
     this.refresh.next();
   }
+  
 
   setView(view: CalendarView) {
     this.view = view;
@@ -215,8 +221,23 @@ export class SchedulingComponent implements OnInit {
     });
   }
 
-  updateSchedule(schedule: Schedule) {
-    this.scheduleService.updateSchedule([schedule]).subscribe({
+  updateSchedule(schedule: Schedule, originalStart: string, originalUsername: string) {
+    const updatePayload = [
+      {
+        id: {
+          username: originalUsername,
+          start: originalStart
+        },
+        updates: {
+          username: schedule.username,
+          start: schedule.start,
+          end: schedule.end,
+          department: schedule.department
+        }
+      }
+    ];
+  
+    this.scheduleService.updateSchedule(updatePayload).subscribe({
       next: (response) => {
         this.successMessage = response.message;
         this.fetchSchedules();
@@ -226,34 +247,61 @@ export class SchedulingComponent implements OnInit {
       }
     });
   }
+  
+  
 
   handleEvent(action: string, event: CalendarEvent): void {
-    console.log('Event clicked:', event);
-    if (confirm(`Delete event: ${event.title}?`)) {
-      const scheduleToDelete = this.scheduleList.find(s => new Date(s.start).getTime() === event.start.getTime());
-      if (scheduleToDelete) {
-        this.deleteSchedule(scheduleToDelete);
-      }
+    const eventEnd = event.end ?? event.start;
+  
+    const schedule = this.scheduleList.find(s =>
+      new Date(s.start).getTime() === new Date(event.start).getTime() &&
+      new Date(s.end).getTime() === new Date(eventEnd).getTime() &&
+      s.username === event.title.replace('Shift: ', '')
+    );
+  
+    if (schedule) {
+      this.openScheduleDialog(schedule);
+    } else {
+      console.warn('No matching schedule found for clicked event');
     }
   }
-
+  
   eventTimesChanged({
     event,
     newStart,
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
-    event.start = newStart;
-    event.end = newEnd;
-
-    const scheduleToUpdate = this.scheduleList.find(s => new Date(s.start).getTime() === event.start.getTime());
-    if (scheduleToUpdate) {
-      scheduleToUpdate.start = newStart.toISOString();
-      scheduleToUpdate.end = (newEnd ?? new Date()).toISOString();
-      this.updateSchedule(scheduleToUpdate);
+    const originalStart = event.meta?.originalStart;
+    const originalUsername = event.meta?.originalUsername;
+  
+    if (!originalStart || !originalUsername) {
+      console.warn('Missing original event metadata');
+      return;
     }
-    
+
+    if (newStart < new Date()) {
+      alert("You cannot move shifts to the past.");
+      return;
+    }    
+  
+    const formatDate = (date: Date) => {
+      return date.toISOString().split('.')[0];
+    };
+  
+    const updatedSchedule: Schedule = {
+      username: originalUsername,
+      start: this.toLocalISOString(newStart),
+      end: this.toLocalISOString(newEnd ?? newStart),
+      department: event.meta?.department || ''
+    };
+  
+    this.updateSchedule(updatedSchedule, originalStart, originalUsername);
+  
+    event.start = newStart;
+    event.end = newEnd ?? newStart;
     this.refresh.next();
-  }
+  }  
+  
 
   toggleScheduleForm() {
     this.showScheduleForm = !this.showScheduleForm;
@@ -297,4 +345,10 @@ export class SchedulingComponent implements OnInit {
     });
   }
 
+  private toLocalISOString = (date: Date): string => {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
+           `T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+  
 }
