@@ -46,7 +46,7 @@ export class InventoryComponent implements OnInit {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
         return `
-      <button class="edit-btn">Edit</button>
+      <button class="edit-btn mr-6">Edit</button>
       <button class="delete-btn">Delete</button>
     `;
       },
@@ -130,5 +130,10 @@ export class InventoryComponent implements OnInit {
       }
     });
   }
+
+  onGridReady(params: any) {
+    this.gridApi = params.api;
+  }
+
 
 }

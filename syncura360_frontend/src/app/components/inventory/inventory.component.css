@@ -2,7 +2,7 @@ h1 {
   animation: fadeIn 1s ease-in-out;
 }
 
-/* Make Edit button look like a link */
+   /* Make Edit button look like a link */
 ::ng-deep .edit-btn {
   background: none;
   border: none;
@@ -19,22 +19,20 @@ h1 {
   text-decoration: underline;
 }
 
-/* Delete button remains a regular button */
 ::ng-deep .delete-btn {
-  background-color: #dc3545;
-  color: white;
+  background: none;
   border: none;
-  padding: 6px 12px;
+  color: #dc3545;
   font-size: 14px;
-  font-weight: bold;
-  border-radius: 4px;
+  text-decoration: none;
   cursor: pointer;
-  margin-left: 8px;
-  transition: background-color 0.3s ease-in-out;
+  padding: 0;
+  transition: color 0.3s ease-in-out;
 }
 
 ::ng-deep .delete-btn:hover {
-  background-color: #c82333;
+  color: #c82333;
+  text-decoration: underline;
 }
 
 /* Fade-in animation */

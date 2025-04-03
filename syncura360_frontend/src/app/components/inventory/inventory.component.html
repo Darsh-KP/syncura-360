@@ -17,13 +17,14 @@
 
       <!-- AG Grid -->
       <ag-grid-angular
-        style="width: 100%; height: 400px;"
-        class="ag-theme-alpine"
-        [rowData]="inventoryList"
-        [columnDefs]="columnDefs"
-        (gridReady)="gridApi = $event.api">
+      style="width: 100%; height: 400px;"
+      class="ag-theme-quartz"
+      [rowData]="inventoryList"
+      [columnDefs]="columnDefs"
+      rowSelection="single"
+      [rowModelType]="'clientSide'"
+      (gridReady)="onGridReady($event)">
       </ag-grid-angular>
-
 
       <!-- Add Item Button -->
       <div class="mt-6 flex justify-end">
