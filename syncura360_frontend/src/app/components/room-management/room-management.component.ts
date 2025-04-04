@@ -129,7 +129,6 @@ removeEquipmentFromSelectedRoom(index: number) {
 
 
   updateRoom(room: Room) {
-    console.log("Updated Room Payload: ", room);
     this.roomService.updateRoom(room).subscribe(() => {
       this.loadRooms();
       this.dialog.closeAll(); 
