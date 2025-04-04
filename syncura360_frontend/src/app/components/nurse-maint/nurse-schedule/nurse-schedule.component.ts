@@ -52,25 +52,30 @@ export class NurseScheduleComponent implements OnInit {
   fetchSchedules() {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
+    const end = new Date('2100-01-01T23:59:59'); // Far future date
 
-    const end = new Date();
-    end.setDate(end.getDate() + 7);
-    end.setHours(23, 59, 59, 999);
+    // const end = new Date();
+    // end.setDate(end.getDate() + 7);
+    // end.setHours(23, 59, 59, 999);
 
     const formattedStart = this.formatDateTime(start);
     const formattedEnd = this.formatDateTime(end);
-
-    // this.scheduleService.getNurseSchedules(formattedStart, formattedEnd).subscribe({
-    //   next: (response) => {
-    //     this.scheduleList = response.scheduledShifts || [];
-    //     this.populateCalendarEvents();
-    //     if (this.gridApi) {
-    //       this.gridApi.setRowData(this.scheduleList);
-    //     }
-    //   },
-    //   error: (error) => console.error(error)
-    // });
+  
+    this.scheduleService.getMySchedule(formattedStart, formattedEnd).subscribe({
+      next: (response) => {
+        this.scheduleList = response.scheduledShifts || [];
+        this.populateCalendarEvents();
+  
+        if (this.gridApi) {
+          this.gridApi.setRowData(this.scheduleList);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching schedules:', error);
+      }
+    });
   }
+  
 
   formatDateTime(date: Date): string {
     return date.toISOString().split('.')[0];
@@ -110,6 +115,7 @@ export class NurseScheduleComponent implements OnInit {
 
   onGridReady(params: any) {
     this.gridApi = params.api;
+    this.gridApi.sizeColumnsToFit();
   }
 
   onQuickFilterChanged(event: any) {
