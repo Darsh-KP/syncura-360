@@ -79,4 +79,18 @@ export class ScheduleService {
       body: { shifts }
     });
   }
+
+    /**
+   * Fetch schedule for the current staff member (based on JWT)
+   * @param start Start date string (ISO format)
+   * @param end End date string (ISO format)
+   * @returns Observable of ScheduleResponse
+   */
+  getMySchedule(start: string, end: string): Observable<ScheduleResponse> {
+    const payload = { start, end };
+    return this.http.post<ScheduleResponse>(`${this.baseUrl}/staff`, payload, {
+      headers: this.getHeaders()
+    });
+  }
+
 }
