@@ -3,7 +3,7 @@ package com.syncura360.dto.Room;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @AllArgsConstructor
 @Getter
