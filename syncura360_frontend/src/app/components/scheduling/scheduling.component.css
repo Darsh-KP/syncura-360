@@ -8,3 +8,40 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
+
+  /* Make Edit button look like a link */
+::ng-deep .edit-btn {
+  background: none;
+  border: none;
+  color: #007bff; /* Bootstrap primary blue */
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s ease-in-out;
+}
+
+::ng-deep .edit-btn:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+::ng-deep .delete-btn {
+  background: none;
+  border: none;
+  color: #dc3545; /* Bootstrap primary blue */
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s ease-in-out;
+}
+
+::ng-deep .delete-btn:hover {
+  color: #c82333;
+  text-decoration: underline;
+}
+
+h1{
+  font-weight: 500;
+}

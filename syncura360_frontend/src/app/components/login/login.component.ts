@@ -14,13 +14,13 @@ import { HttpClientModule } from '@angular/common/http';
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     ReactiveFormsModule,
-    HttpClientModule, 
-    MatInputModule, 
-    MatButtonModule, 
-    MatCardModule, 
-    MatFormFieldModule, 
+    HttpClientModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
     MatIconModule,
     RouterLink
   ],
@@ -41,13 +41,22 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Redirect if user is already logged in
-    if (this.loginService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+    if (typeof window !== 'undefined' && this.loginService.isAuthenticated()) {
+      const role = localStorage.getItem('role');
+      if (role === 'Nurse') {
+        this.router.navigate(['/nurse']);
+      } else if (role === 'Admin' || role === 'Super Admin') {
+        this.router.navigate(['/dashboard']);
+      } else if (role === 'Doctor') {
+        this.router.navigate(['/doctor']);
+      } else {
+        this.router.navigate(['/']);
+      }
     }
-  }
+    }
 
-  passwordVisible: boolean = false;
+
+    passwordVisible: boolean = false;
 
   togglePassword() {
     this.passwordVisible = !this.passwordVisible;
@@ -67,11 +76,22 @@ export class LoginComponent implements OnInit {
     this.loginService.login(username, password).subscribe({
       next: (response) => {
         this.loading = false;
-        if (response.body?.message == "Authentication successful.") {
+
+        if (response.body?.message == "Authentication successful."){
           this.successMessage = 'Login Successful! Redirecting...';
-          this.router.navigate(['/dashboard']);
+          const role = response.body?.role;
+          if (role === 'Nurse') {
+            this.router.navigate(['/nurse']);
+          } else if (role === 'Admin' || role === 'Super Admin') {
+            this.router.navigate(['/dashboard']);
+          } else if (role === 'Doctor') {
+            this.router.navigate(['/doctor']);
+          } else {
+            this.router.navigate(['/']);
+          }
         }
-        
+
+
       },
       error: (error) => {
         this.loading = false;

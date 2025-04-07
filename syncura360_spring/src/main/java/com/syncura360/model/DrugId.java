@@ -22,9 +22,9 @@ public class DrugId implements java.io.Serializable {
     private final Integer hospitalId;
 
     @Column(name = "ndc", nullable = false)
-    private final Integer ndc;
+    private final Long ndc;
 
-    public DrugId(Integer hospitalId, Integer ndc) {
+    public DrugId(Integer hospitalId, Long ndc) {
         this.hospitalId = hospitalId;
         this.ndc = ndc;
     }

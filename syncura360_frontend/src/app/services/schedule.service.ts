@@ -54,12 +54,19 @@ export class ScheduleService {
 
   /**
    * Update scheduled shifts
-   * @param shifts Array of Schedule objects with updated fields
+   * @param updates Array of update objects, each containing old shift id and new data
    * @returns Observable of response message
    */
-  updateSchedule(shifts: Schedule[]): Observable<{ message: string }> {
-    return this.http.put<{ message: string }>(`${this.baseUrl}/update`, { shifts }, { headers: this.getHeaders() });
+  updateSchedule(updates: { 
+    id: { username: string; start: string }; 
+    updates: { username?: string; start?: string; end?: string; department?: string } 
+  }[]): Observable<{ message: string }> {
+    const payload = { updates };
+    return this.http.put<{ message: string }>(`${this.baseUrl}`, payload, {
+      headers: this.getHeaders()
+    });
   }
+
 
   /**
    * Delete scheduled shifts
@@ -67,9 +74,23 @@ export class ScheduleService {
    * @returns Observable of response message
    */
   deleteSchedule(shifts: { start: string; username: string }[]): Observable<{ message: string }> {
-    return this.http.request<{ message: string }>('delete', `${this.baseUrl}/delete`, {
+    return this.http.request<{ message: string }>('delete', `${this.baseUrl}`, {
       headers: this.getHeaders(),
       body: { shifts }
     });
   }
+
+    /**
+   * Fetch schedule for the current staff member (based on JWT)
+   * @param start Start date string (ISO format)
+   * @param end End date string (ISO format)
+   * @returns Observable of ScheduleResponse
+   */
+  getMySchedule(start: string, end: string): Observable<ScheduleResponse> {
+    const payload = { start, end };
+    return this.http.post<ScheduleResponse>(`${this.baseUrl}/staff`, payload, {
+      headers: this.getHeaders()
+    });
+  }
+
 }
