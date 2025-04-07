@@ -64,9 +64,7 @@ export class StaffService {
   createStaff(staff: Staff[]): Observable<{ message: string }> {
     const requestBody = { staff };
     const headers = this.getHeaders();
-    
-    console.log("Sending Token: ", headers.get('Authorization')); // Debugging
-  
+      
     return this.http.post<{ message: string }>(this.baseUrl, requestBody, { headers });
   }  
 

@@ -47,6 +47,8 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/nurse']);
       } else if (role === 'Admin' || role === 'Super Admin') {
         this.router.navigate(['/dashboard']);
+      } else if (role === 'Doctor') {
+        this.router.navigate(['/doctor']);
       } else {
         this.router.navigate(['/']);
       }
@@ -82,6 +84,8 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/nurse']);
           } else if (role === 'Admin' || role === 'Super Admin') {
             this.router.navigate(['/dashboard']);
+          } else if (role === 'Doctor') {
+            this.router.navigate(['/doctor']);
           } else {
             this.router.navigate(['/']);
           }
