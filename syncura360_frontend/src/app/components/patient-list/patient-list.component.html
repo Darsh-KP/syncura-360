@@ -1,0 +1,13 @@
+<app-navbar></app-navbar>
+<div class="ml-60 p-6 bg-gray-100 min-h-screen">
+  <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md">
+    <h2 class="text-2xl font-bold mb-4 text-center">Patient List</h2>
+    <ag-grid-angular
+      class="ag-theme-quartz"
+      style="width: 100%; height: 500px;"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      rowSelection="single">
+    </ag-grid-angular>
+  </div>
+</div>
