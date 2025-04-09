@@ -5,11 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repository interface for performing CRUD operations on the Service entity.
+ *
+ * @author Benjamin Leiby
+ */
 public interface ServiceRepository extends JpaRepository<Service, ServiceId> {
-
     List<Service> findByHospital(Hospital hospital);
 
     @Query("SELECT hs FROM Service hs " +
@@ -21,6 +24,4 @@ public interface ServiceRepository extends JpaRepository<Service, ServiceId> {
             @Param("category") String category,
             @Param("hospitalId") int hospitalId
     );
-
-
 }

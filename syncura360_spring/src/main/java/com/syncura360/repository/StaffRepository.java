@@ -8,8 +8,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for performing CRUD operations on the Staff entity.
+ *
+ * @author Benjamin Leiby
+ */
 public interface StaffRepository extends JpaRepository<Staff, String> {
-
     public interface StaffProjection {
         String getUsername();
         String getRole();
@@ -31,5 +35,4 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
     Optional<Staff> findByUsername(String username);
 
     List<StaffProjection> findByWorksAt(Hospital worksAt);
-
 }
