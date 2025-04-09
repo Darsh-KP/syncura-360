@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -31,9 +30,8 @@ public class VisitId implements java.io.Serializable {
     private final Integer patientId;
 
     @ColumnDefault("current_timestamp()")
-    @Setter
     @Column(name = "admission_date_time", nullable = false)
-    private LocalDateTime admissionDateTime;
+    private final LocalDateTime admissionDateTime = LocalDateTime.now();
 
     public VisitId(Integer hospitalId, Integer patientId) {
         this.hospitalId = hospitalId;
