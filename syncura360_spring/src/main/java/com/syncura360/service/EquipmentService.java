@@ -10,14 +10,34 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Service class responsible for managing equipment in a hospital room.
+ *
+ * @author Darsh-KP
+ */
 @Service
 public class EquipmentService {
     EquipmentRepository equipmentRepository;
 
+    /**
+     * Constructor for initializing {@link EquipmentService} with required dependencies.
+     * Uses constructor injection for necessary components.
+     *
+     * @param equipmentRepository The repository used for equipment operations.
+     */
     public EquipmentService(EquipmentRepository equipmentRepository) {
         this.equipmentRepository = equipmentRepository;
     }
 
+    /**
+     * Sets the equipment for a specific room in the hospital.
+     * If the equipment list is empty or null, it deletes the existing equipment in the room.
+     * Otherwise, it updates the room's equipment.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @param roomName The name of the room to set equipment for.
+     * @param equipments The list of equipment to be set in the room.
+     */
     public void setEquipmentsForRoom(int hospitalId, String roomName, List<EquipmentUpdateDTO> equipments) {
         // Check if there are any equipments
         if (equipments == null || equipments.isEmpty()) {
@@ -56,6 +76,12 @@ public class EquipmentService {
         }
     }
 
+    /**
+     * Deletes all equipment in a specific room for a given hospital.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @param roomName The name of the room to delete the equipment from.
+     */
     public void deleteEquipmentsForRoom(Integer hospitalId, String roomName) {
         equipmentRepository.deleteAllById_HospitalIdAndId_RoomName(hospitalId, roomName.trim());
     }
