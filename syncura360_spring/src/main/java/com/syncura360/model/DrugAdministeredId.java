@@ -34,7 +34,7 @@ public class DrugAdministeredId implements java.io.Serializable {
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "administered_at", nullable = false)
-    private LocalDateTime administeredAt;
+    private final LocalDateTime administeredAt = LocalDateTime.now();
 
     public DrugAdministeredId(Integer hospitalId, Integer patientId, LocalDateTime visitAdmissionDateTime) {
         this.hospitalId = hospitalId;
