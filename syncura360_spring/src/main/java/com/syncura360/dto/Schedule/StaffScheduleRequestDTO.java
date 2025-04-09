@@ -1,13 +1,14 @@
 package com.syncura360.dto.Schedule;
 
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
+/**
+ * DTO for representing a request to fetch the staff schedule, including a start and end time.
+ *
+ * @author Benjamin Leiby
+ */
 @Data
-@Validated
 public class StaffScheduleRequestDTO {
-
     private String start;
     private String end;
-
 }

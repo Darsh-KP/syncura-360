@@ -3,6 +3,11 @@ package com.syncura360.dto.Staff;
 import lombok.Data;
 import java.time.LocalDate;
 
+/**
+ * DTO for creating a new staff member, containing personal and contact information as well as role details.
+ *
+ * @author Benjamin Leiby
+ */
 @Data
 public class StaffCreationDto {
     private String username;
