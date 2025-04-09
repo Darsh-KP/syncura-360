@@ -21,11 +21,15 @@ export class PatientListComponent {
     { field: 'lastName', headerName: 'Last Name' },
     { field: 'dateOfBirth', headerName: 'DOB' },
     { field: 'gender' },
-    { field: 'bloodType' },
-    { field: 'height' },
-    { field: 'weight' },
+    { field: 'phoneNumber', headerName: 'Phone Number' },
+    { field: 'addressLine1', headerName: 'Address' },
+    { field: 'addressLine2', headerName: 'Address Cont.' },
+    { field: 'city', headerName: 'City' },
+    { field: 'state', headerName: 'State' },
+    { field: 'zipCode', headerName: 'Zip Code' },
+    { field: 'country', headerName: 'Country' },
     {
-      headerName: 'Action',
+      headerName: 'Action', pinned: ("right"),
       cellRenderer: (params: any) => {
         const button = document.createElement('button');
         button.innerText = 'View';
@@ -48,7 +52,7 @@ export class PatientListComponent {
   ngOnInit() {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    this.http.get<any[]>('http://localhost:8080/patient/all', { headers }).subscribe(data => {
+    this.http.get<any[]>('http://localhost:8080/patient', { headers }).subscribe(data => {
       this.rowData = data;
     });
   }
