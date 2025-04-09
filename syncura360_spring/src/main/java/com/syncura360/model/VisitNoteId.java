@@ -11,6 +11,11 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents the composite primary key for the VisitNote entity, consisting of hospital ID, patient ID, visit admission date-time, and creation timestamp.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable
@@ -53,5 +58,4 @@ public class VisitNoteId implements java.io.Serializable {
     public int hashCode() {
         return Objects.hash(createdAt, hospitalId, patientId, visitAdmissionDateTime);
     }
-
 }

@@ -10,6 +10,11 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.util.Objects;
 
+/**
+ * Represents a service offered by a hospital, with details like category, description, and cost.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

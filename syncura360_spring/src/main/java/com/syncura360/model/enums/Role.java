@@ -3,6 +3,11 @@ package com.syncura360.model.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Enum representing user roles with values for Doctor, Nurse, Admin, and Super Admin.
+ *
+ * @author Darsh-KP
+ */
 public enum Role {
     Doctor("Doctor"),
     Nurse("Nurse"),
