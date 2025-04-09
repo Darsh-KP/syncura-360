@@ -1,7 +1,5 @@
 package com.syncura360.repository;
 
-
-import com.syncura360.model.Hospital;
 import com.syncura360.model.Schedule;
 import com.syncura360.model.ScheduleId;
 import jakarta.transaction.Transactional;
@@ -13,7 +11,11 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
+/**
+ * Repository interface for performing CRUD operations on the Schedule entity.
+ *
+ * @author Benjamin Leiby
+ */
 public interface ScheduleRepository extends JpaRepository<Schedule, ScheduleId> {
 
     @Query("SELECT s FROM Schedule s " +
