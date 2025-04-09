@@ -11,6 +11,11 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Composite primary key class for identifying a room assignment for a patient during a visit, based on hospital, patient, visit admission time, and assignment time.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable

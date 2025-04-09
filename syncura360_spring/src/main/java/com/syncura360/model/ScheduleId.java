@@ -10,6 +10,12 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents the composite primary key for the Schedule entity.
+ * It consists of the staff's username and the schedule's start date-time.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 @Setter
 @Embeddable

@@ -11,6 +11,12 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents the composite primary key for the ServiceProvided entity,
+ * consisting of hospital ID, patient ID, and visit admission date-time.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable

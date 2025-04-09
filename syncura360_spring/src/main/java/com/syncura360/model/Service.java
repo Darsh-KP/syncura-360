@@ -5,6 +5,11 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a service offered by a hospital, with details like category, description, and cost.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

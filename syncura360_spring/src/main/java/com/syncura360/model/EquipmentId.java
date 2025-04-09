@@ -10,6 +10,11 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.util.Objects;
 
+/**
+ * Embeddable composite ID for identifying equipment in a hospital, including hospital ID, room name, and equipment serial number.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

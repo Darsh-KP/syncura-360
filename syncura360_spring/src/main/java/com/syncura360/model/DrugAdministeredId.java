@@ -11,6 +11,11 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Embeddable composite ID for identifying a drug administered to a patient, including hospital ID, patient ID, visit admission date, and administered time.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable

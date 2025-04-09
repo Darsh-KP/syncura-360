@@ -3,6 +3,11 @@ package com.syncura360.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity representing a room in a hospital, including its unique identifier, associated hospital, and department.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

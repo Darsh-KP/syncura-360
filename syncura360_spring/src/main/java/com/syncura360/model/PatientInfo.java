@@ -8,6 +8,11 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+/**
+ * Entity representing a patient's personal and medical information, including demographics, contact details, and medical history.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

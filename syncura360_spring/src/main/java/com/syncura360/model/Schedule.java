@@ -6,6 +6,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents a schedule entity with details like staff, department, and end date-time.
+ *
+ * @author Darsh-KP
+ */
 @Data
 @Entity
 @Table(name = "Schedule")
@@ -34,6 +39,4 @@ public class Schedule {
     }
 
     public Schedule() {}
-
-
 }
