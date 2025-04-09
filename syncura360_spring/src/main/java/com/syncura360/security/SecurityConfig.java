@@ -3,7 +3,6 @@ package com.syncura360.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,12 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Configuration class for Spring Security settings.
- * Handles authentication, authorization, CORS, and JWT filtering.
- *
- * @author Benjamin Leiby
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -36,21 +29,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        // User Auth
                         .requestMatchers("/", "/register/**", "/login").permitAll()
-
-
+                        .requestMatchers("/visit/**").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
+                        .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug", "/service/**", "/service", "/room").hasAnyAuthority("Admin", "Super Admin")
                         .requestMatchers("/schedule/staff").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
-                        .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug", "/service/**", "/service").hasAnyAuthority("Admin", "Super Admin")
-
-                        // Room
-                        .requestMatchers(HttpMethod.GET, "/room").hasAnyAuthority("Doctor", "Nurse", "Admin", "Super Admin")
-                        .requestMatchers("/room").hasAnyAuthority("Admin", "Super Admin")
-
-                        // Patient
                         .requestMatchers("/patient", "/patient/{patient-id}").hasAnyAuthority("Doctor", "Nurse")
-
-                        // Auth
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
