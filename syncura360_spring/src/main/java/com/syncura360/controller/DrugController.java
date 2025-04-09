@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Controller for managing drugs in the inventory.
  * Handles operations for inserting, editing, deleting, and viewing drug information.
+ *
  * @author Darsh-KP
  */
 @RestController
@@ -77,8 +78,8 @@ public class DrugController {
      * Validates drug data, and updates it in the database.
      *
      * @param authorization The authorization token used to identify user making the request.
-     * @param drugFormDTO DTO containing the details of the drug to be updated.
-     * @param bindingResult Holds the results of the validation of the {@link DrugFormDTO}. This allows for checking if the data is valid before proceeding.
+     * @param drugUpdateDTO DTO containing the details of the drug to be updated.
+     * @param bindingResult Holds the results of the validation of the {@link DrugUpdateDTO}. This allows for checking if the data is valid before proceeding.
      * @return A {@link ResponseEntity} containing a {@link GenericMessageResponseDTO} that indicated whether the drug was successfully updated or if an error occurred.
      */
     @PutMapping

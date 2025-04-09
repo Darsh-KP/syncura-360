@@ -4,7 +4,6 @@ import com.syncura360.dto.Authentication.LoginInfo;
 import com.syncura360.model.Staff;
 import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +19,36 @@ import java.util.Optional;
 
 /**
  * Handles all incoming login requests.
+ *
  * @author Benjamin Leiby
  */
 @RestController
 @CrossOrigin(origins = "*")
 public class LoginController {
-
-    @Autowired
     JwtUtil jwtUtil;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
     StaffRepository staffRepository;
 
     /**
+     * Constructor for initializing LoginController with required dependencies.
+     * Uses constructor injection for necessary components.
+     *
+     * @param jwtUtil Used to add jwt details for logged-in user.
+     * @param authenticationManager Used to authenticate the user trying to log in.
+     * @param staffRepository The repository used to access user details.
+     */
+    public LoginController(JwtUtil jwtUtil, AuthenticationManager authenticationManager, StaffRepository staffRepository) {
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+        this.staffRepository = staffRepository;
+    }
+
+    /**
+     * Attempts to authenticate a user with given credentials.
+     *
      * @param loginInfo DTO containing username and plaintext password.
-     * @return loginResponse DTO containing message, JWT, and authenticated user's role.
+     * @return {@link LoginResponse} DTO containing message, JWT, and authenticated user's role.
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginInfo loginInfo) {
@@ -81,6 +93,7 @@ public class LoginController {
 
     /**
      * DTO for login response.
+     *
      * @param message
      * @param role
      */
