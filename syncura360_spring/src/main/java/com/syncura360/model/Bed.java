@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+/**
+ * Entity representing a bed in a hospital, associated with a specific room and status.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

@@ -4,6 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+/**
+ * DTO for updating existing equipment details such as serial number, equipment name,
+ * and maintenance status.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class EquipmentUpdateDTO {
     @NotNull(message = "Serial number is required.")

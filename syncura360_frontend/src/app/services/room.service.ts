@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 export interface Equipment {
   serialNo: string;
   name: string;
-  // inMaintenance: boolean;
+  inMaintenance: boolean;
 }
 
 export interface Room {

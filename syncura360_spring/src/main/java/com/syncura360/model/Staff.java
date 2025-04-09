@@ -7,6 +7,11 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+/**
+ * Represents a staff member working at a hospital, including personal and professional details.
+ *
+ * @author Darsh-KP
+ */
 @Data
 @Entity
 @Table(name = "Staff", uniqueConstraints = @UniqueConstraint(columnNames = {"works_at", "email"}))

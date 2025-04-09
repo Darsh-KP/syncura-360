@@ -3,6 +3,11 @@ package com.syncura360.model.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Enum representing the category of drugs, with values for Drug and Medical Supply.
+ *
+ * @author Darsh-KP
+ */
 public enum DrugCategory {
     Drug("Drug"),
     Medical_Supply("Medical Supply");

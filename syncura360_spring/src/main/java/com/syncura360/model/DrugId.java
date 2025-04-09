@@ -10,6 +10,11 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.util.Objects;
 
+/**
+ * Embeddable composite ID for identifying a drug, including hospital ID and drug NDC (National Drug Code).
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

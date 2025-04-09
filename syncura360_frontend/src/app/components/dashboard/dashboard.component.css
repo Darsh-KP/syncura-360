@@ -14,8 +14,7 @@
   color: #0056b3;
   text-decoration: underline;
 }
-
-/* Delete button remains a regular button */
+/* 
 ::ng-deep .delete-btn {
   background-color: #dc3545;
   color: white;
@@ -31,7 +30,7 @@
 
 ::ng-deep .delete-btn:hover {
   background-color: #c82333;
-}
+} */
 
 h1{
   font-weight: 500;

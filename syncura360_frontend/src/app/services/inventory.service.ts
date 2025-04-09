@@ -62,8 +62,6 @@ export class inventoryService {
 
   createInventory(drug: inventory): Observable<{ message: string }> {
     const headers = this.getHeaders();
-
-
     return this.http.post<{ message: string }>(this.baseUrl, drug, { headers });
   }
 

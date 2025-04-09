@@ -114,11 +114,10 @@ export class SchedulingComponent implements OnInit {
 
   fetchSchedules() {
     const start = new Date();
-    start.setHours(0, 0, 0, 0); // Set to 12:00 AM
+    start.setHours(0, 0, 0, 0); // Start of today
   
-    const end = new Date();
-    end.setDate(end.getDate() + 7); // One week from today
-    end.setHours(23, 59, 59, 999); // Set to 11:59 PM
+    // Remove limitation by setting far future date
+    const end = new Date('2100-01-01T23:59:59');
   
     const formattedStart = this.formatDateTime(start);
     const formattedEnd = this.formatDateTime(end);
@@ -134,6 +133,7 @@ export class SchedulingComponent implements OnInit {
       error: (error) => this.errorMessage = error.message || 'Failed to load schedules.'
     });
   }
+  
   
   formatDateTime(date: Date): string {
     const year = date.getFullYear();

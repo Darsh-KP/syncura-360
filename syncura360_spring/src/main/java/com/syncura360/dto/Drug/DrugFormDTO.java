@@ -8,6 +8,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
+/**
+ * DTO for submitting a new drug with details such as NDC, name, category, description, strength,
+ * pricing, and quantity information.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class DrugFormDTO {
     @NotNull(message = "NDC is required.")

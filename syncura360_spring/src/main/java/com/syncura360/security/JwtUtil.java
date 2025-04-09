@@ -10,6 +10,11 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * Utility class for generating and parsing JWT tokens.
+ *
+ * @author Benjamin Leiby
+ */
 @Component
 public class JwtUtil {
 

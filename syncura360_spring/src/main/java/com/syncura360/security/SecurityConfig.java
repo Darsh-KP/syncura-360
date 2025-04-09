@@ -18,6 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Configuration class for Spring Security settings.
+ * Handles authentication, authorization, CORS, and JWT filtering.
+ *
+ * @author Benjamin Leiby
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

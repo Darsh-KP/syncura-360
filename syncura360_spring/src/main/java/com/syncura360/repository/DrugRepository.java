@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for performing CRUD operations on the Drug entity.
+ *
+ * @author Darsh-KP
+ */
 public interface DrugRepository extends JpaRepository<Drug, DrugId> {
     boolean existsById_HospitalIdAndId_Ndc(Integer hospitalId, Long ndc);
 

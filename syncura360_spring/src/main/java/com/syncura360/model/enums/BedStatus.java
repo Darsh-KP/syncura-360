@@ -3,6 +3,11 @@ package com.syncura360.model.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Enum representing the status of a bed, with values for Vacant, Occupied, and Under Maintenance.
+ *
+ * @author Darsh-KP
+ */
 public enum BedStatus {
     Vacant("Vacant"),
     Occupied("Occupied"),
