@@ -2,6 +2,7 @@ package com.syncura360.controller;
 
 import com.syncura360.dto.ErrorConvertor;
 import com.syncura360.dto.GenericMessageResponseDTO;
+import com.syncura360.dto.Visit.AddDrugDTO;
 import com.syncura360.dto.Visit.AddServiceDTO;
 import com.syncura360.dto.Visit.VisitCreationDTO;
 import com.syncura360.security.JwtUtil;
@@ -86,6 +87,37 @@ public class VisitController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully added service."));
+    }
+
+    /**
+     *
+     * @param authorization
+     * @param addDrugDTO
+     * @param bindingResult
+     * @return
+     */
+    @PostMapping("/drug")
+    public ResponseEntity<GenericMessageResponseDTO> addDrug(
+        @RequestHeader(name="Authorization") String authorization,
+        @RequestBody AddDrugDTO addDrugDTO,
+        BindingResult bindingResult)
+    {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
+        }
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+            visitService.addDrug(hospitalId, addDrugDTO);
+        } catch (EntityNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully added service."));
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.syncura360.service;
 
+import com.syncura360.dto.Visit.AddDrugDTO;
 import com.syncura360.dto.Visit.AddServiceDTO;
 import com.syncura360.dto.Visit.VisitCreationDTO;
 import com.syncura360.model.*;
@@ -25,6 +26,10 @@ public class VisitService {
     ServiceRepository serviceRepository;
     @Autowired
     ServiceProvidedRepository serviceProvidedRepository;
+    @Autowired
+    DrugRepository drugRepository;
+    @Autowired
+    DrugAdministeredRepository drugAdministeredRepository;
 
     /**
      * Attempt to create start a new visit.
@@ -45,6 +50,11 @@ public class VisitService {
         visitRepository.save(visit);
     }
 
+    /**
+     *
+     * @param hospitalId
+     * @param addServiceDTO
+     */
     @Transactional
     public void addService(int hospitalId, AddServiceDTO addServiceDTO) {
 
@@ -73,7 +83,44 @@ public class VisitService {
 
         ServiceProvided serviceProvided = new ServiceProvided(serviceProvidedId, staff.get(), service.get());
         serviceProvidedRepository.save(serviceProvided);
+    }
 
+    /**
+     *
+     * @param hospitalId
+     * @param addDrugDTO
+     */
+    @Transactional
+    public void addDrug(int hospitalId, AddDrugDTO addDrugDTO) {
+
+        Optional<Visit> visit = visitRepository.findCurrentVisitById(addDrugDTO.getPatientID(), hospitalId);
+
+        if (visit.isEmpty()) {
+            throw new EntityNotFoundException("Visit not found.");
+        }
+
+        DrugAdministeredId drugAdministeredId = new DrugAdministeredId(
+                hospitalId, addDrugDTO.getPatientID(),
+                LocalDateTime.parse(addDrugDTO.getVisitAdmissionDateTime())
+        );
+
+        Optional<Staff> staff = staffRepository.findByUsername(addDrugDTO.getAdministeredBy());
+        if (staff.isEmpty() || staff.get().getWorksAt().getId() != hospitalId) {
+            throw new EntityNotFoundException("Providing staff not found.");
+        }
+
+        DrugId drugId = new DrugId(hospitalId, addDrugDTO.getDrug());
+
+        Optional<Drug> drug = drugRepository.findById(drugId);
+        if (drug.isEmpty()) {
+            throw new EntityNotFoundException("Drug not found.");
+        }
+
+        DrugAdministered drugAdministered = new DrugAdministered(
+                drugAdministeredId, drug.get(), staff.get()
+        );
+
+        drugAdministeredRepository.save(drugAdministered);
     }
 
 }
