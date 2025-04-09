@@ -11,7 +11,6 @@ import com.syncura360.security.JwtUtil;
 import com.syncura360.service.ScheduleService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -25,22 +24,43 @@ import java.util.*;
 
 /**
  * Handles CRUD operations for staff scheduling.
+ * This controller allows scheduling shifts for hospital staff, including adding, updating, retrieving, and deleting shifts.
+ * The operations are protected by authentication and authorization mechanisms.
+ *
  * @author Benjamin Leiby
  */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/schedule")
 public class ScheduleController {
-
-    @Autowired
     StaffRepository staffRepository;
-    @Autowired
     ScheduleRepository scheduleRepository;
-    @Autowired
     ScheduleService scheduleService;
-    @Autowired
     JwtUtil jwtUtil;
 
+    /**
+     * Constructor to inject dependencies of the ScheduleController.
+     *
+     * @param staffRepository the repository for accessing staff data.
+     * @param scheduleRepository the repository for accessing scheduling data.
+     * @param scheduleService the service for managing schedules.
+     * @param jwtUtil utility class for working with JWT tokens.
+     */
+    public ScheduleController(StaffRepository staffRepository, ScheduleRepository scheduleRepository, ScheduleService scheduleService, JwtUtil jwtUtil) {
+        this.staffRepository = staffRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.scheduleService = scheduleService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    /**
+     * Retrieves the schedule for a specific staff member based on the provided time range.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param staffScheduleRequestDTO the data transfer object (DTO) that contains the schedule request details.
+     * @param bindingResult the result of the validation of the input data.
+     * @return a {@link ResponseEntity} containing a {@link ScheduleDto} with the staff's schedule or error message.
+     */
     @PostMapping("/staff")
     @Transactional
     public ResponseEntity<ScheduleDto> getStaffSchedule(
@@ -81,6 +101,13 @@ public class ScheduleController {
 
     }
 
+    /**
+     * Updates the shifts for a given set of shifts.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param shiftUpdateRequestDto the DTO containing the details of the shifts to update.
+     * @return a {@link ResponseEntity} containing a {@link MessageResponse} with the result of the operation.
+     */
     @PutMapping
     @Transactional
     public ResponseEntity<MessageResponse> updateShifts(
@@ -120,6 +147,13 @@ public class ScheduleController {
 
     }
 
+    /**
+     * Retrieves all shifts based on the specified time range and search criteria.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param shiftDto the DTO containing the search criteria for the shifts.
+     * @return a {@link ResponseEntity} containing a {@link ScheduleDto} with the list of shifts or error message.
+     */
     @PostMapping
     @Transactional
     public ResponseEntity<ScheduleDto> getAllShifts(
@@ -153,10 +187,11 @@ public class ScheduleController {
     }
 
     /**
-     * Attempts to add a list of new shifts to the schedule;
-     * @param authorization JWT.
-     * @param newShiftsRequest DTO to model the list of new shifts.
-     * @return MessageResponse DTO containing a success or failure message.
+     * Attempts to add a list of new shifts to the schedule.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param newShiftsRequest the DTO containing the list of new shifts.
+     * @return a {@link ResponseEntity} containing a {@link MessageResponse} with the success or failure message.
      */
     @PostMapping("/new")
     @Transactional
@@ -204,9 +239,10 @@ public class ScheduleController {
 
     /**
      * Attempts to delete a list of shifts from the schedule.
-     * @param authorization JWT.
-     * @param deleteShiftsRequest DTO to model the list of shifts to delete.
-     * @return MessageResponse DTO containing a success or failure message.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param deleteShiftsRequest the DTO containing the list of shifts to delete.
+     * @return a {@link ResponseEntity} containing a {@link MessageResponse} with the success or failure message.
      */
     @DeleteMapping
     @Transactional
@@ -244,6 +280,12 @@ public class ScheduleController {
 
     }
 
+    /**
+     * Creates a list of ShiftDto objects from a list of Schedule objects.
+     *
+     * @param shifts the list of Schedule objects to convert.
+     * @return a list of ShiftDto objects.
+     */
     private List<ShiftDto> createShiftDTOs(List<Schedule> shifts) {
         List<ShiftDto> result = new ArrayList<>();
         if (shifts.isEmpty()) { throw new NoSuchElementException("Shift list is empty."); }
@@ -259,6 +301,15 @@ public class ScheduleController {
         return result;
     }
 
+    /**
+     * Retrieves the shift to modify based on the provided data and hospital ID.
+     *
+     * @param dto the DTO containing the shift update data.
+     * @param hospitalId the ID of the hospital.
+     * @return the {@link Schedule} object to modify.
+     * @throws NoSuchElementException if the shift is not found.
+     * @throws InsufficientAuthenticationException if the hospital ID does not match.
+     */
     private Schedule getShiftToModify(ShiftUpdateDto dto, int hospitalId) {
 
         Optional<Schedule> optionalShift = scheduleRepository.findById(
@@ -276,6 +327,14 @@ public class ScheduleController {
 
     }
 
+    /**
+     * Creates a new shift based on the updates provided and the shift to modify.
+     *
+     * @param updates the DTO containing the shift updates.
+     * @param shiftToModify the existing shift to modify.
+     * @return the new {@link Schedule} object after applying the updates.
+     * @throws SQLIntegrityConstraintViolationException if the new shift data violates database constraints.
+     */
     @SuppressWarnings("OptionalIsPresent")
     private Schedule getNewShift (ShiftDto updates, Schedule shiftToModify) throws SQLIntegrityConstraintViolationException {
 
@@ -309,7 +368,8 @@ public class ScheduleController {
 
     /**
      * Models a simple response with only a string message.
-     * @param message
+     *
+     * @param message the message contained in the response.
      */
     public record MessageResponse(String message) {}
 

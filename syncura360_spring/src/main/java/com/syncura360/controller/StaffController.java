@@ -21,7 +21,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * CRUD operations on staff credentials.
+ * Controller responsible for handling CRUD operations on staff credentials.
+ * Provides endpoints for updating, creating, retrieving, and managing staff members.
+ * <p>
+ * This controller ensures that operations are performed securely, and that
+ * only authenticated users with proper authorization can modify staff details.
+ *
  * @author Benjamin Leiby
  */
 @RestController
@@ -35,10 +40,15 @@ public class StaffController {
     JwtUtil jwtUtil;
 
     /**
-     * Attempts to apply a list of staff info updates.
-     * @param authorization JWT.
-     * @param staffUpdateRequest DTO to model a collection of attempted staff updates.
-     * @return StaffUpdateResponse DTO to communicate which updates were successful.
+     * Attempts to apply a list of staff information updates.
+     * <p>
+     * This method allows an authorized user to batch update multiple staff records.
+     * If an update fails (either due to a staff member not existing or not being authorized),
+     * it will be tracked and communicated in the response.
+     *
+     * @param authorization the JWT token of the authorized user.
+     * @param staffUpdateRequest the DTO containing a collection of attempted staff updates.
+     * @return a {@link ResponseEntity} containing a {@link StaffUpdateResponse} with the result message and list of updated staff.
      */
     @PutMapping("/batch")
     public ResponseEntity<StaffUpdateResponse> updateStaff(
@@ -47,7 +57,7 @@ public class StaffController {
     {
 
         StaffUpdateResponse response = new StaffUpdateResponse();
-        List<String> failed = new ArrayList<String>(); // Track to determine partial success.
+        List<String> failed = new ArrayList<>(); // Track to determine partial success.
 
         String authenticatedUsername = jwtUtil.getUsername(authorization);
         Optional<Staff> authenticatedStaff = staffRepository.findByUsername(authenticatedUsername);
@@ -77,7 +87,7 @@ public class StaffController {
                     response.getStaffUsernames().add(updateDto.getUsername());
                     // Failed if saving changes causes any error.
                 } catch (Exception e) {
-                    System.out.println(e.toString());
+                    System.out.println(e.getMessage());
                     failed.add(updateDto.getUsername()); }
             }
 
@@ -99,9 +109,13 @@ public class StaffController {
     }
 
     /**
-     * Applies updates given a mapping of field names and values.
-     * @param staff instance of JPA entity to update.
-     * @param fields field-value mapping of the update.
+     * Applies updates to a staff member based on a field-value mapping.
+     * <p>
+     * This method updates a staff entity with the provided field names and values.
+     * It supports common fields such as `username`, `role`, `firstName`, etc.
+     *
+     * @param staff the staff entity to update.
+     * @param fields a map of field names and values to be updated.
      */
     private void applyUpdates(Staff staff, Map<String, Object> fields) {
 
@@ -155,7 +169,9 @@ public class StaffController {
     }
 
     /**
-     * DTO to model response containing successfully updated records.
+     * DTO to model the response containing successfully updated staff records.
+     * The response contains a message and a list of updated staff usernames.
+     *
      * @author Benjamin Leiby
      */
     @Data
@@ -167,15 +183,20 @@ public class StaffController {
             this.staffUsernames = staffUsernames;
         }
         public StaffUpdateResponse() {
-            staffUsernames = new ArrayList<String>();
+            staffUsernames = new ArrayList<>();
         }
     }
 
     /**
-     * Attempts to insert new staff members from a list of new staff info.
-     * @param authorization JWT.
-     * @param staffCreationRequest DTO to model a collection of new staff member info.
-     * @return StaffCreationResponse DTO to communicate which insertions were successful.
+     * Attempts to insert new staff members from a list of new staff information.
+     * <p>
+     * This method allows an authorized user to add new staff members to the system.
+     * It securely hashes the password and associates the staff with the hospital
+     * the authenticated user works at.
+     *
+     * @param authorization the JWT token of the authorized user.
+     * @param staffCreationRequest the DTO containing a collection of new staff member information.
+     * @return a {@link ResponseEntity} containing a {@link StaffCreationResponse} with the result message and list of added staff.
      */
     @PostMapping
     public ResponseEntity<StaffCreationResponse> createStaff(
@@ -236,9 +257,13 @@ public class StaffController {
     }
 
     /**
-     * Retrieves the list of staff member info of the accessing users hospital.
-     * @param authorization JWT.
-     * @return AllStaffDTO to model a list of staff member info.
+     * Retrieves the list of staff members' information at the accessing user's hospital.
+     * <p>
+     * This method returns a list of all staff members working at the same hospital as the
+     * authenticated user.
+     *
+     * @param authorization the JWT token of the authorized user.
+     * @return a {@link ResponseEntity} containing an {@link AllStaffDTO} with the list of staff information.
      */
     @GetMapping("/all")
     public ResponseEntity<AllStaffDTO> getAllStaff(
@@ -266,10 +291,11 @@ public class StaffController {
     }
 
     /**
-     * DTO for a list of staff info.
-     * @param message
-     * @param staffList
+     * DTO for a list of staff information.
+     * This record models the response containing a message and a list of staff members' info.
+     *
+     * @param message a message describing the result.
+     * @param staffList a list of projections containing staff details.
      */
     public record AllStaffDTO (String message, List<StaffRepository.StaffProjection> staffList) { }
-
 }

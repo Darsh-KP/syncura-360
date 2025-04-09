@@ -6,7 +6,6 @@ import com.syncura360.model.*;
 import com.syncura360.repository.ServiceRepository;
 import com.syncura360.security.JwtUtil;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +15,39 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Controller responsible for handling services-related operations such as
+ * creating, updating, deleting, and retrieving services in a hospital.
+ * It supports CRUD operations on services and their associated attributes.
+ * The operations are protected by authentication and authorization mechanisms.
+ *
+ * @author Benjamin Leiby
+ */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/services")
 public class ServicesController {
-
-    @Autowired
     JwtUtil jwtUtil;
-    @Autowired
     ServiceRepository serviceRepository;
 
+    /**
+     * Constructor to inject dependencies for the Services Controller.
+     *
+     * @param jwtUtil the utility class for managing JWT authentication tokens.
+     * @param serviceRepository the repository for accessing service data.
+     */
+    public ServicesController(JwtUtil jwtUtil, ServiceRepository serviceRepository) {
+        this.jwtUtil = jwtUtil;
+        this.serviceRepository = serviceRepository;
+    }
+
+    /**
+     * Deletes a list of services based on the names provided in the request.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param deleteServicesDTO the DTO containing the list of service names to delete.
+     * @return a {@link ResponseEntity} containing a {@link GenericMessageResponseDTO} with the result message.
+     */
     @DeleteMapping
     @Transactional
     public ResponseEntity<GenericMessageResponseDTO> deleteServices(
@@ -61,6 +83,13 @@ public class ServicesController {
 
     }
 
+    /**
+     * Updates the details of existing services in the database.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param updateServicesRequest the DTO containing the list of service updates.
+     * @return a {@link ResponseEntity} containing a {@link GenericMessageResponseDTO} with the result message.
+     */
     @PutMapping("/update")
     @Transactional
     public ResponseEntity<GenericMessageResponseDTO> updateServices(
@@ -96,6 +125,13 @@ public class ServicesController {
 
     }
 
+    /**
+     * Retrieves a list of services based on the name and category provided in the request.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param serviceDTO the DTO containing the search criteria for services.
+     * @return a {@link ResponseEntity} containing a {@link ServicesDTO} with the list of services or error message.
+     */
     @PostMapping
     @Transactional
     public ResponseEntity<ServicesDTO> getAllServices(
@@ -130,6 +166,13 @@ public class ServicesController {
 
     }
 
+    /**
+     * Creates new services and saves them to the database.
+     *
+     * @param authorization the JWT token for authentication.
+     * @param serviceRequest the DTO containing the list of services to create.
+     * @return a {@link ResponseEntity} containing a {@link GenericMessageResponseDTO} with the result message.
+     */
     @SuppressWarnings("ExtractMethodRecommender")
     @PostMapping("/new")
     @Transactional
@@ -139,7 +182,7 @@ public class ServicesController {
     {
 
         int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
-        List<Service> serviceEntities = new ArrayList<Service>();
+        List<Service> serviceEntities = new ArrayList<>();
 
         for (ServiceDTO serviceDTO : serviceRequest.getServices()) {
             ServiceId id = new ServiceId();
@@ -163,6 +206,15 @@ public class ServicesController {
 
     }
 
+    /**
+     * Helper method to apply updates to an existing service.
+     *
+     * @param update the DTO containing the updates for the service.
+     * @param hospitalId the hospital ID to ensure the service belongs to the correct hospital.
+     * @param toModify the current service entity to be updated.
+     * @return a {@link Service} object with the updated details.
+     * @throws NoSuchElementException if the service cannot be found.
+     */
     private Service getUpdatedService(ServiceUpdate update, int hospitalId, Service toModify) throws NoSuchElementException {
         ServiceDTO updates = update.getUpdates();
         Service updated = new Service();
@@ -197,5 +249,4 @@ public class ServicesController {
         }
         return updated;
     }
-
 }
