@@ -5,6 +5,12 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * DTO for fetching a list of rooms with additional room details such as room name, department,
+ * number of beds, and associated equipment.
+ *
+ * @author Darsh-KP
+ */
 @Setter
 @Getter
 public class RoomFetchContainerDTO {

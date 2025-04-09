@@ -5,6 +5,12 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * DTO for fetching detailed information about a room, including room name, department,
+ * bed availability (vacant, occupied, and under maintenance), and associated equipment.
+ *
+ * @author Darsh-KP
+ */
 @AllArgsConstructor
 @Getter
 public class RoomFetchDTO {
