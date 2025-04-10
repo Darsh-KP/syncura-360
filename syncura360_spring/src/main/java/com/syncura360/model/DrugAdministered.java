@@ -35,12 +35,16 @@ public class DrugAdministered {
     private final Drug drug;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "administered_by", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "administered_by", nullable = false, insertable = true, updatable = false)
     private final Staff administeredBy;
+
+    @Column(name = "drug_ndc", insertable = true, updatable = false, nullable = false)
+    private final Long drug_ndc;
 
     public DrugAdministered(DrugAdministeredId id, Drug drug, Staff administeredBy) {
         this.id = id;
         this.drug = drug;
         this.administeredBy = administeredBy;
+        this.drug_ndc = drug.getId().getNdc();
     }
 }

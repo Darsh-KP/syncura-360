@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeParseException;
+
 /**
  * Handles incoming requests for visit management.
  * @author Benjamin Leiby
@@ -56,7 +58,7 @@ public class VisitController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully started a new visit."));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully started a new visit."));
     }
 
     /**
@@ -80,21 +82,21 @@ public class VisitController {
 
         try {
             visitService.addService(hospitalId, addServiceDTO);
-        } catch (EntityNotFoundException | IllegalArgumentException e) {
+        } catch (EntityNotFoundException | IllegalArgumentException | DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully added service."));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added service."));
     }
 
     /**
-     *
-     * @param authorization
-     * @param addDrugDTO
-     * @param bindingResult
-     * @return
+     * Add a drug to a given visit.
+     * @param authorization JWT header.
+     * @param addDrugDTO DTO to model request to add drug.
+     * @param bindingResult Result of parsing the request.
+     * @return GenericMessageResponseDTO containing the result of the request.
      */
     @PostMapping("/drug")
     public ResponseEntity<GenericMessageResponseDTO> addDrug(
@@ -110,14 +112,72 @@ public class VisitController {
 
         try {
             visitService.addDrug(hospitalId, addDrugDTO);
-        } catch (EntityNotFoundException | IllegalArgumentException e) {
+        } catch (EntityNotFoundException | IllegalArgumentException | DateTimeParseException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully added service."));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added drug."));
+    }
+
+    /**
+     * Add a drug to a given visit.
+     * @param authorization JWT header.
+     * @param addNoteDTO DTO to model request to add note.
+     * @param bindingResult Result of parsing the request.
+     * @return GenericMessageResponseDTO containing the result of the request.
+     */
+    @PostMapping("/note")
+    public ResponseEntity<GenericMessageResponseDTO> addNote(
+        @RequestHeader(name="Authorization") String authorization,
+        @RequestBody AddNoteDTO addNoteDTO,
+        BindingResult bindingResult)
+    {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
+        }
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+            visitService.addNote(hospitalId, addNoteDTO);
+        } catch (EntityNotFoundException | IllegalArgumentException | DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added note."));
+    }
+
+    @PostMapping("/room")
+    public ResponseEntity<GenericMessageResponseDTO> addRoom(
+        @RequestHeader(name="Authorization") String authorization,
+        @RequestBody AddRoomDTO addRoomDTO,
+        BindingResult bindingResult)
+    {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
+        }
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+            visitService.addRoom(hospitalId, addRoomDTO);
+        } catch (EntityNotFoundException | IllegalArgumentException | DateTimeParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added note."));
+
+
 
     }
+
+
+
 
 }
