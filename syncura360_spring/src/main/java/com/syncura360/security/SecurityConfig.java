@@ -36,17 +36,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        // User Auth APIs
+                        // User Auth
                         .requestMatchers("/", "/register/**", "/login").permitAll()
 
-                        // Admin APIs
-                        .requestMatchers("/schedule/staff").hasAnyAuthority("Admin", "Super Admin")
+
+                        .requestMatchers("/schedule/staff").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
                         .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug", "/service/**", "/service").hasAnyAuthority("Admin", "Super Admin")
+
+                        // Room
+                        .requestMatchers(HttpMethod.GET, "/room").hasAnyAuthority("Doctor", "Nurse", "Admin", "Super Admin")
                         .requestMatchers("/room").hasAnyAuthority("Admin", "Super Admin")
 
-                        // Doctor and Nurse APIs
-                        .requestMatchers(HttpMethod.POST, "/schedule/staff").hasAnyAuthority("Doctor", "Nurse")
-                        .requestMatchers(HttpMethod.GET, "/room").hasAnyAuthority("Doctor", "Nurse")
+                        // Patient
                         .requestMatchers("/patient", "/patient/{patient-id}").hasAnyAuthority("Doctor", "Nurse")
 
                         // Auth
