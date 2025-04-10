@@ -5,6 +5,11 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 
+/**
+ * DTO for fetching drug details, including NDC, name, category, description, strength, and pricing information.
+ *
+ * @author Darsh-KP
+ */
 @AllArgsConstructor
 @Getter
 public class DrugFetchDTO {

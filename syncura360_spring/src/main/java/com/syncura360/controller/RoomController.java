@@ -15,6 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Handles room-related operations for hospitals, including adding, modifying,
+ * removing, and fetching room details. The controller also ensures that actions
+ * are performed by authenticated staff belonging to the relevant hospital.
+ *
+ * @author Darsh-KP
+ */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/room")
@@ -22,11 +29,27 @@ public class RoomController {
     JwtUtil jwtUtil;
     RoomService roomService;
 
+    /**
+     * Constructor to inject dependencies for JWT utility and room service.
+     *
+     * @param jwtUtil the utility class for handling JWT token validation and extraction.
+     * @param roomService the service class for managing room-related operations.
+     */
     public RoomController(JwtUtil jwtUtil, RoomService roomService) {
         this.jwtUtil = jwtUtil;
         this.roomService = roomService;
     }
 
+    /**
+     * Adds a new room to the hospital.
+     * This method validates the room data and creates the room for the relevant hospital,
+     * which is retrieved using the JWT token.
+     *
+     * @param authorization the JWT authorization token to authenticate the logged-in staff.
+     * @param roomFormDTO the data transfer object containing the room details to be added.
+     * @param bindingResult the result of the validation of the room form data.
+     * @return a {@link ResponseEntity} containing a response message with a status code indicating the result.
+     */
     @PostMapping
     public ResponseEntity<GenericMessageResponseDTO> addRoom(
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomFormDTO roomFormDTO, BindingResult bindingResult) {
@@ -51,6 +74,16 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added the room."));
     }
 
+    /**
+     * Modifies an existing room in the hospital.
+     * This method validates the room data and updates the room information for the relevant hospital,
+     * using the hospital ID from the JWT token.
+     *
+     * @param authorization the JWT authorization token to authenticate the logged-in staff.
+     * @param roomUpdateDTO the data transfer object containing the updated room details.
+     * @param bindingResult the result of the validation of the room update data.
+     * @return a {@link ResponseEntity} containing a response message with a status code indicating the result.
+     */
     @PutMapping
     public ResponseEntity<GenericMessageResponseDTO> modifyRoom(
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomUpdateDTO roomUpdateDTO, BindingResult bindingResult) {
@@ -75,6 +108,16 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully updated the room."));
     }
 
+    /**
+     * Removes an existing room from the hospital.
+     * This method validates the room deletion request and deletes the room from the relevant hospital,
+     * identified using the JWT token.
+     *
+     * @param authorization the JWT authorization token to authenticate the logged-in staff.
+     * @param roomDeletionDTO the data transfer object containing the details of the room to be deleted.
+     * @param bindingResult the result of the validation of the room deletion data.
+     * @return a {@link ResponseEntity} containing a response message with a status code indicating the result.
+     */
     @DeleteMapping
     public ResponseEntity<GenericMessageResponseDTO> removeRoom(
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody RoomDeletionDTO roomDeletionDTO, BindingResult bindingResult) {
@@ -99,6 +142,17 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully deleted the room."));
     }
 
+    /**
+     * Retrieves a list of rooms in the hospital.
+     * This method checks if a specific room is requested and fetches the details of that room,
+     * or fetches all the rooms in the hospital if no specific room is requested.
+     * The hospital ID is retrieved from the JWT token.
+     *
+     * @param authorization the JWT authorization token to authenticate the logged-in staff.
+     * @param roomFetchRequestDTO the optional data transfer object containing room search criteria.
+     * @param bindingResult the result of the validation of the room fetch data.
+     * @return a {@link ResponseEntity} containing a response message and a list of rooms or specific room details.
+     */
     @GetMapping
     public ResponseEntity<RoomFetchContainerDTO> getRooms(
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody(required = false) RoomFetchRequestDTO roomFetchRequestDTO, BindingResult bindingResult) {

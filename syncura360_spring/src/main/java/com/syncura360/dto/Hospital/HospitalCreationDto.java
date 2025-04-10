@@ -2,6 +2,12 @@ package com.syncura360.dto.Hospital;
 
 import lombok.Data;
 
+/**
+ * DTO for creating a new hospital with essential details such as name, address, contact information,
+ * type, trauma level, and helipad availability.
+ *
+ * @author Benjamin Leiby
+ */
 @Data
 public class HospitalCreationDto {
     private String name;

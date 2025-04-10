@@ -4,6 +4,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+/**
+ * DTO for submitting a new equipment registration with details such as serial number and equipment name.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class EquipmentFormDTO {
     @NotNull(message = "Serial number is required.")

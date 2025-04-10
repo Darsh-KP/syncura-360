@@ -7,6 +7,11 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+/**
+ * DTO for updating an existing drug's details such as NDC, quantity, and price information.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class DrugUpdateDTO {
     @NotNull(message = "NDC is required.")

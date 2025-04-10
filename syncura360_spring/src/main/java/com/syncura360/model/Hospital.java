@@ -5,6 +5,11 @@ import com.syncura360.model.enums.TraumaLevelConvertor;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * Entity representing a hospital, including its details such as name, address, contact information, trauma level, and facilities.
+ *
+ * @author Darsh-KP
+ */
 @Data
 @Entity
 @Table(name = "Hospital")

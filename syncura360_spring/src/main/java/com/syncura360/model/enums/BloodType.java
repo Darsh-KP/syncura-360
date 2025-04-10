@@ -3,6 +3,11 @@ package com.syncura360.model.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Enum representing different blood types with their corresponding string values.
+ *
+ * @author Darsh-KP
+ */
 public enum BloodType {
     A_Positive("A+"),
     A_Negative("A-"),

@@ -5,6 +5,11 @@ import lombok.Getter;
 
 import jakarta.validation.constraints.Size;
 
+/**
+ * DTO for fetching room details by specifying the room name.
+ *
+ * @author Darsh-KP
+ */
 @AllArgsConstructor
 @Getter
 public class RoomFetchRequestDTO {

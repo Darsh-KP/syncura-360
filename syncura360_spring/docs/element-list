@@ -1,0 +1,16 @@
+com.syncura360
+com.syncura360.controller
+com.syncura360.dto
+com.syncura360.dto.Authentication
+com.syncura360.dto.Drug
+com.syncura360.dto.Hospital
+com.syncura360.dto.Patient
+com.syncura360.dto.Room
+com.syncura360.dto.Schedule
+com.syncura360.dto.Service
+com.syncura360.dto.Staff
+com.syncura360.model
+com.syncura360.model.enums
+com.syncura360.repository
+com.syncura360.security
+com.syncura360.service

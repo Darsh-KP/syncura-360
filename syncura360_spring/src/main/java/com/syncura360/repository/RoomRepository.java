@@ -7,6 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for performing CRUD operations on the Room entity.
+ *
+ * @author Darsh-KP
+ */
 public interface RoomRepository extends JpaRepository<Room, RoomId> {
     boolean existsById_HospitalIdAndId_RoomName(Integer hospitalId, String roomName);
 

@@ -5,6 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+/**
+ * DTO for submitting a new patient registration with essential personal details such as name, date of birth,
+ * contact information, address, and emergency contact information.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class PatientFormDTO {
     @NotNull(message = "First name cannot be null.")

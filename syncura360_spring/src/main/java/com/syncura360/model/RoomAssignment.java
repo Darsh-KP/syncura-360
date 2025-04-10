@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+/**
+ * Entity representing a room assignment for a patient during a visit, including its unique identifier, associated room, and removal status.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @EqualsAndHashCode(of = "id")

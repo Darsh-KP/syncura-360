@@ -5,6 +5,11 @@ import lombok.Getter;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * DTO for deleting a room by specifying the room name.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class RoomDeletionDTO {
     @NotNull(message = "Room name is required.")
