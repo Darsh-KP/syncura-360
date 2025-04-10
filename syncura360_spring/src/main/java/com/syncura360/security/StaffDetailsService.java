@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+/**
+ * Service class that implements UserDetailsService to load staff user details from the database.
+ * Used for authentication and authorization in Spring Security.
+ *
+ * @author Benjamin Leiby
+ */
 @Service
 public class StaffDetailsService implements UserDetailsService {
 

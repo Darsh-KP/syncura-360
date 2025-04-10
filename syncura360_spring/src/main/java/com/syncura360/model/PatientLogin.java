@@ -1,9 +1,17 @@
 package com.syncura360.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
+/**
+ * Entity representing a patient's login credentials, including username, password hash, and associated email.
+ *
+ * @author Darsh-KP
+ */
+@NoArgsConstructor(force = true)
+@Getter
+@Setter
+@EqualsAndHashCode(of = "username")
 @Entity
 @Table(name = "PatientLogin", schema = "syncura360")
 public class PatientLogin {

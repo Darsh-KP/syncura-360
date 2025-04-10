@@ -9,6 +9,12 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+/**
+ * DTO for updating an existing room's details, including room name, department,
+ * number of beds, and associated equipment.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class RoomUpdateDTO {
     @NotNull(message = "Room name is required.")

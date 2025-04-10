@@ -6,6 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * Repository interface for performing CRUD operations on the Equipment entity.
+ *
+ * @author Darsh-KP
+ */
 public interface EquipmentRepository extends JpaRepository<Equipment, EquipmentId> {
     List<Equipment> findById_HospitalIdAndId_RoomName(Integer hospitalId, String roomName);
 

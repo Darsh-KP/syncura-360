@@ -15,17 +15,35 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing patient-related operations.
+ * Provides endpoints to add, modify, and fetch patient information.
+ *
+ * @author Darsh-KP
+ */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/patient")
 public class PatientController {
     PatientService patientService;
 
-    // Constructor injection
+    /**
+     * Constructor to inject the PatientService dependency.
+     *
+     * @param patientService the {@link PatientService} instance for handling patient-related business logic.
+     */
     public PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
 
+    /**
+     * Endpoint to add a new patient.
+     * Validates the request body and attempts to create a new patient.
+     *
+     * @param patientFormDTO the DTO containing the details of the patient to be added ({@link PatientFormDTO}).
+     * @param bindingResult the result of validating the patientFormDTO.
+     * @return a {@link ResponseEntity} containing a {@link GenericMessageResponseDTO} with the outcome message.
+     */
     @PostMapping
     public ResponseEntity<GenericMessageResponseDTO> addPatient(
             @Valid @RequestBody PatientFormDTO patientFormDTO, BindingResult bindingResult) {
@@ -48,6 +66,14 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added the patient."));
     }
 
+    /**
+     * Endpoint to modify an existing patient's information.
+     * Validates the request body and attempts to update the patient details.
+     *
+     * @param patientUpdateDTO the DTO containing the updated patient information ({@link PatientUpdateDTO}).
+     * @param bindingResult the result of validating the patientUpdateDTO.
+     * @return a {@link ResponseEntity} containing a {@link GenericMessageResponseDTO} with the outcome message.
+     */
     @PutMapping
     public ResponseEntity<GenericMessageResponseDTO> modifyPatient(
             @Valid @RequestBody PatientUpdateDTO patientUpdateDTO, BindingResult bindingResult) {
@@ -70,6 +96,12 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully updated the patient."));
     }
 
+    /**
+     * Endpoint to retrieve the list of all patients.
+     *
+     * @return a {@link ResponseEntity} containing a {@link PatientViewFetchContainer} with the list of patients,
+     *         or a 204 NO_CONTENT if no patients exist.
+     */
     @GetMapping
     public ResponseEntity<PatientViewFetchContainer> getPatients() {
         // Retrieve the list of patients
@@ -84,6 +116,13 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.OK).body(patientViewFetchContainer);
     }
 
+    /**
+     * Endpoint to retrieve a specific patient by their ID.
+     *
+     * @param patientId the ID of the patient to be fetched.
+     * @return a {@link ResponseEntity} containing a {@link SpecificPatientFetchDTO} with the patient's details,
+     *         or a 404 NOT_FOUND if the patient does not exist.
+     */
     @GetMapping("/{patient-id}")
     public ResponseEntity<SpecificPatientFetchDTO> getPatientById(@PathVariable("patient-id") Integer patientId) {
         // Basic path variable check

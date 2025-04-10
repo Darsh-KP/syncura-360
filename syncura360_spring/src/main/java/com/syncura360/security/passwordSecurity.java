@@ -3,6 +3,11 @@ package com.syncura360.security;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Utility class for password encoding using Argon2id.
+ *
+ * @author Darsh-KP
+ */
 public class passwordSecurity {
     private passwordSecurity() {}
 
