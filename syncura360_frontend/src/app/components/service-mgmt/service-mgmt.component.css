@@ -15,22 +15,21 @@
   text-decoration: underline;
 }
 
-/* Delete button remains a regular button */
+/* Make Edit button look like a link */
 ::ng-deep .delete-btn {
-  background-color: #dc3545;
-  color: white;
+  background: none;
   border: none;
-  padding: 6px 12px;
+  color: #dc3545; /* Bootstrap primary blue */
   font-size: 14px;
-  font-weight: bold;
-  border-radius: 4px;
+  text-decoration: none;
   cursor: pointer;
-  margin-left: 8px;
-  transition: background-color 0.3s ease-in-out;
+  padding: 0;
+  transition: color 0.3s ease-in-out;
 }
 
 ::ng-deep .delete-btn:hover {
-  background-color: #c82333;
+  color: #c82333;
+  text-decoration: underline;
 }
 
 h1{

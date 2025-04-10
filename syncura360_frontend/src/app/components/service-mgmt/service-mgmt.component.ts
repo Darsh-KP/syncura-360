@@ -43,7 +43,7 @@ export class ServiceMgmtComponent {
       field: 'actions',
       flex: 1,
       cellRenderer: (params: any) => `
-        <button class="edit-btn" data-id="${params.data.id}">Edit</button>
+        <button class="edit-btn mr-4" data-id="${params.data.id}">Edit</button>
         <button class="delete-btn ml-2" data-id="${params.data.name}">Delete</button>
       `
     }
