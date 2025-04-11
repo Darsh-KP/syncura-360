@@ -1,0 +1,12 @@
+::ng-deep .mdc-notched-outline__notch {
+    border-right: none !important; /* Removes the vertical line */
+    }
+    
+    h1{
+        font-weight: 500;
+      }
+    
+    
+    h3 {
+      font-weight: 900;
+    }
