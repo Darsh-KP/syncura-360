@@ -121,36 +121,6 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added drug."));
     }
 
-    /**
-     * Add a drug to a given visit.
-     * @param authorization JWT header.
-     * @param addNoteDTO DTO to model request to add note.
-     * @param bindingResult Result of parsing the request.
-     * @return GenericMessageResponseDTO containing the result of the request.
-     */
-    @PostMapping("/note")
-    public ResponseEntity<GenericMessageResponseDTO> addNote(
-        @RequestHeader(name="Authorization") String authorization,
-        @RequestBody AddNoteDTO addNoteDTO,
-        BindingResult bindingResult)
-    {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
-        }
-
-        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
-
-        try {
-            visitService.addNote(hospitalId, addNoteDTO);
-        } catch (EntityNotFoundException | IllegalArgumentException | DateTimeParseException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added note."));
-    }
-
     @PostMapping("/room")
     public ResponseEntity<GenericMessageResponseDTO> addRoom(
         @RequestHeader(name="Authorization") String authorization,
@@ -171,13 +141,7 @@ public class VisitController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added note."));
-
-
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added room to visit."));
     }
-
-
-
 
 }
