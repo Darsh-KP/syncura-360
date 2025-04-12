@@ -19,12 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Configuration class for Spring Security settings.
- * Handles authentication, authorization, CORS, and JWT filtering.
- *
- * @author Benjamin Leiby
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -39,6 +33,7 @@ public class SecurityConfig {
                         // User Auth
                         .requestMatchers("/", "/register/**", "/login").permitAll()
 
+                        .requestMatchers("/visit/**").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
 
                         .requestMatchers("/schedule/staff").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
                         .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug", "/service/**", "/service").hasAnyAuthority("Admin", "Super Admin")
@@ -84,7 +79,7 @@ public class SecurityConfig {
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowedHeaders(List.of("*")); // Allow all headers
         configuration.setExposedHeaders(List.of("*"));
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply CORS to all endpoints
 

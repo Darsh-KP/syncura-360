@@ -38,9 +38,13 @@ public class ServiceProvided {
     })
     private final Service service;
 
+    @Column(name = "service_name", insertable = true, updatable = false, nullable = false)
+    private String serviceName;
+
     public ServiceProvided(ServiceProvidedId id, Staff performedBy, Service service) {
         this.id = id;
         this.performedBy = performedBy;
         this.service = service;
+        this.serviceName = service.getId().getName();
     }
 }

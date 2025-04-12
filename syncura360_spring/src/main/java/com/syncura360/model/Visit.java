@@ -39,6 +39,9 @@ public class Visit {
     @Column(name = "visit_summary", length = 65535)
     private String visitSummary;
 
+    @Column(name = "visit_note", length = 65535)
+    private String visitNote;
+
     public Visit(VisitId id, String reasonForVisit) {
         this.id = id;
         this.reasonForVisit = reasonForVisit == null ? null : reasonForVisit.trim();
