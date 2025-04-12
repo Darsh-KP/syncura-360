@@ -148,7 +148,7 @@ public class VisitService {
     }
 
     @Transactional
-    public void removeRoom(int hospitalId, DeleteRoomDTO deleteRoomDTO) throws DateTimeParseException {
+    public void removeRoom(int hospitalId, DeleteRoomDTO deleteRoomDTO) {
 
         Optional<Visit> visit = visitRepository.findCurrentVisitById(deleteRoomDTO.getPatientID(), hospitalId);
         if (visit.isEmpty()) {
@@ -163,9 +163,23 @@ public class VisitService {
             throw new EntityNotFoundException("Patient is not assigned to a room.");
         }
 
+        Optional<Room> room = roomRepository.findById(currentAssignment.get().getRoom().getId());
+        if (room.isEmpty()) {
+            throw new EntityNotFoundException("Room not found.");
+        }
+
+        List<Bed> occupiedBeds = bedRepository.findAllByRoomAndStatus(room.get(), BedStatus.Occupied);
+        if (occupiedBeds.isEmpty()) {
+            throw new EntityNotFoundException("No beds occupied.");
+        }
+
         RoomAssignment entity = currentAssignment.get();
         entity.setIsRemoved(true);
         roomAssignmentRepository.save(entity);
+
+        Bed occupied = occupiedBeds.getFirst();
+        occupied.setStatus(BedStatus.Vacant);
+        bedRepository.save(occupied);
     }
 
     @Transactional
