@@ -31,7 +31,7 @@ public class VisitId implements java.io.Serializable {
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "admission_date_time", nullable = false)
-    private LocalDateTime admissionDateTime;
+    private final LocalDateTime admissionDateTime = LocalDateTime.now();
 
     public VisitId(Integer hospitalId, Integer patientId) {
         this.hospitalId = hospitalId;
