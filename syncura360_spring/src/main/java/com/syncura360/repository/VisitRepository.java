@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VisitRepository extends JpaRepository<Visit, VisitId> {
@@ -19,5 +20,11 @@ public interface VisitRepository extends JpaRepository<Visit, VisitId> {
             @Param("hospitalId") int hospitalId
     );
 
+    @Query("SELECT vs FROM Visit vs " +
+            "WHERE vs.id.hospitalId = :hospitalId " +
+            "AND vs.dischargeDateTime is NULL")
+    List<Visit> findCurrentVisitsByHospitalId(
+            @Param("hospitalId") int hospitalId
+    );
 
 }

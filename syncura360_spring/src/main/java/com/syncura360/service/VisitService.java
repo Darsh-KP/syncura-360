@@ -1,20 +1,31 @@
 package com.syncura360.service;
 
-import com.syncura360.controller.AddNoteDTO;
-import com.syncura360.controller.AddRoomDTO;
+import com.syncura360.controller.DeleteRoomDTO;
+import com.syncura360.dto.Visit.AddRoomDTO;
+import com.syncura360.dto.Visit.DoctorDTO;
+import com.syncura360.dto.Visit.NoteDTO;
+import com.syncura360.dto.Visit.VisitDTO;
+import com.syncura360.dto.Drug.DrugFetchDTO;
+import com.syncura360.dto.Service.ServiceDTO;
 import com.syncura360.dto.Visit.AddDrugDTO;
 import com.syncura360.dto.Visit.AddServiceDTO;
 import com.syncura360.dto.Visit.VisitCreationDTO;
 import com.syncura360.model.*;
+import com.syncura360.model.enums.BedStatus;
+import com.syncura360.model.enums.Role;
 import com.syncura360.repository.*;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -35,11 +46,11 @@ public class VisitService {
     @Autowired
     DrugAdministeredRepository drugAdministeredRepository;
     @Autowired
-    VisitNoteRepository visitNoteRepository;
-    @Autowired
     RoomRepository roomRepository;
     @Autowired
     RoomAssignmentRepository roomAssignmentRepository;
+    @Autowired
+    BedRepository bedRepository;
 
     /**
      * Attempt to create start a new visit.
@@ -136,27 +147,25 @@ public class VisitService {
         drugAdministeredRepository.save(drugAdministered);
     }
 
-    /**
-     * Add a note to a given visit.
-     * @param hospitalId Hospital the patient is visiting.
-     * @param addNoteDTO DTO to model the incoming note addition request.
-     */
     @Transactional
-    public void addNote(int hospitalId, AddNoteDTO addNoteDTO) throws DateTimeParseException {
+    public void removeRoom(int hospitalId, DeleteRoomDTO deleteRoomDTO) throws DateTimeParseException {
 
-        Optional<Visit> visit = visitRepository.findCurrentVisitById(addNoteDTO.getPatientID(), hospitalId);
+        Optional<Visit> visit = visitRepository.findCurrentVisitById(deleteRoomDTO.getPatientID(), hospitalId);
         if (visit.isEmpty()) {
             throw new EntityNotFoundException("Visit not found.");
         }
 
-        VisitNoteId visitNoteId = new VisitNoteId(
-            hospitalId,
-            addNoteDTO.getPatientID(),
-            LocalDateTime.parse(addNoteDTO.getVisitAdmissionDateTime())
+        Optional<RoomAssignment> currentAssignment = roomAssignmentRepository.findCurrentAssignmentById(
+            deleteRoomDTO.getPatientID(), hospitalId
         );
 
-        VisitNote visitNote = new VisitNote(visitNoteId, addNoteDTO.getNote());
-        visitNoteRepository.save(visitNote);
+        if (currentAssignment.isEmpty()) {
+            throw new EntityNotFoundException("Patient is not assigned to a room.");
+        }
+
+        RoomAssignment entity = currentAssignment.get();
+        entity.setIsRemoved(true);
+        roomAssignmentRepository.save(entity);
     }
 
     @Transactional
@@ -174,6 +183,22 @@ public class VisitService {
             throw new EntityNotFoundException("Room not found.");
         }
 
+        Optional<RoomAssignment> currentAssignment = roomAssignmentRepository.findCurrentAssignmentById(
+            addRoomDTO.getPatientID(), hospitalId
+        );
+
+        if (currentAssignment.isPresent()) {
+            throw new EntityExistsException("Patient is already assigned to a room.");
+        }
+
+        List<Bed> availableBeds = bedRepository.findAllByRoomAndStatus(room.get(), BedStatus.Vacant);
+
+        if (availableBeds.isEmpty()) {
+            throw new EntityNotFoundException("No beds available");
+        }
+
+        Bed nextAvailable = availableBeds.getFirst();
+
         RoomAssignmentId roomAssignmentId = new RoomAssignmentId(
             hospitalId, addRoomDTO.getPatientID(),
             LocalDateTime.parse(addRoomDTO.getVisitAdmissionTime())
@@ -181,6 +206,120 @@ public class VisitService {
 
         RoomAssignment roomAssignment = new RoomAssignment(roomAssignmentId, false, room.get());
         roomAssignmentRepository.save(roomAssignment);
+
+        nextAvailable.setStatus(BedStatus.Occupied);
+        bedRepository.save(nextAvailable);
     }
 
+    @Transactional
+    public void editNote(int hospitalId, NoteDTO noteDTO) {
+
+        Optional<Visit> visit = visitRepository.findCurrentVisitById(noteDTO.getPatientID(), hospitalId);
+        if (visit.isEmpty()) {
+            throw new EntityNotFoundException("Visit not found.");
+        }
+
+        visit.get().setVisitNote(noteDTO.getNote());
+        visitRepository.save(visit.get());
+    }
+
+    public List<VisitDTO> getVisits(int hospitalId) throws NoSuchElementException {
+
+        List<Visit> entities = visitRepository.findCurrentVisitsByHospitalId(hospitalId);
+
+        if (entities.isEmpty()) {
+            throw new NoSuchElementException("No visits found.");
+        }
+
+        List<VisitDTO> result = new ArrayList<>();
+
+        for (Visit entity : entities) {
+
+            Optional<PatientInfo> patientInfo = patientInfoRepository.findById(entity.getId().getPatientId());
+            if (patientInfo.isEmpty()) {
+                throw new NoSuchElementException("Patient not found.");
+            }
+
+            result.add(new VisitDTO(
+                entity.getId().getPatientId(),
+                entity.getId().getAdmissionDateTime().toString(),
+                patientInfo.get().getFirstName(),
+                patientInfo.get().getLastName(),
+                patientInfo.get().getDateOfBirth().toString(),
+                entity.getVisitNote()
+            ));
+        }
+
+        return result;
+    }
+
+    public List<DoctorDTO> getDoctors(int hospitalId) throws NoSuchElementException {
+
+        List<Staff> entities = staffRepository.findByHospitalAndRole(hospitalId, Role.Doctor);
+
+        if (entities.isEmpty()) {
+            throw new NoSuchElementException("No doctors found.");
+        }
+
+        List<DoctorDTO> result = new ArrayList<>();
+
+        for (Staff entity : entities) {
+            result.add(new DoctorDTO(
+                entity.getUsername(),
+                entity.getFirstName(),
+                entity.getLastName()
+            ));
+        }
+
+        return result;
+    }
+
+    public List<ServiceDTO> getServices(int hospitalId) throws NoSuchElementException {
+
+        List<com.syncura360.model.Service> entities = serviceRepository.findByHospitalId(hospitalId);
+
+        if (entities.isEmpty()) {
+            throw new NoSuchElementException("No doctors found.");
+        }
+
+        List<ServiceDTO> result = new ArrayList<>();
+
+        for (com.syncura360.model.Service entity : entities) {
+            result.add(new ServiceDTO(
+                entity.getId().getName(),
+                entity.getCategory(),
+                entity.getDescription(),
+                entity.getCost()
+            ));
+        }
+
+
+        return result;
+    }
+
+    public List<DrugFetchDTO> getDrugs(int hospitalId) throws NoSuchElementException {
+
+        List<Drug> entities = drugRepository.findAllById_HospitalId(hospitalId);
+
+        if (entities.isEmpty()) {
+            throw new NoSuchElementException("No drugs found.");
+        }
+
+        List<DrugFetchDTO> result = new ArrayList<>();
+
+        for (Drug entity : entities) {
+            result.add(new DrugFetchDTO(
+                entity.getId().getNdc(),
+                entity.getName(),
+                entity.getCategory().toString(),
+                entity.getDescription(),
+                entity.getStrength(),
+                entity.getPpq(),
+                entity.getQuantity(),
+                entity.getPrice()
+            ));
+        }
+
+        return result;
+    }
 }

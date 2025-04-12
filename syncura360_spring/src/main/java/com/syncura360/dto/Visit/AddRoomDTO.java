@@ -1,4 +1,4 @@
-package com.syncura360.controller;
+package com.syncura360.dto.Visit;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
