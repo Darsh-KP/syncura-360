@@ -2,10 +2,12 @@ package com.syncura360.repository;
 
 import com.syncura360.model.RoomAssignment;
 import com.syncura360.model.RoomAssignmentId;
+import com.syncura360.model.Visit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RoomAssignmentRepository extends JpaRepository<RoomAssignment, RoomAssignmentId> {
@@ -19,4 +21,5 @@ public interface RoomAssignmentRepository extends JpaRepository<RoomAssignment, 
             @Param("hospitalId") int hospitalId
     );
 
+    List<RoomAssignment> findAllByVisit(Visit visit);
 }

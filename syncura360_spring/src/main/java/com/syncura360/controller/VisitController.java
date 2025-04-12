@@ -8,6 +8,7 @@ import com.syncura360.security.JwtUtil;
 import com.syncura360.service.VisitService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,50 @@ public class VisitController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully started a new visit."));
+    }
+
+    @GetMapping("/{patientId}/{dateTime}")
+    public ResponseEntity<VisitDetailsDTO> getVisitDetails(
+        @RequestHeader(name="Authorization") String authorization,
+        @NotNull @PathVariable("patientId") int patientId,
+        @NotNull @PathVariable("dateTime") String dateTime)
+    {
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        VisitDetailsDTO response;
+        try {
+            response = new VisitDetailsDTO();
+            response.setTimeline(visitService.getTimeline(hospitalId, patientId));
+            response.setVisitNote(visitService.getNote(hospitalId, patientId));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new VisitDetailsDTO());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/discharge")
+    public ResponseEntity<GenericMessageResponseDTO> discharge(
+        @RequestHeader(name="Authorization") String authorization,
+        @RequestBody DischargeDTO dischargeDTO,
+        BindingResult bindingResult)
+    {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
+        }
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        try {
+            visitService.discharge(hospitalId, dischargeDTO);
+        } catch (EntityExistsException | EntityNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericMessageResponseDTO("An unexpected error occurred."));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully discharged patient."));
     }
 
     /**
@@ -251,4 +296,18 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully edited note."));
     }
 
+    @GetMapping("/rooms")
+    public ResponseEntity<RoomListDTO> getRooms(@RequestHeader(name="Authorization") String authorization) {
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        RoomListDTO response;
+        try {
+            response = new RoomListDTO(visitService.getRooms(hospitalId));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new RoomListDTO(new ArrayList<>()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

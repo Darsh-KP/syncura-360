@@ -10,7 +10,7 @@ public class AddRoomDTO {
     private int patientID;
 
     @NotNull(message="Admission time is required.")
-    private String visitAdmissionTime;
+    private String visitAdmissionDateTime;
 
     @NotNull(message="Room name is required.")
     private String roomName;
