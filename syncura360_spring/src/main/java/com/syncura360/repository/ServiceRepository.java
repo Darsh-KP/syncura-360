@@ -24,4 +24,7 @@ public interface ServiceRepository extends JpaRepository<Service, ServiceId> {
             @Param("category") String category,
             @Param("hospitalId") int hospitalId
     );
+
+    @Query("SELECT hs FROM Service hs " + "WHERE hs.hospital.id = :hospitalId")
+    List<Service> findByHospitalId(@Param("hospitalId") int hospitalId);
 }
