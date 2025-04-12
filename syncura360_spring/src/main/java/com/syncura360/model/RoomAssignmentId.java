@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.cglib.core.Local;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ public class RoomAssignmentId implements java.io.Serializable {
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "assigned_at", nullable = false)
-    private LocalDateTime assignedAt;
+    private LocalDateTime assignedAt = LocalDateTime.now();
 
     public RoomAssignmentId(Integer hospitalId, Integer patientId, LocalDateTime visitAdmissionDateTime) {
         this.hospitalId = hospitalId;
