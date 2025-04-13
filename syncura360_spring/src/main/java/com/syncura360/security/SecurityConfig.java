@@ -1,6 +1,5 @@
 package com.syncura360.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Configuration class for Spring Security settings.
@@ -28,9 +28,11 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -49,6 +51,9 @@ public class SecurityConfig {
 
                         // Patient
                         .requestMatchers("/patient", "/patient/{patient-id}").hasAnyAuthority("Doctor", "Nurse")
+
+                        // Account settings
+                        .requestMatchers("/setting/hospital", "/setting/staff", "setting/password").hasAnyAuthority("Super Admin", "Admin", "Doctor", "Nurse")
 
                         // Auth
                         .anyRequest().authenticated()
@@ -90,5 +95,4 @@ public class SecurityConfig {
 
         return source;
     }
-
 }
