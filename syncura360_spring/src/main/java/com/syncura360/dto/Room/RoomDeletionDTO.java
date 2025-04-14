@@ -14,5 +14,5 @@ import jakarta.validation.constraints.Size;
 public class RoomDeletionDTO {
     @NotNull(message = "Room name is required.")
     @Size(max = 50, message = "Max length for room name is 50 characters.")
-    String roomName;
+    private String roomName;
 }
