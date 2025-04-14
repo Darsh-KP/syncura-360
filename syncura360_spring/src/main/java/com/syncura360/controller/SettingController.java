@@ -17,7 +17,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-// TODO Javadoc!!!
+/**
+ * Controller class for managing settings related to hospital and staff accounts.
+ * Provides endpoints for modifying staff passwords and retrieving hospital/staff settings.
+ *
+ * @author Darsh-KP
+ */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/setting")
@@ -27,6 +32,14 @@ public class SettingController {
     StaffService staffService;
     PasswordService passwordService;
 
+    /**
+     * Constructs a SettingController with the required dependencies.
+     *
+     * @param jwtUtil          Utility for working with JWT tokens.
+     * @param hospitalService  Service for handling hospital-related operations.
+     * @param staffService     Service for handling staff-related operations.
+     * @param passwordService  Service for handling password-related operations.
+     */
     public SettingController(JwtUtil jwtUtil, HospitalService hospitalService, StaffService staffService, PasswordService passwordService) {
         this.jwtUtil = jwtUtil;
         this.hospitalService = hospitalService;
@@ -34,6 +47,14 @@ public class SettingController {
         this.passwordService = passwordService;
     }
 
+    /**
+     * Endpoint to modify a staff member's password.
+     *
+     * @param authorization             JWT token in the request header.
+     * @param staffPasswordChangeForm  DTO containing current and new password.
+     * @param bindingResult             Result of validating the form.
+     * @return A response entity with a status message indicating success or failure.
+     */
     @PutMapping("/password")
     public ResponseEntity<GenericMessageResponseDTO> modifyPassword(
             @RequestHeader(name="Authorization") String authorization, @Valid @RequestBody StaffPasswordChangeForm staffPasswordChangeForm, BindingResult bindingResult) {
@@ -58,6 +79,12 @@ public class SettingController {
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully updated the password."));
     }
 
+    /**
+     * Endpoint to fetch the settings of the hospital associated with the logged-in staff member.
+     *
+     * @param authorization JWT token in the request header.
+     * @return A response entity containing hospital settings or an appropriate error response.
+     */
     @GetMapping("/hospital")
     public ResponseEntity<HospitalSettingFetch> fetchHospitalSetting(
             @RequestHeader(name="Authorization") String authorization) {
@@ -78,6 +105,12 @@ public class SettingController {
         return ResponseEntity.status(HttpStatus.OK).body(hospitalSettingFetch);
     }
 
+    /**
+     * Endpoint to fetch the settings of the logged-in staff member.
+     *
+     * @param authorization JWT token in the request header.
+     * @return A response entity containing staff settings or an appropriate error response.
+     */
     @GetMapping("/staff")
     public ResponseEntity<StaffSettingFetch> fetchStaffSetting(
             @RequestHeader(name="Authorization") String authorization) {

@@ -9,14 +9,31 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+/**
+ * Service for handling operations related to staff settings and profile data retrieval.
+ *
+ * @author Darsh-KP
+ */
 @Service
 public class StaffService {
     StaffRepository staffRepository;
 
+    /**
+     * Constructs a StaffService with the given repository dependency.
+     *
+     * @param staffRepository Repository for accessing staff data.
+     */
     public StaffService(StaffRepository staffRepository) {
         this.staffRepository = staffRepository;
     }
 
+    /**
+     * Retrieves staff settings for a given username.
+     *
+     * @param username The unique username of the staff member.
+     * @return A {@link StaffSettingFetch} DTO containing staff setting details.
+     * @throws EntityNotFoundException If the staff member with the given username is not found.
+     */
     public StaffSettingFetch getStaffSetting(String username) {
         // Find the staff if they already exist
         Optional<Staff> optionalStaff = staffRepository.findByUsername(username);

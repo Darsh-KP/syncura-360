@@ -3,6 +3,12 @@ package com.syncura360.dto.Hospital;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+
+/**
+ * DTO for fetching hospital setting details such as name, address, and facility attributes.
+ *
+ * @author Darsh-KP
+ */
 @AllArgsConstructor
 @Getter
 public class HospitalSettingFetch {
