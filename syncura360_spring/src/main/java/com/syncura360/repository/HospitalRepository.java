@@ -11,8 +11,6 @@ import java.util.List;
  * @author Darsh-KP
  */
 public interface HospitalRepository extends JpaRepository<Hospital, Integer> {
-    List<Hospital> findByName(String username);
-
     List<Hospital> findByTelephone(String phone);
 
     List<Hospital> addressLine1(String address);
