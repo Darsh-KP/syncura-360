@@ -3,6 +3,11 @@ package com.syncura360.dto.Staff;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * DTO for fetching staff setting details including personal, contact, and professional information.
+ *
+ * @author Darsh-KP
+ */
 @AllArgsConstructor
 @Getter
 public class StaffSettingFetch {
