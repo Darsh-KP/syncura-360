@@ -73,7 +73,6 @@ export class AccountDetailsComponent implements OnInit {
     }
 
     this.accountService.changePassword({
-      username: this.staffInfo?.username || '',
       currentPassword: this.currentPassword,
       newPassword: this.newPassword
     }).subscribe({
