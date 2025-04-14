@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface PasswordUpdateRequest {
-  username: string;
   currentPassword: string;
   newPassword: string;
 }
@@ -40,7 +39,7 @@ export interface StaffInfo {
   postal: string;
   country: string;
   specialty: string;
-  years_experience: number;
+  yearsExperience: number;
 }
 
 @Injectable({
@@ -70,7 +69,7 @@ export class AccountSettingsService {
       headers: this.getHeaders()
     });
   }
-  
+
   getStaffInfo(): Observable<StaffInfo> {
     return this.http.get<StaffInfo>(`${this.baseUrl}/staff`, {
       headers: this.getHeaders()
