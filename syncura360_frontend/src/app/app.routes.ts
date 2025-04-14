@@ -5,6 +5,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterPatientComponent} from './components/nurse-maint/register-patient/register-patient.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SchedulingComponent } from './components/scheduling/scheduling.component';
+import { PatientListComponent } from './components/patient-list/patient-list.component';
 import {InventoryComponent} from './components/inventory/inventory.component';
 import { RoomManagementComponent } from './components/room-management/room-management.component';
 import { NurseScheduleComponent} from './components/nurse-maint/nurse-schedule/nurse-schedule.component';
@@ -26,7 +27,14 @@ export const routes: Routes = [
   // nurse routes
   {path: 'nurse', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse']} },
   {path: 'schedule', component: NurseScheduleComponent, canActivate: [AuthGuard], data: {roles:['Nurse']} },
-  
+  { path: 'view-patients', component: PatientListComponent, canActivate: [AuthGuard], data: { roles: ['Nurse']} },
+  {
+    path: 'register-patient',
+    component: RegisterPatientComponent,
+    canActivate: [AuthGuard],
+    data: {roles:['Nurse']}
+  },
+
   // doctor routes
   {path: 'doctor', component: DoctorScheduleComponent, canActivate: [AuthGuard], data: {roles:['Doctor']} },
 
