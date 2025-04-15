@@ -1,0 +1,39 @@
+<div class="p-6 w-full max-w-2xl mx-auto overflow-auto">
+  <h2 class="text-2xl font-semibold text-gray-700 mb-6 text-center">
+    {{ isEditing ? 'Edit Visit' : 'Create New Visit' }}
+  </h2>
+
+  <form [formGroup]="visitForm" (ngSubmit)="submit()" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Patient ID</mat-label>
+      <input matInput formControlName="patientID" type="text" inputmode="numeric" pattern="[0-9]*" required>
+      <mat-error *ngIf="visitForm.get('patientID')?.hasError('required')">
+        Patient ID is required
+      </mat-error>
+      <mat-error *ngIf="visitForm.get('patientID')?.hasError('pattern') || visitForm.get('patientID')?.hasError('min')">
+        Enter a valid, numeric ID
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="w-full md:col-span-2">
+      <mat-label>Reason for Visit</mat-label>
+      <textarea matInput formControlName="reasonForVisit" rows="3"></textarea>
+      <mat-hint>Optional but helpful</mat-hint>
+    </mat-form-field>
+
+    <!-- Buttons -->
+    <div class="flex gap-4 col-span-2 justify-center">
+      <button mat-raised-button color="primary" type="submit" [disabled]="visitForm.invalid || loading">
+        {{ isEditing ? 'Update' : 'Add' }} Visit
+      </button>
+      <button mat-raised-button color="warn" type="button" (click)="dialogRef.close()">
+        Cancel
+      </button>
+    </div>
+
+  </form>
+
+  <p *ngIf="createVisitError" class="text-red-600 text-center pt-4">{{ createVisitError }}</p>
+</div>
