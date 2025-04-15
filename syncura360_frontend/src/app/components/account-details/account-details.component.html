@@ -1,0 +1,100 @@
+<div class="relative min-h-screen bg-gray-50 pt-8 px-4 sm:px-8 md:px-12 lg:pl-64 lg:pr-72 flex flex-col gap-8">
+
+    <!-- Navbar -->
+    <div class="hidden lg:block fixed left-0 top-0 h-screen w-64">
+      <app-navbar></app-navbar>
+    </div>
+
+    <!-- Page Heading -->
+    <div class="space-y-1">
+      <h1 class="text-4xl text-gray-800 tracking-tight">Account Details</h1>
+      <p class="text-base text-gray-500">View your hospital and personal account details</p>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Hospital Info -->
+      <mat-card class="p-6 rounded-xl shadow-md bg-white">
+        <h2 class="text-2xl font-semibold text-blue-700 mb-4">🏥 Hospital Info</h2>
+        <div *ngIf="hospitalInfo; else loadingHospital" class="space-y-2 text-gray-700">
+          <p><strong>Name:</strong> {{ hospitalInfo.hospitalName }}</p>
+          <p><strong>Type:</strong> {{ hospitalInfo.type }}</p>
+          <p><strong>Trauma Level:</strong> {{ hospitalInfo.traumaLevel }}</p>
+          <p><strong>Helipad:</strong> {{ hospitalInfo.hasHelipad ? 'Yes' : 'No' }}</p>
+          <p><strong>Phone:</strong> {{ hospitalInfo.telephone }}</p>
+          <p><strong>Address:</strong><br>
+            {{ hospitalInfo.addressLine1 }}<br>
+            {{ hospitalInfo.addressLine2 }}<br>
+            {{ hospitalInfo.city }}, {{ hospitalInfo.state }} {{ hospitalInfo.postal }}
+          </p>
+        </div>
+        <ng-template #loadingHospital>
+          <p class="text-gray-400 italic">Loading hospital information...</p>
+        </ng-template>
+      </mat-card>
+
+      <!-- Staff Info -->
+      <mat-card class="p-6 rounded-xl shadow-md bg-white">
+        <h2 class="text-2xl font-semibold text-green-700 mb-4">👤 Staff Info</h2>
+        <div *ngIf="staffInfo; else loadingStaff" class="space-y-2 text-gray-700">
+          <p><strong>Username:</strong> {{ staffInfo.username }}</p>
+          <p><strong>Name:</strong> {{ staffInfo.firstName }} {{ staffInfo.lastName }}</p>
+          <p><strong>Email:</strong> {{ staffInfo.email }}</p>
+          <p><strong>Phone:</strong> {{ staffInfo.phone }}</p>
+          <p><strong>DOB:</strong> {{ staffInfo.dateOfBirth }}</p>
+          <p><strong>Role:</strong> {{ staffInfo.role }}</p>
+          <p><strong>Specialty:</strong> {{ staffInfo.specialty }}</p>
+          <p><strong>Experience:</strong> {{ staffInfo.yearsExperience }} years</p>
+          <p><strong>Address:</strong><br>
+            {{ staffInfo.addressLine1 }}<br>
+            {{ staffInfo.addressLine2 }}<br>
+            {{ staffInfo.city }}, {{ staffInfo.state }} {{ staffInfo.postal }}, {{ staffInfo.country }}
+          </p>
+
+          <button mat-raised-button color="primary" (click)="openPasswordDialog()"
+            class="mt-4 bg-blue-600 text-white hover:bg-blue-700 transition-all">
+            Change Password
+          </button>
+        </div>
+        <ng-template #loadingStaff>
+          <p class="text-gray-400 italic">Loading staff information...</p>
+        </ng-template>
+      </mat-card>
+
+    </div>
+
+    <!-- Change Password Dialog -->
+    <ng-template #passwordDialog>
+      <div class="p-6 space-y-4 bg-white rounded-xl shadow-xl w-96">
+
+        <h2 class="text-xl font-semibold text-gray-800">🔐 Change Password</h2>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Current Password</mat-label>
+          <input matInput type="password" [(ngModel)]="currentPassword" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>New Password</mat-label>
+          <input matInput type="password" [(ngModel)]="newPassword" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Confirm New Password</mat-label>
+          <input matInput type="password" [(ngModel)]="confirmPassword" required>
+        </mat-form-field>
+
+        <div *ngIf="passwordChangeMessage" class="text-sm text-red-600 italic">
+          {{ passwordChangeMessage }}
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button mat-raised-button color="primary" (click)="changePassword()"
+            class="flex-1 bg-blue-600 text-white hover:bg-blue-700">Save</button>
+          <button mat-stroked-button color="warn" (click)="closeDialog()" class="flex-1">Cancel</button>
+        </div>
+      </div>
+    </ng-template>
+
+  </div>
