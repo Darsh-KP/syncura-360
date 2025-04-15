@@ -44,8 +44,8 @@
           <p><strong>Phone:</strong> {{ staffInfo.phone }}</p>
           <p><strong>DOB:</strong> {{ staffInfo.dateOfBirth }}</p>
           <p><strong>Role:</strong> {{ staffInfo.role }}</p>
-          <p><strong>Specialty:</strong> {{ staffInfo.specialty }}</p>
-          <p><strong>Experience:</strong> {{ staffInfo.yearsExperience }} years</p>
+          <p><strong>Specialty:</strong> {{ staffInfo.specialty ? staffInfo.specialty : 'N/A' }}</p>
+          <p><strong>Experience:</strong> {{ staffInfo.yearsExperience !== null ? staffInfo.yearsExperience + ' years' : 'N/A' }}</p>          
           <p><strong>Address:</strong><br>
             {{ staffInfo.addressLine1 }}<br>
             {{ staffInfo.addressLine2 }}<br>
@@ -68,22 +68,31 @@
     <ng-template #passwordDialog>
       <div class="p-6 space-y-4 bg-white rounded-xl shadow-xl w-96">
 
-        <h2 class="text-xl font-semibold text-gray-800">🔐 Change Password</h2>
+        <h2 class="text-xl font-semibold text-gray-800 mb-20">🔐 Change Password</h2>
 
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Current Password</mat-label>
-          <input matInput type="password" [(ngModel)]="currentPassword" required>
+          <input matInput type="password" [(ngModel)]="currentPassword" >
         </mat-form-field>
 
+        <!-- New Password -->
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>New Password</mat-label>
-          <input matInput type="password" [(ngModel)]="newPassword" required>
+          <input matInput [type]="passwordVisibleNew ? 'text' : 'password'" [(ngModel)]="newPassword" required>
+          <button mat-icon-button matSuffix (click)="togglePasswordNew()" type="button">
+            <mat-icon>{{ passwordVisibleNew ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
 
+        <!-- Confirm New Password -->
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Confirm New Password</mat-label>
-          <input matInput type="password" [(ngModel)]="confirmPassword" required>
+          <input matInput [type]="passwordVisibleConfirm ? 'text' : 'password'" [(ngModel)]="confirmPassword" required>
+          <button mat-icon-button matSuffix (click)="togglePasswordConfirm()" type="button">
+            <mat-icon>{{ passwordVisibleConfirm ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
+
 
         <div *ngIf="passwordChangeMessage" class="text-sm text-red-600 italic">
           {{ passwordChangeMessage }}

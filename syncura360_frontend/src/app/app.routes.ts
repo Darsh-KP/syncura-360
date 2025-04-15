@@ -22,23 +22,18 @@ export const routes: Routes = [
   { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin']} },
   { path: 'service-mgmt', component: ServiceMgmtComponent, canActivate: [AuthGuard] },
   {path: 'room-management', component: RoomManagementComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin']} },
-  {path: 'account-details', component: AccountDetailsComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin']} },
+  {path: 'account-details', component: AccountDetailsComponent, canActivate: [AuthGuard],  data: {roles:['Super Admin','Admin', 'Nurse', 'Doctor']} },
 
   // nurse routes
   {path: 'nurse', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse']} },
   {path: 'schedule', component: NurseScheduleComponent, canActivate: [AuthGuard], data: {roles:['Nurse']} },
   { path: 'view-patients', component: PatientListComponent, canActivate: [AuthGuard], data: { roles: ['Nurse']} },
-  {
-    path: 'register-patient',
-    component: RegisterPatientComponent,
-    canActivate: [AuthGuard],
-    data: {roles:['Nurse']}
-  },
+  {path: 'register-patient', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse']}},
 
   // doctor routes
   {path: 'doctor', component: DoctorScheduleComponent, canActivate: [AuthGuard], data: {roles:['Doctor']} },
 
-
+  // doctor/nurse routes
   {path: 'room', component: RoomViewComponent, canActivate: [AuthGuard], data: {roles:['Nurse', 'Doctor']} },
 
 ];

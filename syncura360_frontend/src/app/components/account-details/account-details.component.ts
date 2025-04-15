@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { AccountSettingsService, HospitalInfo, StaffInfo } from '../../services/account-settings.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-account-details',
@@ -20,7 +21,8 @@ import { AccountSettingsService, HospitalInfo, StaffInfo } from '../../services/
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule
+    FormsModule,
+    MatIconModule
   ],
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.css']
@@ -34,6 +36,8 @@ export class AccountDetailsComponent implements OnInit {
   newPassword: string = '';
   confirmPassword: string = '';
   passwordChangeMessage: string = '';
+  passwordVisibleNew: boolean = false;
+  passwordVisibleConfirm: boolean = false;
 
   @ViewChild('passwordDialog') passwordDialog!: TemplateRef<any>;
 
@@ -67,11 +71,42 @@ export class AccountDetailsComponent implements OnInit {
   }
 
   changePassword() {
+    // Trim and update the values directly
+    this.currentPassword = this.currentPassword.trim();
+    this.newPassword = this.newPassword.trim();
+    this.confirmPassword = this.confirmPassword.trim();
+  
+    // Validate: current password not empty
+    if (!this.currentPassword) {
+      this.passwordChangeMessage = "Enter current password.";
+      return;
+    }
+  
+    // Validate: new password not empty
+    if (!this.newPassword) {
+      this.passwordChangeMessage = "Enter a new password.";
+      return;
+    }
+  
+    // Validate: confirm new password not empty
+    if (!this.confirmPassword) {
+      this.passwordChangeMessage = "Confirm your new password.";
+      return;
+    }
+  
+    // Validate: new password matches confirmation
     if (this.newPassword !== this.confirmPassword) {
       this.passwordChangeMessage = "New passwords don't match.";
       return;
     }
+  
+    // Validate: check that new password is different from the current password
+    if (this.currentPassword === this.newPassword) {
+      this.passwordChangeMessage = "New password must be different from the current password.";
+      return;
+    }
 
+    // All validations passed
     this.accountService.changePassword({
       currentPassword: this.currentPassword,
       newPassword: this.newPassword
@@ -84,9 +119,20 @@ export class AccountDetailsComponent implements OnInit {
         this.passwordChangeMessage = err?.error?.message || 'Password change failed.';
       }
     });
-  }
+  }  
+  
+  
 
   closeDialog() {
     this.dialog.closeAll();
   }
+
+  togglePasswordNew() {
+    this.passwordVisibleNew = !this.passwordVisibleNew;
+  }
+  
+  togglePasswordConfirm() {
+    this.passwordVisibleConfirm = !this.passwordVisibleConfirm;
+  }
+  
 }
