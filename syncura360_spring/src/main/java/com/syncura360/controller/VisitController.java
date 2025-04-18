@@ -231,8 +231,8 @@ public class VisitController {
         VisitDetailsDTO response;
         try {
             response = new VisitDetailsDTO();
-            response.setTimeline(visitService.getTimeline(hospitalId, patientId));
-            response.setVisitNote(visitService.getNote(hospitalId, patientId));
+            response.setTimeline(visitService.getTimeline(hospitalId, patientId, dateTime, false));
+            response.setVisitNote(visitService.getNote(hospitalId, patientId, dateTime, false));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new VisitDetailsDTO());
         }

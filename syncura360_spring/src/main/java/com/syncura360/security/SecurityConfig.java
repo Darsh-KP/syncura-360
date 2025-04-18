@@ -35,7 +35,9 @@ public class SecurityConfig {
                         // User Auth
                         .requestMatchers("/", "/register/**", "/login").permitAll()
 
-                        .requestMatchers("/visit/**").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
+                        .requestMatchers("/record/**").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
+
+                        .requestMatchers("/visit/**").hasAnyAuthority("Doctor", "Nurse")
 
                         .requestMatchers("/schedule/staff").hasAnyAuthority("Admin", "Super Admin", "Doctor", "Nurse")
                         .requestMatchers("/staff/**", "/test_auth", "/staff", "/schedule/**", "/schedule", "/drug", "/service/**", "/service").hasAnyAuthority("Admin", "Super Admin")

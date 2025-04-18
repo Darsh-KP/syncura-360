@@ -1,18 +1,8 @@
 package com.syncura360.service;
 
-import com.syncura360.dto.Visit.RoomDTO;
-import com.syncura360.dto.Visit.DeleteRoomDTO;
-import com.syncura360.dto.Visit.DischargeDTO;
-import com.syncura360.dto.Visit.TimelineElementDTO;
-import com.syncura360.dto.Visit.AddRoomDTO;
-import com.syncura360.dto.Visit.DoctorDTO;
-import com.syncura360.dto.Visit.NoteDTO;
-import com.syncura360.dto.Visit.VisitDTO;
+import com.syncura360.dto.Visit.*;
 import com.syncura360.dto.Drug.DrugFetchDTO;
 import com.syncura360.dto.Service.ServiceDTO;
-import com.syncura360.dto.Visit.AddDrugDTO;
-import com.syncura360.dto.Visit.AddServiceDTO;
-import com.syncura360.dto.Visit.VisitCreationDTO;
 import com.syncura360.model.*;
 import com.syncura360.model.enums.BedStatus;
 import com.syncura360.model.enums.Role;
@@ -55,9 +45,16 @@ public class VisitService {
      * Retrieve note associated with given visit.
      * @return String visitNote.
      */
-    public String getNote(int hospitalId, int patientId) {
+    public String getNote(int hospitalId, int patientId, String admissionDateTime, boolean record) {
 
-        Optional<Visit> optionalVisit = visitRepository.findCurrentVisitById(patientId, hospitalId);
+        Optional<Visit> optionalVisit;
+
+        if (record) {
+            optionalVisit = visitRepository.findRecordById(patientId, hospitalId, LocalDateTime.parse(admissionDateTime));
+        } else {
+            optionalVisit = visitRepository.findCurrentVisitById(patientId, hospitalId);
+        }
+
         if (optionalVisit.isEmpty()) {
             throw new EntityNotFoundException("Patient visit not found.");
         }
@@ -69,9 +66,16 @@ public class VisitService {
      * Retrieve all visit events summarized in timeline.
      * @return TimelineElementDTO
      */
-    public List<TimelineElementDTO> getTimeline(int hospitalId, int patientId) {
+    public List<TimelineElementDTO> getTimeline(int hospitalId, int patientId, String admissionDateTime, boolean record) {
 
-        Optional<Visit> optionalVisit = visitRepository.findCurrentVisitById(patientId, hospitalId);
+        Optional<Visit> optionalVisit;
+
+        if (record) {
+            optionalVisit = visitRepository.findRecordById(patientId, hospitalId, LocalDateTime.parse(admissionDateTime));
+        } else {
+            optionalVisit = visitRepository.findCurrentVisitById(patientId, hospitalId);
+        }
+
         if (optionalVisit.isEmpty()) {
             throw new EntityNotFoundException("Patient visit not found.");
         }
@@ -122,6 +126,16 @@ public class VisitService {
                 roomAssignment.getId().getAssignedAt().toString(),
                 "Assigned to " + roomAssignment.getRoomName(),
                 "..."
+            ));
+        }
+
+        // if record get discharge date
+
+        if (record) {
+            timeline.add(new TimelineElementDTO(
+                visit.getDischargeDateTime().toString(),
+                "Patient discharged.",
+                "Note: " + visit.getVisitNote()
             ));
         }
 
@@ -378,6 +392,40 @@ public class VisitService {
                 patientInfo.get().getLastName(),
                 patientInfo.get().getDateOfBirth().toString(),
                 entity.getVisitNote()
+            ));
+        }
+
+        return result;
+    }
+
+    /**
+     * Get a list of all visit records. Can be further queried individually.
+     */
+    public List<RecordDTO> getRecords(int hospitalId) throws NoSuchElementException {
+
+        List<Visit> entities = visitRepository.findRecordsByHospitalId(hospitalId);
+
+        if (entities.isEmpty()) {
+            throw new NoSuchElementException("No visits found.");
+        }
+
+        List<RecordDTO> result = new ArrayList<>();
+
+        for (Visit entity : entities) {
+
+            Optional<PatientInfo> patientInfo = patientInfoRepository.findById(entity.getId().getPatientId());
+            if (patientInfo.isEmpty()) {
+                throw new NoSuchElementException("Patient not found.");
+            }
+
+            result.add(new RecordDTO(
+                    entity.getId().getPatientId(),
+                    entity.getId().getAdmissionDateTime().toString(),
+                    patientInfo.get().getFirstName(),
+                    patientInfo.get().getLastName(),
+                    patientInfo.get().getDateOfBirth().toString(),
+                    entity.getVisitNote(),
+                    entity.getDischargeDateTime().toString()
             ));
         }
 
