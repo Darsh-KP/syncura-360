@@ -63,27 +63,13 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully started a new visit."));
     }
 
-    @GetMapping("/{patientId}/{dateTime}")
-    public ResponseEntity<VisitDetailsDTO> getVisitDetails(
-        @RequestHeader(name="Authorization") String authorization,
-        @NotNull @PathVariable("patientId") int patientId,
-        @NotNull @PathVariable("dateTime") String dateTime)
-    {
-
-        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
-
-        VisitDetailsDTO response;
-        try {
-            response = new VisitDetailsDTO();
-            response.setTimeline(visitService.getTimeline(hospitalId, patientId));
-            response.setVisitNote(visitService.getNote(hospitalId, patientId));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new VisitDetailsDTO());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
+    /**
+     * Attempt to discharge a patient.
+     * @param authorization JWT header.
+     * @param dischargeDTO DTO to model incoming discharge request.
+     * @param bindingResult Result of parsing request.
+     * @return GenericMessageResponseDTO indicating result of action.
+     */
     @PostMapping("/discharge")
     public ResponseEntity<GenericMessageResponseDTO> discharge(
         @RequestHeader(name="Authorization") String authorization,
@@ -167,6 +153,13 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added drug."));
     }
 
+    /**
+     * Attempt to add a room to a visit.
+     * @param authorization JWT header.
+     * @param addRoomDTO DTO to model incoming room addition request.
+     * @param bindingResult Result of parsing request.
+     * @return GenericMessageResponseDTO indicating result of action.
+     */
     @PostMapping("/room")
     public ResponseEntity<GenericMessageResponseDTO> addRoom(
         @RequestHeader(name="Authorization") String authorization,
@@ -190,6 +183,13 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new GenericMessageResponseDTO("Successfully added room to visit."));
     }
 
+    /**
+     * Attempts to remove a patient from a room.
+     * @param authorization JWT header.
+     * @param deleteRoomDTO DTO to model removal request.
+     * @param bindingResult Result of parsing request.
+     * @return GenericMessageResponseDTO indicating result of request.
+     */
     @DeleteMapping("/room")
     public ResponseEntity<GenericMessageResponseDTO> removeRoom(
             @RequestHeader(name="Authorization") String authorization,
@@ -213,6 +213,38 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully removed patient from room."));
     }
 
+    /**
+     * Attempt to retrieve details of a given visit.
+     * @param authorization JWT header.
+     * @param patientId ID of patient for visit lookup.
+     * @param dateTime Admission date time for visit lookup.
+     * @return VisitDetailsDTO DTO to containerize visit timeline and visit note.
+     */
+    @GetMapping("/{patientId}/{dateTime}")
+    public ResponseEntity<VisitDetailsDTO> getVisitDetails(
+            @RequestHeader(name="Authorization") String authorization,
+            @NotNull @PathVariable("patientId") int patientId,
+            @NotNull @PathVariable("dateTime") String dateTime)
+    {
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        VisitDetailsDTO response;
+        try {
+            response = new VisitDetailsDTO();
+            response.setTimeline(visitService.getTimeline(hospitalId, patientId));
+            response.setVisitNote(visitService.getNote(hospitalId, patientId));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new VisitDetailsDTO());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * Get a list of currently ongoing visits.
+      * @param authorization JWT header.
+     * @return VisitListDTO to model response.
+     */
     @GetMapping
     public ResponseEntity<VisitListDTO> getVisits(@RequestHeader(name="Authorization") String authorization) {
 
@@ -228,6 +260,11 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * Get a list of doctors at users hospital.
+     * @param authorization JWT header.
+     * @return DoctorListDTO to model response.
+     */
     @GetMapping("/doctors")
     public ResponseEntity<DoctorListDTO> getDoctors(@RequestHeader(name="Authorization") String authorization) {
 
@@ -243,6 +280,11 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * Get a list of doctors at users hospital.
+     * @param authorization JWT header.
+     * @return DoctorListDTO to model response.
+     */
     @GetMapping("/services")
     public ResponseEntity<ServiceListDTO> getServices(@RequestHeader(name="Authorization") String authorization) {
 
@@ -258,6 +300,11 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * Get a list of drugs at users hospital.
+     * @param authorization JWT header.
+     * @return DrugFetchListDTO to model response.
+     */
     @GetMapping("/drugs")
     public ResponseEntity<DrugFetchListDTO> getDrugs(@RequestHeader(name="Authorization") String authorization) {
 
@@ -273,11 +320,38 @@ public class VisitController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    /**
+     * Get list of available rooms.
+     * @param authorization JWT header.
+     * @return RoomListDTO to model room list.
+     */
+    @GetMapping("/rooms")
+    public ResponseEntity<RoomListDTO> getRooms(@RequestHeader(name="Authorization") String authorization) {
+
+        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
+
+        RoomListDTO response;
+        try {
+            response = new RoomListDTO(visitService.getRooms(hospitalId));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new RoomListDTO(new ArrayList<>()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * Attempt to modify visit note.
+     * @param authorization JWT header.
+     * @param noteDTO DTO to model incoming note request.
+     * @param bindingResult Result of parsing request.
+     * @return GenericMessageResponseDTO to indicate result of request.
+     */
     @PutMapping("/note")
     public ResponseEntity<GenericMessageResponseDTO> editNote(
-        @RequestHeader(name="Authorization") String authorization,
-        @RequestBody NoteDTO noteDTO,
-        BindingResult bindingResult)
+            @RequestHeader(name="Authorization") String authorization,
+            @RequestBody NoteDTO noteDTO,
+            BindingResult bindingResult)
     {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GenericMessageResponseDTO("Invalid request: " + ErrorConvertor.convertErrorsToString(bindingResult)));
@@ -294,20 +368,5 @@ public class VisitController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new GenericMessageResponseDTO("Successfully edited note."));
-    }
-
-    @GetMapping("/rooms")
-    public ResponseEntity<RoomListDTO> getRooms(@RequestHeader(name="Authorization") String authorization) {
-
-        int hospitalId = Integer.parseInt(jwtUtil.getHospitalID(authorization));
-
-        RoomListDTO response;
-        try {
-            response = new RoomListDTO(visitService.getRooms(hospitalId));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new RoomListDTO(new ArrayList<>()));
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
