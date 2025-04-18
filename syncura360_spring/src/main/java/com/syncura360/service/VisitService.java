@@ -98,9 +98,11 @@ public class VisitService {
         for (ServiceProvided serviceProvided : servicesProvided) {
             timeline.add(new TimelineElementDTO(
                 serviceProvided.getId().getProvidedAt().toString(),
-                serviceProvided.getServiceName(),
-                "Performed by " + serviceProvided.getPerformedBy().getFirstName()
+                serviceProvided.getServiceName() + " Performed",
+                "Performed by: " + serviceProvided.getPerformedBy().getFirstName()
                 + " " + serviceProvided.getPerformedBy().getLastName()
+                + ". Price: $" + serviceProvided.getService().getCost()
+                + ". Category: " + serviceProvided.getService().getCategory() + ". "
             ));
         }
 
@@ -111,9 +113,13 @@ public class VisitService {
         for (DrugAdministered drugAdministered : drugsAdministered) {
             timeline.add(new TimelineElementDTO(
                 drugAdministered.getId().getAdministeredAt().toString(),
-                drugAdministered.getDrug().getName(),
-                "Administered by " + drugAdministered.getAdministeredBy().getFirstName()
+                drugAdministered.getDrug().getName() + " Administered",
+                "Administered by: " + drugAdministered.getAdministeredBy().getFirstName()
                 + " " + drugAdministered.getAdministeredBy().getLastName()
+                + ". Name: " + drugAdministered.getDrug().getName()
+                + ". Strength: " + drugAdministered.getDrug().getStrength()
+                + ". Quantity: " + drugAdministered.getQuantity()
+                + ". Cost: $" + drugAdministered.getDrug().getPrice().longValue() * drugAdministered.getQuantity()
             ));
         }
 
@@ -125,7 +131,7 @@ public class VisitService {
             timeline.add(new TimelineElementDTO(
                 roomAssignment.getId().getAssignedAt().toString(),
                 "Assigned to " + roomAssignment.getRoomName(),
-                "..."
+                "Department: " + roomAssignment.getRoom().getDepartment()
             ));
         }
 
@@ -259,8 +265,12 @@ public class VisitService {
             throw new EntityNotFoundException("Drug not found.");
         }
 
+        if (addDrugDTO.getQuantity() <= 0) {
+            addDrugDTO.setQuantity(1);
+        }
+
         DrugAdministered drugAdministered = new DrugAdministered(
-            drugAdministeredId, drug.get(), staff.get()
+            drugAdministeredId, drug.get(), staff.get(), addDrugDTO.getQuantity()
         );
 
         drugAdministeredRepository.save(drugAdministered);
