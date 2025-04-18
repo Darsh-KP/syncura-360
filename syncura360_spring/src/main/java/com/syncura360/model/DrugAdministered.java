@@ -41,10 +41,14 @@ public class DrugAdministered {
     @Column(name = "drug_ndc", insertable = true, updatable = false, nullable = false)
     private final Long drug_ndc;
 
-    public DrugAdministered(DrugAdministeredId id, Drug drug, Staff administeredBy) {
+    @Column(name = "quantity", insertable = true, updatable = false, nullable = false)
+    private final int quantity;
+
+    public DrugAdministered(DrugAdministeredId id, Drug drug, Staff administeredBy, int quantity) {
         this.id = id;
         this.drug = drug;
         this.administeredBy = administeredBy;
         this.drug_ndc = drug.getId().getNdc();
+        this.quantity = quantity;
     }
 }
