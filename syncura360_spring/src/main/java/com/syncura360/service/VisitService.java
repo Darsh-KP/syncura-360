@@ -51,6 +51,10 @@ public class VisitService {
     @Autowired
     BedRepository bedRepository;
 
+    /**
+     * Retrieve note associated with given visit.
+     * @return String visitNote.
+     */
     public String getNote(int hospitalId, int patientId) {
 
         Optional<Visit> optionalVisit = visitRepository.findCurrentVisitById(patientId, hospitalId);
@@ -61,6 +65,10 @@ public class VisitService {
         return optionalVisit.get().getVisitNote();
     }
 
+    /**
+     * Retrieve all visit events summarized in timeline.
+     * @return TimelineElementDTO
+     */
     public List<TimelineElementDTO> getTimeline(int hospitalId, int patientId) {
 
         Optional<Visit> optionalVisit = visitRepository.findCurrentVisitById(patientId, hospitalId);
@@ -145,6 +153,9 @@ public class VisitService {
         visitRepository.save(visit);
     }
 
+    /**
+     * Discharge patient from visit. Sets discharged date, removes current room assignments if any exist.
+     */
     @Transactional
     public void discharge(int hospitalId, DischargeDTO dischargeDTO) {
 
@@ -241,6 +252,9 @@ public class VisitService {
         drugAdministeredRepository.save(drugAdministered);
     }
 
+    /**
+     * Remove a patient from a room.
+     */
     @Transactional
     public void removeRoom(int hospitalId, DeleteRoomDTO deleteRoomDTO) {
 
@@ -276,6 +290,9 @@ public class VisitService {
         bedRepository.save(occupied);
     }
 
+    /**
+     * Add a patient to a room.
+     */
     @Transactional
     public void addRoom(int hospitalId, AddRoomDTO addRoomDTO) throws DateTimeParseException {
 
@@ -319,6 +336,9 @@ public class VisitService {
         bedRepository.save(nextAvailable);
     }
 
+    /**
+     * Edit the visitNote field.
+     */
     @Transactional
     public void editNote(int hospitalId, NoteDTO noteDTO) {
 
@@ -331,6 +351,9 @@ public class VisitService {
         visitRepository.save(visit.get());
     }
 
+    /**
+     * Get a list of all visit records. Can be further queried individually.
+     */
     public List<VisitDTO> getVisits(int hospitalId) throws NoSuchElementException {
 
         List<Visit> entities = visitRepository.findCurrentVisitsByHospitalId(hospitalId);
@@ -361,6 +384,9 @@ public class VisitService {
         return result;
     }
 
+    /**
+     * Get the doctors available at the hospital.
+     */
     public List<DoctorDTO> getDoctors(int hospitalId) throws NoSuchElementException {
 
         List<Staff> entities = staffRepository.findByHospitalAndRole(hospitalId, Role.Doctor);
@@ -382,6 +408,9 @@ public class VisitService {
         return result;
     }
 
+    /**
+     * Get services available at the hospital.
+     */
     public List<ServiceDTO> getServices(int hospitalId) throws NoSuchElementException {
 
         List<com.syncura360.model.Service> entities = serviceRepository.findByHospitalId(hospitalId);
@@ -405,6 +434,9 @@ public class VisitService {
         return result;
     }
 
+    /**
+     * Get a list of available drugs at the hospital.
+     */
     public List<DrugFetchDTO> getDrugs(int hospitalId) throws NoSuchElementException {
 
         List<Drug> entities = drugRepository.findAllById_HospitalId(hospitalId);
@@ -431,6 +463,9 @@ public class VisitService {
         return result;
     }
 
+    /**
+     * Get list of available rooms at hospital.
+     */
     public List<RoomDTO> getRooms(int hospitalID) throws NoSuchElementException {
 
         List<Room> entities = roomRepository.findById_HospitalId(hospitalID);
