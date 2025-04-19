@@ -7,6 +7,7 @@ import com.syncura360.model.*;
 import com.syncura360.model.enums.BedStatus;
 import com.syncura360.model.enums.Role;
 import com.syncura360.repository.*;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -150,7 +151,7 @@ public class VisitService {
     }
 
     /**
-     * Attempt to create start a new visit.
+     * Attempt to start a new visit.
      * @param hospitalId Hospital the patient is visiting.
      * @param visitCreationDTO DTO to model incoming visit creation request.
      */
@@ -241,7 +242,7 @@ public class VisitService {
      * @param addDrugDTO DTO to model incoming drug addition request.
      */
     @Transactional
-    public void addDrug(int hospitalId, AddDrugDTO addDrugDTO) throws DateTimeParseException {
+    public void addDrug(int hospitalId, AddDrugDTO addDrugDTO) throws DateTimeParseException, EntityNotFoundException {
 
         Optional<Visit> visit = visitRepository.findCurrentVisitById(addDrugDTO.getPatientID(), hospitalId);
         if (visit.isEmpty()) {
@@ -263,10 +264,16 @@ public class VisitService {
         Optional<Drug> drug = drugRepository.findById(drugId);
         if (drug.isEmpty()) {
             throw new EntityNotFoundException("Drug not found.");
+        } else if (drug.get().getQuantity() == 0) {
+            throw new EntityNotFoundException("The drug is not currently in inventory.");
         }
 
-        if (addDrugDTO.getQuantity() <= 0) {
-            addDrugDTO.setQuantity(1);
+        // set value to default if null int type or invalid quantity
+        if (addDrugDTO.getQuantity() <= 0) { addDrugDTO.setQuantity(1); }
+
+        // check if enough drug in inventory
+        if (addDrugDTO.getQuantity() < drug.get().getQuantity()) {
+            throw new EntityNotFoundException("Not enough in inventory to administer this amount.");
         }
 
         DrugAdministered drugAdministered = new DrugAdministered(
@@ -274,6 +281,11 @@ public class VisitService {
         );
 
         drugAdministeredRepository.save(drugAdministered);
+
+        // Once drug has been administered, decrement inventory count by the administered quantity.
+        Drug drugEntity = drug.get();
+        drugEntity.setQuantity(drugEntity.getQuantity() - addDrugDTO.getQuantity());
+        drugRepository.save(drugEntity);
     }
 
     /**
@@ -497,7 +509,7 @@ public class VisitService {
      */
     public List<DrugFetchDTO> getDrugs(int hospitalId) throws NoSuchElementException {
 
-        List<Drug> entities = drugRepository.findAllById_HospitalId(hospitalId);
+        List<Drug> entities = drugRepository.findAllAvailableAtHospital(hospitalId);
 
         if (entities.isEmpty()) {
             throw new NoSuchElementException("No drugs found.");
