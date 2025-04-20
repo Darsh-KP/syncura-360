@@ -23,13 +23,15 @@ describe('AuthGuard', () => {
 
   it('should allow access when token is present', () => {
     spyOn(localStorage, 'getItem').and.returnValue('mockToken'); // Simulate token presence
-    expect(authGuard.canActivate()).toBeTrue();
+    const mockRoute = {} as any; // minimal mock, update as needed
+    expect(authGuard.canActivate(mockRoute)).toBeTrue();
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 
   it('should deny access and redirect to login when token is missing', () => {
     spyOn(localStorage, 'getItem').and.returnValue(null); // Simulate no token
-    expect(authGuard.canActivate()).toBeFalse();
+    const mockRoute = {} as any; // minimal mock, update as needed
+    expect(authGuard.canActivate(mockRoute)).toBeFalse();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
   });
 });
