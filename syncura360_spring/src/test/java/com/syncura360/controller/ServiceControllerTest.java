@@ -1,4 +1,4 @@
-package com.syncura360.Ben;
+package com.syncura360.controller;
 
 public class ServiceControllerTest {
 }
