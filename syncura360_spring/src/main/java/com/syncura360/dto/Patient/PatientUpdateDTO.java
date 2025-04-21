@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public class PatientUpdateDTO {
     @NotNull(message = "Patient ID cannot be null.")
-    private Integer id;
+    private Integer patientId;
 
     @NotNull(message = "First name cannot be null.")
     @Size(max = 50, message = "First name cannot be longer than 50 characters.")

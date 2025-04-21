@@ -132,7 +132,7 @@ public class PatientService {
         }
 
         // Find the patient if they already exists
-        Optional<PatientInfo> optionalPatientInfo = patientInfoRepository.findById(patientUpdateDTO.getId());
+        Optional<PatientInfo> optionalPatientInfo = patientInfoRepository.findById(patientUpdateDTO.getPatientId());
         if (optionalPatientInfo.isEmpty()) {
             throw new EntityExistsException("Given patient does not exist.");
         }

@@ -19,4 +19,6 @@ public class VisitDTO {
 
     private String note;
 
+    public VisitDTO() {}
+
 }
