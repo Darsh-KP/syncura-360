@@ -26,7 +26,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PatientServiceTest {
-
     // Create a fake repository
     @Mock
     PatientInfoRepository patientInfoRepository;
