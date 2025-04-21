@@ -18,7 +18,7 @@ import java.util.Optional;
  * Service class responsible for managing room-related operations in the hospital.
  * Handles room creation, updating, deletion, and fetching.
  *
- * @author YourName
+ * @author Darsh-KP
  */
 @Service
 public class RoomService {
