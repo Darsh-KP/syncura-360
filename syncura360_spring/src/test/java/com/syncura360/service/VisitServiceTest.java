@@ -1,10 +1,9 @@
-package com.syncura360.Ben;
+package com.syncura360.service;
 
 import com.syncura360.dto.Visit.*;
 import com.syncura360.model.*;
 import com.syncura360.model.enums.BedStatus;
 import com.syncura360.repository.*;
-import com.syncura360.service.VisitService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
