@@ -39,7 +39,7 @@ export class ItemFormComponent {
   createItemError ='';
   isEditing: boolean = false;
 
-  category: string[]=['💊 Drug','🩹 Medical Supply'];
+  category: string[]=['Drug','Medical Supply'];
 
   constructor(
     private fb: FormBuilder,

@@ -1,0 +1,145 @@
+<!-- Main Container -->
+<div class="p-6 max-w-4xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <h2 class="text-2xl font-semibold text-center">Visit Timeline</h2>
+  <div class="bg-blue-50 border border-blue-300 text-blue-900 p-4 rounded shadow mb-6">
+    <h3 class="text-lg font-semibold mb-2">Patient Details</h3>
+    <pre class="whitespace-pre-wrap text-sm font-mono">{{ details }}</pre>
+  </div>
+
+  <!-- PrimeNG Vertical Timeline -->
+  <p-timeline [value]="timelineEvents" layout="vertical" class="custom-timeline">
+    <ng-template pTemplate="content" let-event>
+      <div class="p-4 bg-white rounded shadow-md">
+        <h4 class="text-md font-semibold mb-1">{{ event.title }}</h4>
+        <p class="text-sm text-gray-600 mb-1">{{ event.dateTime | date: 'medium' }}</p>
+        <p class="text-sm text-gray-800">{{ event.description }}</p>
+      </div>
+    </ng-template>
+  </p-timeline>
+
+  <!-- Note Editor -->
+  <div class="bg-white shadow rounded p-4">
+    <h3 class="text-lg font-medium mb-2">Visit Note</h3>
+    <textarea
+      class="w-full border p-2 rounded"
+      rows="3"
+      [(ngModel)]="note"
+      placeholder="Enter or update notes for this visit...">
+    </textarea>
+    <div class="text-right mt-2">
+      <button mat-raised-button color="primary" (click)="updateNote()">Update Note</button>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-wrap gap-3 justify-center">
+    <button mat-flat-button color="primary" (click)="selectSection('drug')">Add Drug</button>
+    <button mat-flat-button color="accent" (click)="selectSection('service')">Add Service</button>
+    <button mat-flat-button color="primary" (click)="selectSection('room')">Assign Room</button>
+    <button mat-flat-button color="accent" (click)="selectSection('discharge')">Discharge</button>
+    <button mat-flat-button color="warn" (click)="removeRoom()">Remove Room</button>
+  </div>
+
+  <!-- Dynamic Forms -->
+  <div class="bg-white p-6 rounded shadow">
+    <ng-container [ngSwitch]="selectedSection">
+
+      <!-- Drug Form -->
+      <form *ngSwitchCase="'drug'" [formGroup]="drugForm" (ngSubmit)="submitDrug()" class="space-y-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Select Drug</mat-label>
+          <mat-select formControlName="drug" required>
+            <mat-option *ngFor="let drug of drugs" [value]="drug.ndc">
+              {{ drug.name }} ({{ drug.strength }}) - NDC: {{ drug.ndc }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Quantity</mat-label>
+          <input matInput type="number" formControlName="quantity" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Administered By</mat-label>
+          <mat-select formControlName="administeredBy" required>
+            <mat-option *ngFor="let doctor of doctors" [value]="doctor.username">
+              Dr. {{ doctor.firstName }} {{ doctor.lastName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="flex justify-end gap-2">
+          <button mat-stroked-button type="button" (click)="selectedSection = null">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="drugForm.invalid">Submit Drug</button>
+        </div>
+      </form>
+
+      <!-- Service Form -->
+      <form *ngSwitchCase="'service'" [formGroup]="serviceForm" (ngSubmit)="submitService()" class="space-y-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Select Service</mat-label>
+          <mat-select formControlName="service" required>
+            <mat-option *ngFor="let service of services" [value]="service.name">
+              {{ service.name }} ({{ service.category }}) - ${{ service.cost }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Performed By</mat-label>
+          <mat-select formControlName="performedBy" required>
+            <mat-option *ngFor="let doctor of doctors" [value]="doctor.username">
+              Dr. {{ doctor.firstName }} {{ doctor.lastName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="flex justify-end gap-2">
+          <button mat-stroked-button type="button" (click)="selectedSection = null">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="serviceForm.invalid">Submit Service</button>
+        </div>
+      </form>
+
+      <!-- Room Form -->
+      <form *ngSwitchCase="'room'" [formGroup]="roomForm" (ngSubmit)="submitRoom()" class="space-y-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Select Room</mat-label>
+          <mat-select formControlName="roomName" required>
+            <mat-option *ngFor="let room of rooms" [value]="room.roomName">
+              {{ room.roomName }} ({{ room.department }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="flex justify-end gap-2">
+          <button mat-stroked-button type="button" (click)="selectedSection = null">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="roomForm.invalid">Assign Room</button>
+        </div>
+      </form>
+
+      <!-- Discharge Form -->
+      <form *ngSwitchCase="'discharge'" [formGroup]="dischargeForm" (ngSubmit)="submitDischarge()" class="space-y-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Visit Summary</mat-label>
+          <textarea matInput formControlName="visitSummary" rows="3" required></textarea>
+        </mat-form-field>
+
+        <div class="flex justify-end gap-2">
+          <button mat-stroked-button type="button" (click)="selectedSection = null">Cancel</button>
+          <button mat-raised-button color="warn" type="submit" [disabled]="dischargeForm.invalid">Discharge Patient</button>
+        </div>
+      </form>
+
+      <!-- Default -->
+      <div *ngSwitchDefault class="text-center py-8">
+        <mat-icon class="text-gray-400" style="font-size: 48px;">medical_services</mat-icon>
+        <p class="text-gray-500 mt-2">Select an action to begin</p>
+      </div>
+
+    </ng-container>
+  </div>
+  <button mat-flat-button color="warn" (click)="backButton()">Back</button>
+</div>
