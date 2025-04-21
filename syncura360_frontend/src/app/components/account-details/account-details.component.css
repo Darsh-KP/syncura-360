@@ -6,3 +6,7 @@ h1{
 h3 {
   font-weight: 900;
 }
+/* Adjust the outline to remove the vertical separation */
+::ng-deep .mdc-notched-outline__notch {
+border-right: none !important; /* Removes the vertical line */
+}
