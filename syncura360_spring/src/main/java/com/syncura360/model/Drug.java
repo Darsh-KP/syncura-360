@@ -8,6 +8,11 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 
+/**
+ * Entity representing a drug in the system, including its details like name, category, description, strength, price, and quantity.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter
@@ -16,7 +21,7 @@ import java.math.BigDecimal;
 @Table(name = "Drug", schema = "syncura360")
 public class Drug {
     @EmbeddedId
-    private final DrugId id;
+    private DrugId id;
 
     @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

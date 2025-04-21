@@ -11,6 +11,11 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents the composite primary key for the Visit entity, consisting of hospital ID, patient ID, and admission date-time.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable
@@ -26,7 +31,7 @@ public class VisitId implements java.io.Serializable {
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "admission_date_time", nullable = false)
-    private LocalDateTime admissionDateTime;
+    private final LocalDateTime admissionDateTime = LocalDateTime.now();
 
     public VisitId(Integer hospitalId, Integer patientId) {
         this.hospitalId = hospitalId;

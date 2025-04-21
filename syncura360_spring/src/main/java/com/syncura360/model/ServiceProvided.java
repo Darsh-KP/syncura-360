@@ -5,6 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a service provided to a patient during a visit, including details like the staff who performed it and the service itself.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @EqualsAndHashCode(of = "id")
@@ -33,9 +38,13 @@ public class ServiceProvided {
     })
     private final Service service;
 
+    @Column(name = "service_name", insertable = true, updatable = false, nullable = false)
+    private String serviceName;
+
     public ServiceProvided(ServiceProvidedId id, Staff performedBy, Service service) {
         this.id = id;
         this.performedBy = performedBy;
         this.service = service;
+        this.serviceName = service.getId().getName();
     }
 }

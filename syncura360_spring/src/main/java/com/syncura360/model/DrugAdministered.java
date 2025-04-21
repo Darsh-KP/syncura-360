@@ -5,6 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity representing a drug administered to a patient, including the drug, visit, and the staff who administered it.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @EqualsAndHashCode(of = "id")
@@ -30,12 +35,20 @@ public class DrugAdministered {
     private final Drug drug;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "administered_by", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "administered_by", nullable = false, insertable = true, updatable = false)
     private final Staff administeredBy;
 
-    public DrugAdministered(DrugAdministeredId id, Drug drug, Staff administeredBy) {
+    @Column(name = "drug_ndc", insertable = true, updatable = false, nullable = false)
+    private final Long drug_ndc;
+
+    @Column(name = "quantity", insertable = true, updatable = false, nullable = false)
+    private final int quantity;
+
+    public DrugAdministered(DrugAdministeredId id, Drug drug, Staff administeredBy, int quantity) {
         this.id = id;
         this.drug = drug;
         this.administeredBy = administeredBy;
+        this.drug_ndc = drug.getId().getNdc();
+        this.quantity = quantity;
     }
 }

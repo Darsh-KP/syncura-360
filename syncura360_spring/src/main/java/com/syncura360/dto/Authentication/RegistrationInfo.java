@@ -5,8 +5,8 @@ import com.syncura360.dto.Staff.StaffCreationDto;
 import lombok.Data;
 
 /**
- * DTO which models an incoming hospital registration request.
- * May need to be changed for security purposes (to prevent field injection).
+ * DTO that models an incoming hospital registration request, including staff and hospital information.
+ *
  * @author Benjamin Leiby
  */
 @Data

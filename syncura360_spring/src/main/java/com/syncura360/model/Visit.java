@@ -5,6 +5,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a visit to a hospital, including details such as the patient, hospital, and reason for visit.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter
@@ -33,6 +38,9 @@ public class Visit {
 
     @Column(name = "visit_summary", length = 65535)
     private String visitSummary;
+
+    @Column(name = "visit_note", length = 65535)
+    private String visitNote;
 
     public Visit(VisitId id, String reasonForVisit) {
         this.id = id;

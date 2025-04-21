@@ -3,6 +3,12 @@ package com.syncura360.dto.Patient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * DTO for fetching a patient's details, including personal information such as name, date of birth,
+ * contact information, and address.
+ *
+ * @author Darsh-KP
+ */
 @AllArgsConstructor
 @Getter
 public class PatientViewFetchDTO {

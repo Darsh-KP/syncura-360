@@ -10,6 +10,11 @@ import org.hibernate.Hibernate;
 import java.io.Serial;
 import java.util.Objects;
 
+/**
+ * Composite primary key class for identifying a room in a hospital, based on hospital ID and room name.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Setter

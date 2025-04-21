@@ -3,6 +3,11 @@ package com.syncura360.model.enums;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+/**
+ * Converter for {@link DrugCategory} enum to its String representation for database storage and vice versa.
+ *
+ * @author Darsh-KP
+ */
 @Converter(autoApply = true)
 public class DrugCategoryConvertor implements AttributeConverter<DrugCategory, String> {
     @Override

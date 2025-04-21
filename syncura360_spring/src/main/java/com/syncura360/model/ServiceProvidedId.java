@@ -6,11 +6,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.cglib.core.Local;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Represents the composite primary key for the ServiceProvided entity,
+ * consisting of hospital ID, patient ID, and visit admission date-time.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable
@@ -29,7 +36,7 @@ public class ServiceProvidedId implements java.io.Serializable {
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "provided_at", nullable = false)
-    private LocalDateTime providedAt;
+    private final LocalDateTime providedAt = LocalDateTime.now();
 
     public ServiceProvidedId(Integer hospitalId, Integer patientId, LocalDateTime visitAdmissionDateTime) {
         this.hospitalId = hospitalId;

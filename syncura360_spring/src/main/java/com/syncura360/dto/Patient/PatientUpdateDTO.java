@@ -5,10 +5,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+/**
+ * DTO for updating an existing patient's information, including personal details such as name,
+ * date of birth, contact information, address, and medical notes.
+ *
+ * @author Darsh-KP
+ */
 @Getter
 public class PatientUpdateDTO {
     @NotNull(message = "Patient ID cannot be null.")
-    private Integer id;
+    private Integer patientId;
 
     @NotNull(message = "First name cannot be null.")
     @Size(max = 50, message = "First name cannot be longer than 50 characters.")

@@ -10,7 +10,6 @@ import com.syncura360.repository.StaffRepository;
 import com.syncura360.security.passwordSecurity;
 import com.syncura360.dto.Hospital.HospitalCreationDto;
 import com.syncura360.dto.Staff.StaffCreationDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,27 +18,42 @@ import jakarta.validation.Valid;
 
 /**
  * Handles hospital registration and initialization of head admin credentials.
+ * This controller is responsible for registering a new hospital along with its head administrator.
+ *
  * @author Benjamin Leiby
  */
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/register")
 public class RegController {
-
-    @Autowired
     HospitalRepository hospitalRepository;
-    @Autowired
     StaffRepository staffRepository;
 
     /**
-     * @param regInfo DTO containing hospital and head admin info.
-     * @return String containing result message.
+     * Constructor to inject dependencies for hospital and staff repositories.
+     *
+     * @param hospitalRepository the repository for accessing hospital data.
+     * @param staffRepository the repository for accessing staff data.
+     */
+    public RegController(HospitalRepository hospitalRepository, StaffRepository staffRepository) {
+        this.hospitalRepository = hospitalRepository;
+        this.staffRepository = staffRepository;
+    }
+
+    /**
+     * Registers a new hospital and its head admin.
+     * This method checks for unique values (such as hospital address and phone number,
+     * and staff username) before saving the hospital and the head admin to the database.
+     * If any error occurs during the process, it handles rollback and returns appropriate error messages.
+     *
+     * @param regInfo DTO containing hospital and head admin information ({@link RegistrationInfo}).
+     * @return a {@link ResponseEntity} with a status and message indicating the result of the registration.
      */
     @PostMapping("/hospital")
     public ResponseEntity<String> registerHospital(@Valid @RequestBody RegistrationInfo regInfo) {
 
         HttpStatus responseType = HttpStatus.NOT_ACCEPTABLE;
-        String responseMessage = "Failed.";
+        String responseMessage;
 
         HospitalCreationDto hospitalCreationDto = regInfo.getHospital();
         StaffCreationDto headAdminCreationDto = regInfo.getStaff();
@@ -53,15 +67,15 @@ public class RegController {
         else if (staffRepository.findByUsername(headAdminCreationDto.getUsername()).isPresent()) { responseMessage = "Failed: Staff username is taken."; }
         else {
 
-            Hospital hospital = null;
-            Staff staff = null;
+            Hospital hospital;
+            Staff staff;
 
             try {
                 hospital = getHospital(hospitalCreationDto);
                 hospitalRepository.save(hospital);
             } catch (Exception e) {
 
-                System.out.println(e.toString());
+                System.out.println(e.getMessage());
 
                 responseType = HttpStatus.INTERNAL_SERVER_ERROR;
                 responseMessage = "Failed. Error saving hospital to database.";
@@ -88,9 +102,12 @@ public class RegController {
       }
 
     /**
-     * @param headAdminCreationDto DTO to model head admin registration info.
-     * @param hospital JPA Entity to model the hospital.
-     * @return Staff JPA Entity for insertion.
+     * Converts {@link StaffCreationDto} into a {@link Staff} JPA entity for insertion into the database.
+     * The staff is set with various personal details and hospital association.
+     *
+     * @param headAdminCreationDto DTO containing head admin registration information.
+     * @param hospital the hospital entity to associate the staff with.
+     * @return a {@link Staff} entity populated with the provided details.
      */
     private static Staff getStaff(StaffCreationDto headAdminCreationDto, Hospital hospital) {
         PasswordEncoder encoder = passwordSecurity.getPasswordEncoder();
@@ -114,8 +131,10 @@ public class RegController {
     }
 
     /**
-     * @param hospitalCreationDto DTO to model hospital registration info.
-     * @return Hospital JPA entity for insertion.
+     * Converts {@link HospitalCreationDto} into a {@link Hospital} JPA entity for insertion into the database.
+     *
+     * @param hospitalCreationDto DTO containing hospital registration information.
+     * @return a {@link Hospital} entity populated with the provided details.
      */
     private static Hospital getHospital(HospitalCreationDto hospitalCreationDto) {
         Hospital hospital = new Hospital();

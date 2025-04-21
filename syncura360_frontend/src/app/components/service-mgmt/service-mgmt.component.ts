@@ -1,9 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { StaffService, Staff } from '../../services/staff.service';
 import { AgGridModule } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
-import { UserMaintComponent } from '../user-maint/user-maint.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -43,7 +41,7 @@ export class ServiceMgmtComponent {
       field: 'actions',
       flex: 1,
       cellRenderer: (params: any) => `
-        <button class="edit-btn" data-id="${params.data.id}">Edit</button>
+        <button class="edit-btn mr-4" data-id="${params.data.id}">Edit</button>
         <button class="delete-btn ml-2" data-id="${params.data.name}">Delete</button>
       `
     }

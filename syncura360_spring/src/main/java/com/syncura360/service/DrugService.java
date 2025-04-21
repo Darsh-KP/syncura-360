@@ -12,15 +12,32 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+/**
+ * Service class responsible for managing drugs in a hospital.
+ *
+ * @author Darsh-KP
+ */
 @Service
 public class DrugService {
     DrugRepository drugRepository;
 
-    // Constructor injection
+    /**
+     * Constructor for initializing {@link DrugService} with required dependencies.
+     * Uses constructor injection for necessary components.
+     *
+     * @param drugRepository The repository used for drug operations.
+     */
     public DrugService(DrugRepository drugRepository) {
         this.drugRepository = drugRepository;
     }
 
+    /**
+     * Creates a new drug in the hospital's inventory if it does not already exist.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @param drugFormDTO The data transfer object containing drug details.
+     * @throws EntityExistsException If the drug with the given NDC already exists.
+     */
     public void createDrug(int hospitalId, DrugFormDTO drugFormDTO) {
         // Check for drug uniqueness
         if (drugRepository.existsById_HospitalIdAndId_Ndc(hospitalId, drugFormDTO.getNdc())) {
@@ -51,6 +68,14 @@ public class DrugService {
         drugRepository.save(newDrug);
     }
 
+    /**
+     * Updates an existing drug in the hospital's inventory.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @param drugUpdateDTO The data transfer object containing updated drug details.
+     * @throws EntityNotFoundException If the drug with the given NDC does not exist.
+     * @throws IllegalArgumentException If any input constraints are violated (e.g., negative quantity or invalid price).
+     */
     public void updateDrug(int hospitalId, DrugUpdateDTO drugUpdateDTO) {
         // Find the drug if it already exists
         Optional<Drug> drugResult = drugRepository.findById_HospitalIdAndId_Ndc(hospitalId, drugUpdateDTO.getNdc());
@@ -79,6 +104,13 @@ public class DrugService {
         drugRepository.save(drug);
     }
 
+    /**
+     * Deletes a drug from the hospital's inventory.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @param drugFormDTO The data transfer object containing the drug details to be deleted.
+     * @throws EntityNotFoundException If the drug with the given NDC does not exist.
+     */
     public void deleteDrug(int hospitalId, DrugDeletionDTO drugFormDTO) {
         // Find the drug if it already exists
         Optional<Drug> drugResult = drugRepository.findById_HospitalIdAndId_Ndc(hospitalId, drugFormDTO.getNdc());
@@ -92,6 +124,12 @@ public class DrugService {
         drugRepository.deleteById(new DrugId(hospitalId, drug.getId().getNdc()));
     }
 
+    /**
+     * Fetches a list of all drugs for a given hospital.
+     *
+     * @param hospitalId The ID of the hospital.
+     * @return A {@link DrugFetchListDTO} containing a list of all drugs for the hospital.
+     */
     public DrugFetchListDTO fetchDrugs(int hospitalId) {
         // Return a list of all the drugs for the hospital
         return new DrugFetchListDTO(drugRepository.findAllById_HospitalId(hospitalId).stream().map(drug ->

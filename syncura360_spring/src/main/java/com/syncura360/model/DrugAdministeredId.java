@@ -11,6 +11,11 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Embeddable composite ID for identifying a drug administered to a patient, including hospital ID, patient ID, visit admission date, and administered time.
+ *
+ * @author Darsh-KP
+ */
 @NoArgsConstructor(force = true)
 @Getter
 @Embeddable
@@ -29,7 +34,7 @@ public class DrugAdministeredId implements java.io.Serializable {
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "administered_at", nullable = false)
-    private LocalDateTime administeredAt;
+    private final LocalDateTime administeredAt = LocalDateTime.now();
 
     public DrugAdministeredId(Integer hospitalId, Integer patientId, LocalDateTime visitAdmissionDateTime) {
         this.hospitalId = hospitalId;

@@ -15,15 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class responsible for managing patient information.
+ *
+ * @author Darsh-KP
+ */
 @Service
 public class PatientService {
     PatientInfoRepository patientInfoRepository;
 
-    // Constructor injection
+    /**
+     * Constructor for initializing {@link PatientService} with required dependencies.
+     * Uses constructor injection for necessary components.
+     *
+     * @param patientInfoRepository The repository used for patient information operations.
+     */
     public PatientService(PatientInfoRepository patientInfoRepository) {
         this.patientInfoRepository = patientInfoRepository;
     }
 
+    /**
+     * Creates a new patient in the system.
+     *
+     * @param patientFormDTO The data transfer object containing the patient details.
+     * @throws EntityExistsException If a patient with the same details already exists.
+     */
     public void createPatient(PatientFormDTO patientFormDTO) {
         // Convert fields
         LocalDate dateOfBirth = null;
@@ -89,6 +105,13 @@ public class PatientService {
         patientInfoRepository.save(newPatientInfo);
     }
 
+    /**
+     * Updates an existing patient's information.
+     *
+     * @param patientUpdateDTO The data transfer object containing the updated patient details.
+     * @throws EntityExistsException If the patient does not exist.
+     * @throws IllegalArgumentException If input constraints are violated (e.g., negative height or weight).
+     */
     public void updatePatient(PatientUpdateDTO patientUpdateDTO) {
         // Convert fields
         LocalDate dateOfBirth = null;
@@ -109,7 +132,7 @@ public class PatientService {
         }
 
         // Find the patient if they already exists
-        Optional<PatientInfo> optionalPatientInfo = patientInfoRepository.findById(patientUpdateDTO.getId());
+        Optional<PatientInfo> optionalPatientInfo = patientInfoRepository.findById(patientUpdateDTO.getPatientId());
         if (optionalPatientInfo.isEmpty()) {
             throw new EntityExistsException("Given patient does not exist.");
         }
@@ -164,6 +187,11 @@ public class PatientService {
         patientInfoRepository.save(patientInfo);
     }
 
+    /**
+     * Fetches a list of all patients in the system.
+     *
+     * @return A {@link PatientViewFetchContainer} containing a list of all patients.
+     */
     public PatientViewFetchContainer fetchPatients() {
         // Return a list of all the patients
         List<PatientViewFetchDTO> patientsList = new ArrayList<>();
@@ -185,6 +213,13 @@ public class PatientService {
         return new PatientViewFetchContainer(patientsList);
     }
 
+    /**
+     * Fetches details of a specific patient by their ID.
+     *
+     * @param patientId The ID of the patient.
+     * @return A {@link SpecificPatientFetchDTO} containing the details of the patient.
+     * @throws EntityNotFoundException If the patient with the given ID does not exist.
+     */
     public SpecificPatientFetchDTO fetchPatient(Integer patientId) {
         // Find the patient if they already exists
         Optional<PatientInfo> optionalPatientInfo = patientInfoRepository.findById(patientId);

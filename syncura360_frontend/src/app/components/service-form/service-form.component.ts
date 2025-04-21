@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import {inventory} from '../../services/inventory.service';
+
 @Component({
   selector: 'app-service-form',
   imports: [CommonModule,
@@ -83,7 +83,7 @@ export class ServiceFormComponent {
       }
 
       const updateRequest = {
-        name: originalName, // This is now guaranteed to be a string
+        name: originalName,
         updates: {
           name: rawFormData.name,
           category: rawFormData.category,

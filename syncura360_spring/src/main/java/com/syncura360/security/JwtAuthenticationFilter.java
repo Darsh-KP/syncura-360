@@ -23,6 +23,11 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Filter for authenticating JWT tokens in HTTP requests.
+ *
+ * @author Benjamin Leiby
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
