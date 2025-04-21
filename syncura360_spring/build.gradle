@@ -17,6 +17,11 @@ repositories {
 	mavenCentral()
 }
 
+// Mockito Agent
+configurations {
+	mockitoAgent
+}
+
 dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -38,8 +43,16 @@ dependencies {
 	testImplementation 'org.mockito:mockito-core:5.17.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.17.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+	// Mockito Agent for inline
+	mockitoAgent('org.mockito:mockito-core:5.17.0') {
+		transitive = false
+	}
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Mockito arg
+	jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
