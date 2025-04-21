@@ -51,14 +51,14 @@ public class BedServiceTest {
         when(bedRepository.countByRoomAndStatus(eq(room), eq(BedStatus.Vacant))).thenReturn(3);
 
         // Create a room id for test
-        RoomId roomId = new RoomId(1, "room1");
+        RoomId roomId = new RoomId(1, "Room1");
         when(room.getId()).thenReturn(roomId);
 
         // Call the method to decrease to 3 beds
         bedService.updateBedsForRoom(room, 3);
 
         // Verify that delete was called with correct arguments
-        verify(bedRepository).deleteXVacantBedsInRoom(1, "room1", 2);
+        verify(bedRepository).deleteXVacantBedsInRoom(1, "Room1", 2);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class BedServiceTest {
     void testDeleteBedsForRoom_DeletesSuccessfully() {
         // Create a fake room and its ID
         Room room = mock(Room.class);
-        RoomId roomId = new RoomId(1, "room1");
+        RoomId roomId = new RoomId(1, "Room1");
 
         // Simulate room.getId() returning our test ID
         when(room.getId()).thenReturn(roomId);
@@ -107,7 +107,7 @@ public class BedServiceTest {
         // Call the method to delete 2 beds
         bedService.deleteBedsForRoom(room, 2);
 
-        // Verify the correct deletion call was made
-        verify(bedRepository).deleteXVacantBedsInRoom(1, "room1", 2);
+        // Verify that the correct deletion call was made
+        verify(bedRepository).deleteXVacantBedsInRoom(1, "Room1", 2);
     }
 }
