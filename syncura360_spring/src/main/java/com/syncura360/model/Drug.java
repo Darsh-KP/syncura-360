@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 @Table(name = "Drug", schema = "syncura360")
 public class Drug {
     @EmbeddedId
-    private final DrugId id;
+    private DrugId id;
 
     @Setter(AccessLevel.NONE)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
