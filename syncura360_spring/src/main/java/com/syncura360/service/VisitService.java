@@ -272,7 +272,7 @@ public class VisitService {
         if (addDrugDTO.getQuantity() <= 0) { addDrugDTO.setQuantity(1); }
 
         // check if enough drug in inventory
-        if (addDrugDTO.getQuantity() < drug.get().getQuantity()) {
+        if (addDrugDTO.getQuantity() > drug.get().getQuantity()) {
             throw new EntityNotFoundException("Not enough in inventory to administer this amount.");
         }
 
@@ -308,6 +308,9 @@ public class VisitService {
         }
 
         Optional<Room> room = roomRepository.findById(currentAssignment.get().getRoom().getId());
+
+        System.out.println(currentAssignment.get().getRoom().getId().getRoomName());
+
         if (room.isEmpty()) {
             throw new EntityNotFoundException("Room not found.");
         }
