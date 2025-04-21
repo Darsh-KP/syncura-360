@@ -66,7 +66,7 @@ public class EquipmentServiceTest {
         when(dto1.getName()).thenReturn("Equipment1");
         when(dto1.getInMaintenance()).thenReturn(true);
 
-        // Create a input list
+        // Create an input list
         List<EquipmentUpdateDTO> inputEquipments = List.of(dto1);
 
         // Simulate equipments in the database
