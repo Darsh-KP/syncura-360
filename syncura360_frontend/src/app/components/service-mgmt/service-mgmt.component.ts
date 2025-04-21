@@ -1,9 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { StaffService, Staff } from '../../services/staff.service';
 import { AgGridModule } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
-import { UserMaintComponent } from '../user-maint/user-maint.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
