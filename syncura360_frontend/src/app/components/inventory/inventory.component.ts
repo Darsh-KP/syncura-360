@@ -36,31 +36,37 @@ export class InventoryComponent implements OnInit {
   successMessage = '';
 
   columnDefs: ColDef[] = [
-    { headerName: 'NDC', field: 'ndc' },
-    { headerName: 'Name', field: 'name' },
-    {headerName: 'Pkg-Quantity', field: 'ppq' },
-    { headerName: 'Quantity', field: 'quantity' },
-    { headerName: 'Price', field: 'price' },
+    { headerName: 'NDC', field: 'ndc', flex: 1 },
+    { headerName: 'Name', field: 'name', flex: 1 },
+    { headerName: 'Pkg-Quantity', field: 'ppq', flex: 1 },
+    { headerName: 'Quantity', field: 'quantity', flex: 1 },
+    { headerName: 'Price', field: 'price', flex: 1 },
     {
       headerName: 'Actions',
+      field: 'actions',
+      flex: 1,
+      suppressSizeToFit: false,
       cellRenderer: (params: any) => {
         return `
-      <button class="edit-btn mr-6">Edit</button>
-      <button class="delete-btn">Delete</button>
-    `;
+          <button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded mr-4 hover:bg-blue-600">
+            Edit
+          </button>
+          <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+            Delete
+          </button>
+        `;
       },
       onCellClicked: (params: any) => {
         const targetClass = params.event.target.className;
-
+  
         if (targetClass.includes('edit-btn')) {
-          this.openItemForm(params.data); // already works
+          this.openItemForm(params.data);
         } else if (targetClass.includes('delete-btn')) {
-          this.onDelete(params.data); //
+          this.onDelete(params.data);
         }
       }
     }
-
-  ];
+  ];  
 
   ngOnInit(): void {
     this.loadInventory();
