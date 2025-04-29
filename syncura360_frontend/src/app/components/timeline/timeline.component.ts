@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , Input} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -32,6 +32,8 @@ import {
   ]
 })
 export class TimelineComponent implements OnInit {
+  @Input() readOnly: boolean = false;
+
   patientID!: number;
   admissionDateTime!: string;
   timelineEvents: { dateTime: string; title: string; description: string }[] = [];
@@ -55,7 +57,10 @@ export class TimelineComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private visitService: VisitMgmtService
-  ) {}
+  ) {
+    const nav = this.router.getCurrentNavigation();
+    this.readOnly = nav?.extras.state?.['readOnly'] ?? false;
+  }
 
   ngOnInit(): void {
     this.patientID = Number(this.route.snapshot.paramMap.get('patientID'));
@@ -94,12 +99,25 @@ export class TimelineComponent implements OnInit {
   }
 
   loadTimeline() {
-    this.visitService.getTimeline(this.patientID, this.admissionDateTime).subscribe({
-      next: (res) =>{ (this.timelineEvents = res.timeline);
-      this.note = res.visitNote;
+
+    if (!this.readOnly) {
+
+      this.visitService.getTimeline(this.patientID, this.admissionDateTime).subscribe({
+        next: (res) => {
+          (this.timelineEvents = res.timeline);
+          this.note = res.visitNote;
         },
-      error: (err) => console.error('Failed to load timeline', err),
-    });
+        error: (err) => console.error('Failed to load timeline', err),
+      });
+    } else {
+      this.visitService.getRecord(this.patientID, this.admissionDateTime).subscribe({
+        next: (res) => {
+          (this.timelineEvents = res.timeline);
+          this.note = res.visitNote;
+        },
+        error: (err) => console.error('Failed to load record timeline', err),
+      });
+    }
   }
 
   updateNote() {
@@ -192,7 +210,12 @@ export class TimelineComponent implements OnInit {
   }
 
   backButton(){
+    if(this.readOnly){
+      this.router.navigate(['/visit-records']);
+    }
+    else{
     this.router.navigate(['/visit-mgmt']);
+    }
   }
 
 

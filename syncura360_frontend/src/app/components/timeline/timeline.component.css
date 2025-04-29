@@ -21,3 +21,34 @@ mat-form-field {
   border-right: none !important;
 }
 
+::ng-deep .custom-timeline .p-timeline-event {
+  margin-bottom: 3rem; /* Adds spacing between nodes */
+}
+
+/* Make sure the connector line is visible and spans the vertical timeline */
+
+/* Force the timeline line to stay in the center, behind the markers */
+::ng-deep .custom-timeline .p-timeline-event-connector {
+  background-color: #cbd5e0;
+  width: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-height: 140%;
+  z-index: 2; /* pushes the line behind */
+  position: absolute;
+}
+
+/* Make the markers visually prominent */
+::ng-deep .custom-timeline .p-timeline-event-marker {
+  background-color: #0d6efd;
+  border: 3px solid white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #0d6efd;
+  z-index: 3; /* make sure marker stays on top */
+  position: relative;
+}
+
+
+

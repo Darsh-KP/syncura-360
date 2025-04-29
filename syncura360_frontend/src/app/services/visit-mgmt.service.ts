@@ -67,6 +67,7 @@ export interface Doctor{
 })
 export class VisitMgmtService {
   private baseUrl = 'http://localhost:8080/visit';
+  private recUrl = 'http://localhost:8080/record';
 
   constructor(private http: HttpClient) {}
 
@@ -184,6 +185,17 @@ export class VisitMgmtService {
       })
     );
   }
+  getRecords(): Observable<{ visits: visit[] }> {
+    return this.http.get<{ visits: visit[] }>(
+      `${this.recUrl}`,
+      { headers: this.getHeaders() }
+    ).pipe(
+      catchError(error => {
+        console.error('Error fetching visits:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 
   getTimeline(patientID: number, admissionDateTime: string): Observable<{
     timeline: { dateTime: string; title: string; description: string }[];
@@ -203,6 +215,26 @@ export class VisitMgmtService {
       })
     );
   }
+
+  getRecord(patientID: number, admissionDateTime: string): Observable<{
+    timeline: { dateTime: string; title: string; description: string }[];
+    visitNote?: string; // Add this line to include the note in the response type
+  }> {
+    return this.http.get<{
+      timeline: { dateTime: string; title: string; description: string }[];
+      visitNote?: string;
+    }>(
+      `${this.recUrl}/${patientID}/${admissionDateTime}`,
+      { headers: this.getHeaders() }
+    ).pipe(
+      tap(response => console.log('Timeline response:', response)), // Add this tap operator to log the full response
+      catchError(error => {
+        console.error('Error fetching record timeline:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
 
   getDoctors(): Observable<{
     doctors: { username: string; firstName: string; lastName: string }[];
