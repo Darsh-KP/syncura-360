@@ -134,6 +134,16 @@ public class VisitService {
                 "Assigned to " + roomAssignment.getRoomName(),
                 "Department: " + roomAssignment.getRoom().getDepartment()
             ));
+
+            // If removed, create timeline element for this event.
+            if (roomAssignment.getIsRemoved()) {
+                timeline.add(new TimelineElementDTO(
+                        roomAssignment.getRemovedAt().toString(),
+                        "Removed from " + roomAssignment.getRoomName(),
+                        "Department: " + roomAssignment.getRoom().getDepartment()
+                ));
+            }
+
         }
 
         // if record get discharge date
@@ -309,8 +319,6 @@ public class VisitService {
 
         Optional<Room> room = roomRepository.findById(currentAssignment.get().getRoom().getId());
 
-        System.out.println(currentAssignment.get().getRoom().getId().getRoomName());
-
         if (room.isEmpty()) {
             throw new EntityNotFoundException("Room not found.");
         }
@@ -322,6 +330,7 @@ public class VisitService {
 
         RoomAssignment entity = currentAssignment.get();
         entity.setIsRemoved(true);
+        entity.setRemovedAt(LocalDateTime.now());
         roomAssignmentRepository.save(entity);
 
         Bed occupied = occupiedBeds.getFirst();
