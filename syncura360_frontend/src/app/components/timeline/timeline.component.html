@@ -9,15 +9,20 @@
   </div>
 
   <!-- PrimeNG Vertical Timeline -->
-  <p-timeline [value]="timelineEvents" layout="vertical" class="custom-timeline">
+  <p-timeline
+    [value]="timelineEvents"
+    layout="vertical"
+    align="alternate"
+    class="custom-timeline">
     <ng-template pTemplate="content" let-event>
-      <div class="p-4 bg-white rounded shadow-md">
+      <div class="p-4 bg-white rounded-2xl shadow-md">
         <h4 class="text-md font-semibold mb-1">{{ event.title }}</h4>
         <p class="text-sm text-gray-600 mb-1">{{ event.dateTime | date: 'medium' }}</p>
         <p class="text-sm text-gray-800">{{ event.description }}</p>
       </div>
     </ng-template>
   </p-timeline>
+
 
   <!-- Note Editor -->
   <div class="bg-white shadow rounded p-4">
@@ -28,13 +33,13 @@
       [(ngModel)]="note"
       placeholder="Enter or update notes for this visit...">
     </textarea>
-    <div class="text-right mt-2">
+    <div class="text-right mt-2" *ngIf="!readOnly">
       <button mat-raised-button color="primary" (click)="updateNote()">Update Note</button>
     </div>
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex flex-wrap gap-3 justify-center">
+  <div class="flex flex-wrap gap-3 justify-center" *ngIf="!readOnly">
     <button mat-flat-button color="primary" (click)="selectSection('drug')">Add Drug</button>
     <button mat-flat-button color="accent" (click)="selectSection('service')">Add Service</button>
     <button mat-flat-button color="primary" (click)="selectSection('room')">Assign Room</button>

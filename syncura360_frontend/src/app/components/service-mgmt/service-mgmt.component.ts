@@ -32,20 +32,26 @@ export class ServiceMgmtComponent {
   gridApi: any;
   public themeClass: string = 'ag-theme-alpine';
   columnDefs: ColDef[] = [
-    { headerName: 'Name', field: 'name', sortable: true, filter: true },
-    { headerName: 'Category', field: 'category', sortable: true, filter: true },
-    { headerName: 'Description', field: 'description', sortable: true, filter: true },
-    { headerName: 'Cost', field: 'cost', sortable: true, filter: true },
+    { headerName: 'Name', field: 'name', sortable: true, filter: true, flex: 1 },
+    { headerName: 'Category', field: 'category', sortable: true, filter: true, flex: 1 },
+    { headerName: 'Description', field: 'description', sortable: true, filter: true, flex: 2 },
+    { headerName: 'Cost', field: 'cost', sortable: true, filter: true, flex: 1 },
     {
       headerName: 'Actions',
       field: 'actions',
       flex: 1,
+      suppressSizeToFit: false,
       cellRenderer: (params: any) => `
-        <button class="edit-btn mr-4" data-id="${params.data.id}">Edit</button>
-        <button class="delete-btn ml-2" data-id="${params.data.name}">Delete</button>
+        <button class="edit-btn bg-blue-500 text-white px-2 py-1 rounded mr-4 hover:bg-blue-600" data-id="${params.data.id}">
+          Edit
+        </button>
+        <button class="delete-btn bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" data-id="${params.data.name}">
+          Delete
+        </button>
       `
     }
   ];
+  
   onQuickFilterChanged(event: any) {
     const filterValue = event.target.value;
     this.gridApi.setQuickFilter(filterValue);

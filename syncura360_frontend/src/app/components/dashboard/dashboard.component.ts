@@ -30,19 +30,22 @@ export class DashboardComponent implements OnInit {
   public themeClass: string = 'ag-theme-quartz';
 
   columnDefs: ColDef[] = [
-    { headerName: 'Name', field: 'fullName', sortable: true, filter: true },
-    { headerName: 'Email', field: 'email', sortable: true, filter: true },
-    { headerName: 'Phone', field: 'phone', sortable: true, filter: true },
-    { headerName: 'Role', field: 'role', sortable: true, filter: true },
+    { headerName: 'Name', field: 'fullName', sortable: true, filter: true, flex: 1 },
+    { headerName: 'Email', field: 'email', sortable: true, filter: true, flex: 1 },
+    { headerName: 'Phone', field: 'phone', sortable: true, filter: true, flex: 1 },
+    { headerName: 'Role', field: 'role', sortable: true, filter: true, flex: 1 },
     {
       headerName: 'Actions',
       field: 'actions',
-      flex: 1,
       cellRenderer: (params: any) => `
-        <button class="edit-btn" data-id="${params.data.id}">Edit</button>
-      `
+        <button class="edit-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600" data-id="${params.data.id}">
+          Edit
+        </button>
+      `,
+      flex: 1,
+      suppressSizeToFit: false
     }
-  ];
+  ];  
   
 
   constructor(
