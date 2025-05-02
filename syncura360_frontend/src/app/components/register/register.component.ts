@@ -53,33 +53,33 @@ export class RegisterComponent {
   constructor(private fb: FormBuilder, private router: Router, private registerService: RegisterService) {
     this.registerForm = this.fb.group({
       // Hospital Information
-      name: ['NJ General Hospital', Validators.required],
-      addressLine1: ['123 Main St', Validators.required],
-      city: ['New Jersey', Validators.required],
-      state: ['NJ', Validators.required],
-      postal: ['10001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      telephone: ['4738258383', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      type: ['General', Validators.required],
-      traumaLevel: ['Level I', Validators.required],
-      hasHelipad: [true],
-
+      name: ['', Validators.required],
+      addressLine1: ['', Validators.required],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      postal: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      telephone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      type: ['', Validators.required],
+      traumaLevel: ['', Validators.required],
+      hasHelipad: [false],
+    
       // Admin (Staff) Information
-      username: ['admin123', Validators.required],
-      passwordHash: ['123456', [Validators.required, Validators.minLength(6)]],
+      username: ['', Validators.required],
+      passwordHash: ['', [Validators.required, Validators.minLength(6)]],
       role: ['Super Admin'],
-      firstName: ['John', Validators.required],
-      lastName: ['Doe', Validators.required],
-      email: ['john.doe@example.com', [Validators.required, Validators.email]],
-      phone: ['2382838233', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+    
       // Admin Address
-      addressLine1Admin: ['456 Elm St', Validators.required],
-      cityAdmin: ['Los Angeles', Validators.required],
-      stateAdmin: ['CA', Validators.required],
-      postalAdmin: ['90001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      country: ['United States', Validators.required],
-      dateOfBirth: ['1990-01-01', Validators.required] // Make sure date format matches what your input expects
-    });
+      addressLine1Admin: ['', Validators.required],
+      cityAdmin: ['', Validators.required],
+      stateAdmin: ['', Validators.required],
+      postalAdmin: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      country: ['', Validators.required],
+      dateOfBirth: ['', Validators.required]
+    });    
   }
 
 
