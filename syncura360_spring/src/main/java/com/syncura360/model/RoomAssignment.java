@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 /**
  * Entity representing a room assignment for a patient during a visit, including its unique identifier, associated room, and removal status.
  *
@@ -33,6 +35,10 @@ public class RoomAssignment {
     @Setter
     @Column(name = "is_removed", nullable = false)
     private Boolean isRemoved;
+
+    @Column(name = "removed_at")
+    @Setter
+    private LocalDateTime removedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
