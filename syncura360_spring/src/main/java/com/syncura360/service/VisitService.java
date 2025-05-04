@@ -134,6 +134,16 @@ public class VisitService {
                 "Assigned to " + roomAssignment.getRoomName(),
                 "Department: " + roomAssignment.getRoom().getDepartment()
             ));
+
+            // If removed, create timeline element for this event.
+            if (roomAssignment.getIsRemoved()) {
+                timeline.add(new TimelineElementDTO(
+                        roomAssignment.getRemovedAt().toString(),
+                        "Removed from " + roomAssignment.getRoomName(),
+                        "Department: " + roomAssignment.getRoom().getDepartment()
+                ));
+            }
+
         }
 
         // if record get discharge date
@@ -272,7 +282,7 @@ public class VisitService {
         if (addDrugDTO.getQuantity() <= 0) { addDrugDTO.setQuantity(1); }
 
         // check if enough drug in inventory
-        if (addDrugDTO.getQuantity() < drug.get().getQuantity()) {
+        if (addDrugDTO.getQuantity() > drug.get().getQuantity()) {
             throw new EntityNotFoundException("Not enough in inventory to administer this amount.");
         }
 
@@ -308,6 +318,7 @@ public class VisitService {
         }
 
         Optional<Room> room = roomRepository.findById(currentAssignment.get().getRoom().getId());
+
         if (room.isEmpty()) {
             throw new EntityNotFoundException("Room not found.");
         }
@@ -319,6 +330,7 @@ public class VisitService {
 
         RoomAssignment entity = currentAssignment.get();
         entity.setIsRemoved(true);
+        entity.setRemovedAt(LocalDateTime.now());
         roomAssignmentRepository.save(entity);
 
         Bed occupied = occupiedBeds.getFirst();
