@@ -21,3 +21,15 @@ mat-form-field {
   border-right: none !important;
 }
 
+.ag-theme-quartz {
+  --ag-header-background-color: #2A9D8F;        /* Teal Header */
+  --ag-odd-row-background-color: #f9f9f9;       /* Light rows */
+  --ag-row-hover-color: #E9C46A;                /* Yellow hover */
+  --ag-font-size: 14px;
+  --ag-font-family: 'Segoe UI', sans-serif;
+}
+
+.ag-theme-quartz .ag-header-cell-label {
+  font-weight: 600;
+  color: white;
+}

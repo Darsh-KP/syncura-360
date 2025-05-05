@@ -1,15 +1,12 @@
 <app-navbar></app-navbar>
 <div class="ml-60 p-6 bg-gray-100 min-h-screen">
-  <div class="max-w-4xl mx-auto bg-white p-10 shadow-lg rounded-lg">
-      <div class="flex justify-end mb-4">
-          <mat-slide-toggle [(ngModel)]="darkMode" (change)="toggleDarkMode()">
-              🌙 Dark Mode
-          </mat-slide-toggle>
-      </div>
-      <h2 class="text-2xl font-bold text-gray-800 dark:text-white text-center mb-4">Register a Patient</h2>
-      <p class="text-gray-600 text-center mb-6 dark:text-gray-300">Fill out patient details below</p>
+  <div class="max-w-4xl mx-auto bg-[#FFF4EB] p-10 shadow-lg rounded-lg border-t-4 border-[#2A9D8F]">
+  <div class="flex justify-end mb-4">
+    </div>
+    <h2 class="text-2xl font-bold text-[#264653] text-center mb-4">Register a Patient</h2>
+    <p class="text-[#2a9d8f] text-center mb-6">Fill out patient details below</p>
 
-      <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form [formGroup]="patientForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Basic Info -->
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>First Name</mat-label>
@@ -102,7 +99,10 @@
 
       <!-- Submit Button -->
       <div class="col-span-1 md:col-span-2 text-center mt-6">
-        <button mat-flat-button color="primary" type="submit" [disabled]="loading || patientForm.invalid">
+        <button
+          type="submit"
+          [disabled]="loading || patientForm.invalid"
+          class="bg-[#2A9D8F] hover:bg-[#21867a] text-white font-semibold px-6 py-3 rounded shadow transition-all duration-300 ease-in-out disabled:opacity-50">
           {{ loading ? 'Registering...' : 'Register Patient' }}
         </button>
       </div>

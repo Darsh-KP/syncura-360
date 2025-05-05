@@ -1,8 +1,41 @@
 body.dark {
-  background-color: #1f2937; /* Tailwind's gray-800 */
+  background-color: #264653;
   color: white;
 }
 
 body.dark .mat-form-field {
-  background-color: #374151; /* Tailwind's gray-700 */
+  background-color: #2A9D8F;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #fdfcfb;
+  border-radius: 6px;
+}
+
+.mat-form-field-label {
+  color: #264653 !important;
+}
+
+.mat-input-element {
+  color: #264653 !important;
+}
+
+.mat-select-value {
+  color: #264653 !important;
+}
+
+.mat-form-field-outline {
+  color: #e9c46a !important;
+}
+
+.mat-slide-toggle-thumb {
+  background-color: #e76f51 !important;
+}
+
+button[mat-flat-button][color="primary"] {
+  background-color: #2A9D8F;
+}
+
+button[mat-flat-button][color="primary"]:hover {
+  background-color: #21867a;
 }
