@@ -174,7 +174,7 @@ export class RegisterComponent {
         console.error('Registration error:', err);
         this.loading = false;
         this.successMessage = '';
-        this.errorMessage = err.message || 'An error occurred while processing your request.';
+        this.errorMessage = 'An error occurred while processing your request.';
         }
     });
   }
