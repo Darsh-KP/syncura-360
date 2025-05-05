@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule, MatDialogModule],
   template: `
-    <div class="p-4 w-full max-w-md mx-auto">
+    <div class="p-4 w-full max-w-md mx-auto bg-white shadow-md rounded-md border-t-4 border-[#2A9D8F]">
       <h2 class="text-xl font-bold mb-4">Patient Info</h2>
       <ng-container *ngIf="patientData; else loadingTpl">
         <div class="space-y-2 text-sm text-gray-700">
@@ -40,9 +40,8 @@ import { FormsModule } from '@angular/forms';
         <p>Loading patient details...</p>
       </ng-template>
       <div class="text-right mt-4">
-        <button class=" bg-blue-500 text-white rounded hover:bg-blue-600"
 
-
+        <button class="px-4 py-2 bg-[#F4A261] text-white rounded hover:bg-[#E76F51]"
                 (click)="saveNote()">
           Save Note
         </button>
