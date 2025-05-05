@@ -61,6 +61,7 @@ export class RegisterComponent {
       // Hospital Information
       name: ['', Validators.required],
       addressLine1: ['', Validators.required],
+      addressLine2: ['', Validators.required],
       city: ['', Validators.required],
       state: ['', Validators.required],
       postal: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
@@ -80,6 +81,7 @@ export class RegisterComponent {
 
       // Admin Address
       addressLine1Admin: ['', Validators.required],
+      addressLine2Admin: ['', Validators.required],
       cityAdmin: ['', Validators.required],
       stateAdmin: ['', Validators.required],
       postalAdmin: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
@@ -128,6 +130,7 @@ export class RegisterComponent {
       hospital: {
         name: this.registerForm.value.name,
         addressLine1: this.registerForm.value.addressLine1,
+        addressLine2: this.registerForm.value.addressLine2,
         city: this.registerForm.value.city,
         state: this.registerForm.value.state,
         postal: this.registerForm.value.postal,
@@ -145,6 +148,7 @@ export class RegisterComponent {
         email: this.registerForm.value.email,
         phone: this.registerForm.value.phone,
         addressLine1: this.registerForm.value.addressLine1Admin,
+        addressLine2:this.registerForm.value.addressLine2Admin,
         city: this.registerForm.value.cityAdmin,
         state: this.registerForm.value.stateAdmin,
         postal: this.registerForm.value.postalAdmin,

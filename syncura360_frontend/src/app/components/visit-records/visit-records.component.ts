@@ -39,7 +39,7 @@ export class VisitRecordsComponent {
     {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
-        return `<button class="view-button">View</button>`;
+        return `<button class="view-button px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">View</button>`;
       }
     }
   ];
