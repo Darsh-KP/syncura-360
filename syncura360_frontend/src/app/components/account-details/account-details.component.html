@@ -23,7 +23,7 @@
           <p><strong>Helipad:</strong> {{ hospitalInfo.hasHelipad ? 'Yes' : 'No' }}</p>
           <p><strong>Phone:</strong> {{ hospitalInfo.telephone }}</p>
           <p><strong>Address:</strong><br>
-            {{ hospitalInfo.addressLine1 }}<br>
+            {{ hospitalInfo.addressLine1 }},
             {{ hospitalInfo.addressLine2 }}<br>
             {{ hospitalInfo.city }}, {{ hospitalInfo.state }} {{ hospitalInfo.postal }}
           </p>
@@ -46,7 +46,7 @@
           <p><strong>Specialty:</strong> {{ staffInfo.specialty ? staffInfo.specialty : 'N/A' }}</p>
           <p><strong>Experience:</strong> {{ staffInfo.yearsExperience !== null ? staffInfo.yearsExperience + ' years' : 'N/A' }}</p>
           <p><strong>Address:</strong><br>
-            {{ staffInfo.addressLine1 }}<br>
+            {{ staffInfo.addressLine1 }},
             {{ staffInfo.addressLine2 }}<br>
             {{ staffInfo.city }}, {{ staffInfo.state }} {{ staffInfo.postal }}, {{ staffInfo.country }}
           </p>
