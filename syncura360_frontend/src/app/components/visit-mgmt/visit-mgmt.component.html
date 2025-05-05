@@ -27,7 +27,12 @@
 
       <!-- Add Item Button -->
       <div class="mt-6 flex justify-end">
-        <button mat-raised-button color="primary" (click)="openVisitForm()">Add Visit</button>
+        <button
+          mat-raised-button
+          (click)="openVisitForm()"
+          [ngStyle]="{ 'background-color': '#264653', 'color': 'white' }">
+          Add Visit
+        </button>
       </div>
     </div>
   </div>
