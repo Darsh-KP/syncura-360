@@ -8,7 +8,6 @@
     <!-- Page Heading -->
     <div class="space-y-1">
       <h1 class="text-4xl text-gray-800 tracking-tight">Account Details</h1>
-      <p class="text-base text-gray-500">View your hospital and personal account details</p>
     </div>
 
     <!-- Info Cards -->
@@ -45,7 +44,7 @@
           <p><strong>DOB:</strong> {{ staffInfo.dateOfBirth }}</p>
           <p><strong>Role:</strong> {{ staffInfo.role }}</p>
           <p><strong>Specialty:</strong> {{ staffInfo.specialty ? staffInfo.specialty : 'N/A' }}</p>
-          <p><strong>Experience:</strong> {{ staffInfo.yearsExperience !== null ? staffInfo.yearsExperience + ' years' : 'N/A' }}</p>          
+          <p><strong>Experience:</strong> {{ staffInfo.yearsExperience !== null ? staffInfo.yearsExperience + ' years' : 'N/A' }}</p>
           <p><strong>Address:</strong><br>
             {{ staffInfo.addressLine1 }}<br>
             {{ staffInfo.addressLine2 }}<br>
