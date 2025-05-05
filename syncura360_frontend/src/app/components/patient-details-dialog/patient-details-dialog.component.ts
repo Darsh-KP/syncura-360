@@ -41,6 +41,8 @@ import { FormsModule } from '@angular/forms';
       </ng-template>
       <div class="text-right mt-4">
         <button class=" bg-blue-500 text-white rounded hover:bg-blue-600"
+
+
                 (click)="saveNote()">
           Save Note
         </button>
