@@ -51,24 +51,24 @@ export class SchedulingComponent implements OnInit {
 
   columnDefs: ColDef[] = [
     { headerName: 'Doctor/Nurse', field: 'username', sortable: true, filter: true },
-    { 
-      headerName: 'Date', 
-      field: 'start', 
-      sortable: true, 
+    {
+      headerName: 'Date',
+      field: 'start',
+      sortable: true,
       filter: true,
       valueFormatter: (params) => this.formatDate(params.value) // Format Date only
     },
-    { 
-      headerName: 'Start Time', 
-      field: 'start', 
-      sortable: true, 
+    {
+      headerName: 'Start Time',
+      field: 'start',
+      sortable: true,
       filter: true,
       valueFormatter: (params) => this.formatTime(params.value) // Format Start Time
     },
-    { 
-      headerName: 'End Time', 
-      field: 'end', 
-      sortable: true, 
+    {
+      headerName: 'End Time',
+      field: 'end',
+      sortable: true,
       filter: true,
       valueFormatter: (params) => this.formatTime(params.value) // Format End Time
     },
@@ -85,18 +85,18 @@ export class SchedulingComponent implements OnInit {
       minWidth: 140
     }
   ];
-  
+
   formatDate(dateTime: string): string {
     const date = new Date(dateTime);
     return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD
   }
-  
+
   formatTime(dateTime: string): string {
     const date = new Date(dateTime);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }); // Format HH:MM AM/PM
   }
-  
-  
+
+
   constructor(private fb: FormBuilder, private scheduleService: ScheduleService, private dialog: MatDialog) {
     this.scheduleForm = this.fb.group({
       username: ['', Validators.required],
@@ -115,13 +115,13 @@ export class SchedulingComponent implements OnInit {
   fetchSchedules() {
     const start = new Date();
     start.setHours(0, 0, 0, 0); // Start of today
-  
+
     // Remove limitation by setting far future date
     const end = new Date('2100-01-01T23:59:59');
-  
+
     const formattedStart = this.formatDateTime(start);
     const formattedEnd = this.formatDateTime(end);
-  
+
     this.scheduleService.getSchedules(formattedStart, formattedEnd).subscribe({
       next: (response) => {
         this.scheduleList = response.scheduledShifts || [];
@@ -133,8 +133,8 @@ export class SchedulingComponent implements OnInit {
       error: (error) => this.errorMessage = error.message || 'Failed to load schedules.'
     });
   }
-  
-  
+
+
   formatDateTime(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -142,11 +142,11 @@ export class SchedulingComponent implements OnInit {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
   }
-  
-  
+
+
 
   fetchStaff() {
     // Example static data for staff selection (replace with API call later)
@@ -171,7 +171,7 @@ export class SchedulingComponent implements OnInit {
     }));
     this.refresh.next();
   }
-  
+
 
   setView(view: CalendarView) {
     this.view = view;
@@ -236,7 +236,7 @@ export class SchedulingComponent implements OnInit {
         }
       }
     ];
-  
+
     this.scheduleService.updateSchedule(updatePayload).subscribe({
       next: (response) => {
         this.successMessage = response.message;
@@ -247,25 +247,25 @@ export class SchedulingComponent implements OnInit {
       }
     });
   }
-  
-  
+
+
 
   handleEvent(action: string, event: CalendarEvent): void {
     const eventEnd = event.end ?? event.start;
-  
+
     const schedule = this.scheduleList.find(s =>
       new Date(s.start).getTime() === new Date(event.start).getTime() &&
       new Date(s.end).getTime() === new Date(eventEnd).getTime() &&
       s.username === event.title.replace('Shift: ', '')
     );
-  
+
     if (schedule) {
       this.openScheduleDialog(schedule);
     } else {
       console.warn('No matching schedule found for clicked event');
     }
   }
-  
+
   eventTimesChanged({
     event,
     newStart,
@@ -273,7 +273,7 @@ export class SchedulingComponent implements OnInit {
   }: CalendarEventTimesChangedEvent): void {
     const originalStart = event.meta?.originalStart;
     const originalUsername = event.meta?.originalUsername;
-  
+
     if (!originalStart || !originalUsername) {
       console.warn('Missing original event metadata');
       return;
@@ -282,26 +282,26 @@ export class SchedulingComponent implements OnInit {
     if (newStart < new Date()) {
       alert("You cannot move shifts to the past.");
       return;
-    }    
-  
+    }
+
     const formatDate = (date: Date) => {
       return date.toISOString().split('.')[0];
     };
-  
+
     const updatedSchedule: Schedule = {
       username: originalUsername,
       start: this.toLocalISOString(newStart),
       end: this.toLocalISOString(newEnd ?? newStart),
       department: event.meta?.department || ''
     };
-  
+
     this.updateSchedule(updatedSchedule, originalStart, originalUsername);
-  
+
     event.start = newStart;
     event.end = newEnd ?? newStart;
     this.refresh.next();
-  }  
-  
+  }
+
 
   toggleScheduleForm() {
     this.showScheduleForm = !this.showScheduleForm;
@@ -319,7 +319,7 @@ export class SchedulingComponent implements OnInit {
   onCellClicked(event: any) {
     const action = event.event.target?.getAttribute('data-action');
     const schedule: Schedule = event.data;
-  
+
     if (action === 'edit') {
       this.openScheduleDialog(schedule);
     } else if (action === 'delete') {
@@ -328,19 +328,19 @@ export class SchedulingComponent implements OnInit {
         this.deleteSchedule(schedule);
       }
     }
-  }  
+  }
 
   openScheduleDialog(schedule: Schedule | null = null) {
     const dialogRef = this.dialog.open(ScheduleDialogComponent, {
-      autoFocus: false, 
+      autoFocus: false,
       restoreFocus: true,
       width: '500px',
       data: { schedule }
     });
-  
+
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result === 'updated' || result === 'deleted') {
-        this.fetchSchedules(); 
+        this.fetchSchedules();
       }
     });
   }
@@ -350,5 +350,5 @@ export class SchedulingComponent implements OnInit {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
            `T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   }
-  
+
 }

@@ -305,10 +305,13 @@ export class VisitMgmtService {
       this.http.get<{
         firstName: string; lastName: string;
         dateOfBirth: string; gender: string;
-        contactNumber: string; email: string;
-        address: string; city: string;
-        state: string; zipCode: string;
-        insuranceProvider: string; insuranceNumber: string;
+        phone: string; bloodType: String; height: number;
+        weight: number;
+        addressLine1: string; addressLine2: String; city: string;
+        state: string; postal: string; country: String; emergencyContactName: String
+    emergencyContactPhone: String
+    medicalNotes: String
+
       }>(
         `http://localhost:8080/patient/${patientID}`,
         {
@@ -326,10 +329,12 @@ export class VisitMgmtService {
       Name: ${data.firstName} ${data.lastName}
       DOB: ${data.dateOfBirth}
       Gender: ${data.gender}
-      Contact: ${data.contactNumber}
-      Email: ${data.email}
-      Address: ${data.address}, ${data.city}, ${data.state}, ${data.zipCode}
-      Insurance: ${data.insuranceProvider} (${data.insuranceNumber})
+      Contact: ${data.phone}
+      Address: ${data.addressLine1},${data.addressLine2}, ${data.city}, ${data.state}, ${data.postal},${data.country}
+      Phone: ${data.phone}
+      Weight: ${data.weight}, Height: ${data.height}. Blood Type: ${data.bloodType}
+      Emergency ContactName: ${data.emergencyContactName}, Emergency Contact Phone:${data.emergencyContactPhone}
+      MedicalNotes: ${data.medicalNotes}
     `.trim();
     }).catch(err => {
       console.error('Failed to fetch patient details', err);

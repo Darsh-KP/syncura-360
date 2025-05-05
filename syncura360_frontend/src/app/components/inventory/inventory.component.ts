@@ -58,7 +58,7 @@ export class InventoryComponent implements OnInit {
       },
       onCellClicked: (params: any) => {
         const targetClass = params.event.target.className;
-  
+
         if (targetClass.includes('edit-btn')) {
           this.openItemForm(params.data);
         } else if (targetClass.includes('delete-btn')) {
@@ -66,7 +66,7 @@ export class InventoryComponent implements OnInit {
         }
       }
     }
-  ];  
+  ];
 
   ngOnInit(): void {
     this.loadInventory();
@@ -129,5 +129,8 @@ export class InventoryComponent implements OnInit {
     this.gridApi = params.api;
   }
 
-
+  onQuickFilterChanged(event: any) {
+    const value = event.target.value;
+    this.gridApi.setQuickFilter(value);
+  }
 }
