@@ -1,11 +1,12 @@
+.sidebar {
+  background-color: #264653; /* deep blue */
+  color: white;
+}
+
 a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-  }
-  
-  a:hover {
-    background-color: #374151;
-  }
-  
+  color: white;
+}
+
+a:hover {
+  background-color: #2A9D8F; /* hover with teal */
+}

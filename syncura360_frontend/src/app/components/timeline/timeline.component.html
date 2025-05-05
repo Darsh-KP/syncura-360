@@ -43,7 +43,7 @@
         placeholder="Enter or update notes for this visit...">
   </textarea>
       <div class="text-right mt-2" *ngIf="!readOnly">
-        <button mat-raised-button color="primary" (click)="updateNote()">Update Note</button>
+        <button mat-raised-button (click)="updateNote()" [ngStyle]="{'background-color': '#264653', 'color': 'white'}">Update Note</button>
       </div>
     </div>
 
@@ -57,11 +57,11 @@
 
     <!-- Action Buttons -->
     <div class="flex flex-wrap gap-3 justify-center" *ngIf="!readOnly">
-      <button mat-flat-button color="primary" (click)="selectSection('drug')">Add Drug</button>
-      <button mat-flat-button color="accent" (click)="selectSection('service')">Add Service</button>
-      <button mat-flat-button color="primary" (click)="selectSection('room')">Assign Room</button>
-      <button mat-flat-button color="accent" (click)="selectSection('discharge')">Discharge</button>
-      <button mat-flat-button color="warn" (click)="removeRoom()">Remove Room</button>
+      <button mat-flat-button (click)="selectSection('drug')" [ngStyle]="{'background-color': '#264653', 'color': 'white'}">Add Drug</button>
+      <button mat-flat-button (click)="selectSection('service')" [ngStyle]="{'background-color': '#2A9D8F', 'color': 'white'}">Add Service</button>
+      <button mat-flat-button (click)="selectSection('room')" [ngStyle]="{'background-color': '#E9C46A', 'color': 'black'}">Assign Room</button>
+      <button mat-flat-button (click)="selectSection('discharge')" [ngStyle]="{'background-color': '#F4A261', 'color': 'white'}">Discharge</button>
+      <button mat-flat-button (click)="removeRoom()" [ngStyle]="{'background-color': '#E76f51', 'color': 'white'}">Remove Room</button>
     </div>
 
     <!-- Dynamic Forms -->
@@ -167,7 +167,7 @@
     </div>
 
     <div class="text-right">
-      <button mat-flat-button color="warn" (click)="backButton()">Back</button>
+      <button mat-flat-button (click)="backButton()" [ngStyle]="{'background-color': '#D65E45', 'color': 'white'}">Back</button>
     </div>
   </div> <!-- End centered wrapper -->
 
