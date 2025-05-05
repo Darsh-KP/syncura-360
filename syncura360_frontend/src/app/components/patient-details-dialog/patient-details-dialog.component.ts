@@ -40,7 +40,7 @@ import { FormsModule } from '@angular/forms';
         <p>Loading patient details...</p>
       </ng-template>
       <div class="text-right mt-4">
-        <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 (click)="saveNote()">
           Save Note
         </button>

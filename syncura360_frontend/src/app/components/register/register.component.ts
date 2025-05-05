@@ -44,9 +44,15 @@ export class RegisterComponent {
   submitted = false;
 
   states: string[] = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+    'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
+    'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+    'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
+    'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
+    'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio',
+    'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
+    'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia',
+    'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
   ];
   traumaLevels: string[] = ['Level I', 'Level II', 'Level III', 'Level IV', 'Level V'];
 
@@ -62,16 +68,16 @@ export class RegisterComponent {
       type: ['', Validators.required],
       traumaLevel: ['', Validators.required],
       hasHelipad: [false],
-    
+
       // Admin (Staff) Information
       username: ['', Validators.required],
-      passwordHash: ['', [Validators.required, Validators.minLength(6)]],
+      passwordHash: ['', [Validators.required, Validators.minLength(8)]],
       role: ['Super Admin'],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-    
+
       // Admin Address
       addressLine1Admin: ['', Validators.required],
       cityAdmin: ['', Validators.required],
@@ -79,7 +85,7 @@ export class RegisterComponent {
       postalAdmin: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
       country: ['', Validators.required],
       dateOfBirth: ['', Validators.required]
-    });    
+    });
   }
 
 
@@ -165,10 +171,13 @@ export class RegisterComponent {
         this.loading = false;
         this.successMessage = '';
         this.errorMessage = err.message || 'An error occurred while processing your request.';
-      }
+        }
     });
   }
 
+  ngOnInit() {
+    this.registerForm.reset();
+  }
 
   /**
    * Navigates back to the login page.
