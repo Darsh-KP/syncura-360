@@ -38,8 +38,8 @@ export const routes: Routes = [
   // doctor routes
   {path: 'doctor', component: DoctorScheduleComponent, canActivate: [AuthGuard], data: {roles:['Doctor']} },
 
-  { path: 'view-patients', component: PatientListComponent, canActivate: [AuthGuard], data: { roles: ['Nurse']} },
-  {path: 'register-patient', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse']}},
+  { path: 'view-patients', component: PatientListComponent, canActivate: [AuthGuard], data: { roles: ['Nurse','Doctor']} },
+  {path: 'register-patient', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse','Doctor']}},
 
   // doctor routes
   {path: 'doctor', component: DoctorScheduleComponent, canActivate: [AuthGuard], data: {roles:['Doctor']} },
