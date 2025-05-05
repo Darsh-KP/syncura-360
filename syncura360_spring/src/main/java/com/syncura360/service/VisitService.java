@@ -7,7 +7,6 @@ import com.syncura360.model.*;
 import com.syncura360.model.enums.BedStatus;
 import com.syncura360.model.enums.Role;
 import com.syncura360.repository.*;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -152,7 +151,7 @@ public class VisitService {
             timeline.add(new TimelineElementDTO(
                 visit.getDischargeDateTime().toString(),
                 "Patient discharged.",
-                "Note: " + visit.getVisitNote()
+                "Visit Summary: " + visit.getVisitSummary()
             ));
         }
 
