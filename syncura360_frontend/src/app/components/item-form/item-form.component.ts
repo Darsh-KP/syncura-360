@@ -134,7 +134,9 @@ export class ItemFormComponent {
     }
   }
 
-
+  digitsOnly(value: string | null | undefined): string {
+    return (value || '').replace(/[^0-9]/g, '');
+  }
 
   cancel(): void {
     this.dialogRef.close();

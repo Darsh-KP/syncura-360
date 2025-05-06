@@ -9,6 +9,7 @@ com.syncura360.dto.Room
 com.syncura360.dto.Schedule
 com.syncura360.dto.Service
 com.syncura360.dto.Staff
+com.syncura360.dto.Visit
 com.syncura360.model
 com.syncura360.model.enums
 com.syncura360.repository

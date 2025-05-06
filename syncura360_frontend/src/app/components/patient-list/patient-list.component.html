@@ -1,22 +1,34 @@
 <app-navbar></app-navbar>
-<div class="ml-60 p-6 bg-gray-100 min-h-screen">
-  <div class="max-w-6xl mx-auto bg-white p-6 shadow-md rounded-md">
-    <h2 class="text-2xl font-bold mb-4 text-center">Patient List</h2>
-    <input
-      type="text"
-      placeholder="Search patients..."
-      (input)="onQuickFilterChanged($event)"
-      class="mb-4 p-2 border border-gray-300 rounded w-full max-w-md mx-auto block"
-    />
-    <ag-grid-angular
-      class="ag-theme-quartz"
-      style="width: 100%; height: 500px;"
-      [gridOptions]="gridOptions"
-      [rowData]="rowData"
-      [columnDefs]="columnDefs"
-      rowSelection="single"
-      (gridReady)="onGridReady($event)"
-      (cellClicked)="onCellClicked($event)">
-    </ag-grid-angular>
+
+<div class="flex min-h-screen bg-[#fdfcfb]">
+
+  <!-- Main content area adjusted for sidebar -->
+  <div class="flex-1 ml-60 p-6 flex flex-col gap-6">
+
+    <!-- Patient List Container (no max-width restriction) -->
+    <div class="w-full bg-white p-6 shadow-md rounded-md flex flex-col flex-1 border-t-4 border-[#2A9D8F]">
+      <h2 class="text-2xl font-bold mb-4 text-[#264653] text-center">Patient List</h2>
+
+      <!-- Search Bar -->
+      <input
+        type="text"
+        placeholder="Search patients..."
+        (input)="onQuickFilterChanged($event)"
+        class="mb-4 p-2 border border-gray-300 rounded w-full max-w-md mx-auto block focus:border-[#E9C46A] focus:ring-2 focus:ring-[#E9C46A]"
+      />
+
+      <!-- Grid -->
+      <ag-grid-angular
+        class="ag-theme-quartz flex-grow"
+        style="width: 100%; height: 100%;"
+        [gridOptions]="gridOptions"
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+        rowSelection="single"
+        (gridReady)="onGridReady($event)"
+        (cellClicked)="onCellClicked($event)">
+      </ag-grid-angular>
+
+    </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-::ng-deep .mat-dialog-container {
+:host ::ng-deep .mat-dialog-container {
   width: 90vw;
   max-width: 600px;
   max-height: 90vh;
@@ -17,7 +17,53 @@ mat-form-field {
   }
 }
 
-::ng-deep .mdc-notched-outline__notch {
+:host ::ng-deep .mdc-notched-outline__notch {
   border-right: none !important;
 }
 
+:host ::ng-deep .custom-timeline .p-timeline-event {
+  margin-bottom: 3rem; /* Adds spacing between nodes */
+}
+
+
+:host ::ng-deep .custom-timeline .p-timeline-event-connector {
+  background-color: #cbd5e0;
+  width: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-height: 140%;
+  z-index: 1; /* Lower than marker */
+  position: absolute;
+}
+
+:host ::ng-deep .custom-timeline .p-timeline-event-marker {
+  background-color: #0d6efd;
+  border: 3px solid white;
+  width: 25px;
+  height: 25px;
+  border-radius: 37%;
+  box-shadow: 0 0 0 3px #0d6efd;
+  z-index: 2; /* Higher than connector */
+  position: relative;
+}
+
+:host ::ng-deep .custom-timeline .p-timeline-event-content {
+  z-index: 2; /* Same as marker to keep content above connector */
+  position: relative;
+}
+
+.text-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.text-center mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+}

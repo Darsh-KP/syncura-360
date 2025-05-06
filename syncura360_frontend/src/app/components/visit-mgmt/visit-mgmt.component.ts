@@ -41,7 +41,8 @@ export class VisitMgmtComponent {
     {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
-        return `<button class="view-button">View</button>`;
+        return `<button class="view-button px-1 py-1 text-xs text-white rounded hover:opacity-90" style="background-color:#F4A261;">View</button>`;
+
       }
     }
   ];

@@ -7,7 +7,6 @@ import com.syncura360.model.*;
 import com.syncura360.model.enums.BedStatus;
 import com.syncura360.model.enums.Role;
 import com.syncura360.repository.*;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -134,6 +133,16 @@ public class VisitService {
                 "Assigned to " + roomAssignment.getRoomName(),
                 "Department: " + roomAssignment.getRoom().getDepartment()
             ));
+
+            // If removed, create timeline element for this event.
+            if (roomAssignment.getIsRemoved()) {
+                timeline.add(new TimelineElementDTO(
+                        roomAssignment.getRemovedAt().toString(),
+                        "Removed from " + roomAssignment.getRoomName(),
+                        "Department: " + roomAssignment.getRoom().getDepartment()
+                ));
+            }
+
         }
 
         // if record get discharge date
@@ -142,7 +151,7 @@ public class VisitService {
             timeline.add(new TimelineElementDTO(
                 visit.getDischargeDateTime().toString(),
                 "Patient discharged.",
-                "Note: " + visit.getVisitNote()
+                "Visit Summary: " + visit.getVisitSummary()
             ));
         }
 
@@ -309,8 +318,6 @@ public class VisitService {
 
         Optional<Room> room = roomRepository.findById(currentAssignment.get().getRoom().getId());
 
-        System.out.println(currentAssignment.get().getRoom().getId().getRoomName());
-
         if (room.isEmpty()) {
             throw new EntityNotFoundException("Room not found.");
         }
@@ -322,6 +329,7 @@ public class VisitService {
 
         RoomAssignment entity = currentAssignment.get();
         entity.setIsRemoved(true);
+        entity.setRemovedAt(LocalDateTime.now());
         roomAssignmentRepository.save(entity);
 
         Bed occupied = occupiedBeds.getFirst();

@@ -1,14 +1,17 @@
-<div class="h-screen w-60 sidebar text-white flex flex-col p-4 shadow-lg fixed left-0 top-0">
-<!-- App Title -->
+<div class="h-screen w-60 sidebar bg-[#264653] text-[#fdfcfb] flex flex-col p-4 shadow-lg fixed left-0 top-0">
+  <img src="/images/syncura-bg.gif" alt="Syncura Logo" class="w-16 h-16 mx-auto mb-4 select-none pointer-events-none" draggable="false" />
+
+  <!-- App Title -->
     <h2 class="text-2xl font-bold mb-6 text-center">Dashboard</h2>
 
     <!-- Navigation Links -->
     <nav class="flex flex-col space-y-4">
       <ng-container *ngIf="role === 'Admin' || role === 'Super Admin'">
-      <a routerLink="/dashboard"
-         class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
-        🏠 <span class="ml-3">Home</span>
-      </a>
+        <a routerLink="/dashboard"
+           class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+          <mat-icon style="color: yellowgreen;">person</mat-icon>
+          <span class="ml-3">Staff</span>
+        </a>
       </ng-container>
     <ng-container *ngIf="role === 'Admin' || role === 'Super Admin'">
       <a routerLink="/scheduling"
@@ -43,7 +46,7 @@
       <ng-container *ngIf="role === 'Nurse'">
         <a routerLink="/nurse"
            class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
-            <span class="ml-3">Register Patient</span>
+          📝 <span class="ml-3">Register Patient</span>
         </a>
 
         <a routerLink="/schedule"
@@ -56,7 +59,7 @@
 
         <a routerLink="/room"
         class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
-        🚪 <span class="ml-3">Rooms</span>
+          🚪 <span class="ml-3">Rooms</span>
         </a>
 
         <a routerLink="/visit-mgmt"
@@ -79,31 +82,40 @@
 
       <!-- Doctor-only links -->
       <ng-container *ngIf="role === 'Doctor'">
+
+        <a routerLink="/register-patient"
+           class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+          📝 <span class="ml-3">Register Patient</span>
+        </a>
+
+        <a routerLink="/view-patients" class="p-3 rounded-lg hover:bg-gray-700 flex items-center">
+          📋 <span class="ml-3">View Patients</span>
+        </a>
+
         <a routerLink="/doctor"
           class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
           📅 <span class="ml-3">Schedules</span>
         </a>
 
-
         <a routerLink="/room"
            class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
           🚪 <span class="ml-3">Rooms</span>
         </a>
-        <a routerLink="/account-details"
-
-        class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
-        💻 <span class="ml-3">Account Details</span>
-      </a>
 
         <a routerLink="/visit-mgmt"
-           class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
-          🖊️ <span class="ml-3">Visit Management</span>
-        </a>
+                class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+        🖊️ <span class="ml-3">Visit Management</span>
+      </a>
 
         <a routerLink="/visit-records"
            class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
           📁 <span class="ml-3">Visit Records</span>
         </a>
+
+        <a routerLink="/account-details"
+        class="p-3 rounded-lg transition-all duration-300 hover:bg-gray-700 flex items-center">
+        💻 <span class="ml-3">Account Details</span>
+      </a>
       </ng-container>
 
     </nav>
@@ -111,8 +123,8 @@
     <!-- Logout Button -->
     <div class="mt-auto">
       <button (click)="logoutAndRedirect()"
-      class="w-full p-3 flex items-center justify-center gap-2 rounded-lg bg-red-500 text-white font-medium shadow-md
-            hover:bg-red-400 active:scale-95 focus:ring-2 focus:ring-red-300">
+      class="w-full p-3 flex items-center justify-center gap-2 rounded-lg bg-[#e76f51] text-white font-medium shadow-md
+            hover:bg-[#d65e45] active:scale-95 focus:ring-2 focus:ring-red-300">
       <span>🚪 Logout</span>
     </button>
     </div>

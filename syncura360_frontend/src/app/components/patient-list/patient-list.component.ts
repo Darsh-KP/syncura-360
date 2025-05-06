@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { PatientDetailsDialogComponent } from '../patient-details-dialog/patient-details-dialog.component';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { ViewButtonComponent} from './view-button/view-button.component';
 
 @Component({
   selector: 'app-patient-list',
@@ -42,11 +43,9 @@ export class PatientListComponent {
       { field: 'postal', headerName: 'Zip Code' },
       { field: 'country', headerName: 'Country' },
       {
-        headerName: 'Action',
+        headerName: 'Details',
         pinned: 'right',
-        cellRenderer: (params: any) => {
-          return `<button class="view-btn px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">View</button>`;
-        }
+        cellRenderer: ViewButtonComponent
       }
       ];
 
@@ -89,7 +88,7 @@ export class PatientListComponent {
   }
 
   onCellClicked(event: any) {
-    if (event.colDef && event.colDef.headerName == 'Action' && event.event.target.classList.contains('view-btn')) {
+    if (event.colDef && event.colDef.headerName == 'Details' && event.event.target.classList.contains('custom-view-btn')) {
       this.dialog.open(PatientDetailsDialogComponent, {
         width: '500px',
         data: event.data

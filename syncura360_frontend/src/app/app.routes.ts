@@ -15,6 +15,7 @@ import { RoomViewComponent } from './components/room-view/room-view.component';
 import {VisitMgmtComponent} from './components/visit-mgmt/visit-mgmt.component';
 import {TimelineComponent} from './components/timeline/timeline.component';
 import { AccountDetailsComponent } from './components/account-details/account-details.component';
+import {VisitRecordsComponent} from './components/visit-records/visit-records.component';
 
 
 export const routes: Routes = [
@@ -37,8 +38,8 @@ export const routes: Routes = [
   // doctor routes
   {path: 'doctor', component: DoctorScheduleComponent, canActivate: [AuthGuard], data: {roles:['Doctor']} },
 
-  { path: 'view-patients', component: PatientListComponent, canActivate: [AuthGuard], data: { roles: ['Nurse']} },
-  {path: 'register-patient', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse']}},
+  { path: 'view-patients', component: PatientListComponent, canActivate: [AuthGuard], data: { roles: ['Nurse','Doctor']} },
+  {path: 'register-patient', component: RegisterPatientComponent, canActivate: [AuthGuard], data: {roles:['Nurse','Doctor']}},
 
   // doctor routes
   {path: 'doctor', component: DoctorScheduleComponent, canActivate: [AuthGuard], data: {roles:['Doctor']} },
@@ -46,7 +47,7 @@ export const routes: Routes = [
   // doctor/nurse routes
 
   {path: 'room', component: RoomViewComponent, canActivate: [AuthGuard], data: {roles:['Nurse', 'Doctor']} },
-  {path: 'visit-Records', component: VisitMgmtComponent, canActivate: [AuthGuard], data: {roles:['Doctor', 'Nurse']} },
+  {path: 'visit-records', component: VisitRecordsComponent, canActivate: [AuthGuard], data: {roles:['Doctor', 'Nurse']} },
   {path: 'visit-mgmt', component: VisitMgmtComponent, canActivate: [AuthGuard], data: {roles:['Nurse','Doctor']} },
 
   {

@@ -1,0 +1,26 @@
+.ag-theme-quartz {
+  --ag-header-background-color: #2A9D8F;
+  --ag-odd-row-background-color: #f9f9f9;
+  --ag-row-hover-color: #E9C46A;
+  --ag-font-size: 14px;
+  --ag-font-family: 'Segoe UI', sans-serif;
+}
+.mat-toolbar {
+  border-top: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+.custom-view-btn {
+  background-color: #F4A261;
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.custom-view-btn:hover {
+  background-color: #E76F51;
+}

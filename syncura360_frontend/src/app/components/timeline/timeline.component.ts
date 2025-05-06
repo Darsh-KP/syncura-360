@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , Input} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,7 @@ import { VisitMgmtService } from '../../services/visit-mgmt.service';
 import {
   drugPerVisit, servicePerVisit, roomForVisit, dischargeForVisit, notesForVisit
 } from '../../services/visit-mgmt.service';
+import {NavbarComponent} from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-timeline',
@@ -25,6 +26,7 @@ import {
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    NavbarComponent,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
@@ -32,6 +34,8 @@ import {
   ]
 })
 export class TimelineComponent implements OnInit {
+  @Input() readOnly: boolean = false;
+
   patientID!: number;
   admissionDateTime!: string;
   timelineEvents: { dateTime: string; title: string; description: string }[] = [];
@@ -48,14 +52,28 @@ export class TimelineComponent implements OnInit {
   rooms: any[] = [];
   note:String | undefined;
   details: any;
-
+  roomAssigned: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private visitService: VisitMgmtService
-  ) {}
+  ) {
+    const nav = this.router.getCurrentNavigation();
+    this.readOnly = nav?.extras.state?.['readOnly'] ?? false;
+  }
+
+  updateRoomAssignmentStatus(): void {
+    const lastRoomEvent = [...this.timelineEvents]
+      .reverse()
+      .find(e =>
+        e.title?.toLowerCase().includes('assigned to') ||
+        e.title?.toLowerCase().includes('removed from')
+      );
+
+    this.roomAssigned = !!lastRoomEvent && lastRoomEvent.title.toLowerCase().includes('assigned to');
+  }
 
   ngOnInit(): void {
     this.patientID = Number(this.route.snapshot.paramMap.get('patientID'));
@@ -94,12 +112,26 @@ export class TimelineComponent implements OnInit {
   }
 
   loadTimeline() {
-    this.visitService.getTimeline(this.patientID, this.admissionDateTime).subscribe({
-      next: (res) =>{ (this.timelineEvents = res.timeline);
-      this.note = res.visitNote;
+
+    if (!this.readOnly) {
+
+      this.visitService.getTimeline(this.patientID, this.admissionDateTime).subscribe({
+        next: (res) => {
+          (this.timelineEvents = res.timeline);
+          this.updateRoomAssignmentStatus();
+          this.note = res.visitNote;
         },
-      error: (err) => console.error('Failed to load timeline', err),
-    });
+        error: (err) => console.error('Failed to load timeline', err),
+      });
+    } else {
+      this.visitService.getRecord(this.patientID, this.admissionDateTime).subscribe({
+        next: (res) => {
+          (this.timelineEvents = res.timeline);
+          this.note = res.visitNote;
+        },
+        error: (err) => console.error('Failed to load record timeline', err),
+      });
+    }
   }
 
   updateNote() {
@@ -120,7 +152,8 @@ export class TimelineComponent implements OnInit {
       patientID: this.patientID,
       visitAdmissionDateTime: this.admissionDateTime
     }).subscribe({
-      next: () => this.loadTimeline(),
+      next: () => {this.loadTimeline();this.roomAssigned = false;
+        this.updateRoomAssignmentStatus();},
       error: (err) => console.error('Failed to remove room', err)
     });
   }
@@ -172,6 +205,7 @@ export class TimelineComponent implements OnInit {
     this.visitService.assignRoom(data).subscribe({
       next: () => {
         this.roomForm.reset();
+        this.roomAssigned = true;
         this.loadTimeline();
       },
       error: (err) => console.error('Failed to assign room', err)
@@ -192,7 +226,12 @@ export class TimelineComponent implements OnInit {
   }
 
   backButton(){
+    if(this.readOnly){
+      this.router.navigate(['/visit-records']);
+    }
+    else{
     this.router.navigate(['/visit-mgmt']);
+    }
   }
 
 

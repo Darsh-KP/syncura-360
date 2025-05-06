@@ -44,41 +44,49 @@ export class RegisterComponent {
   submitted = false;
 
   states: string[] = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado',
+    'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
+    'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+    'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
+    'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
+    'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio',
+    'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
+    'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia',
+    'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
   ];
   traumaLevels: string[] = ['Level I', 'Level II', 'Level III', 'Level IV', 'Level V'];
 
   constructor(private fb: FormBuilder, private router: Router, private registerService: RegisterService) {
     this.registerForm = this.fb.group({
       // Hospital Information
-      name: ['NJ General Hospital', Validators.required],
-      addressLine1: ['123 Main St', Validators.required],
-      city: ['New Jersey', Validators.required],
-      state: ['NJ', Validators.required],
-      postal: ['10001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      telephone: ['4738258383', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      type: ['General', Validators.required],
-      traumaLevel: ['Level I', Validators.required],
-      hasHelipad: [true],
+      name: ['', Validators.required],
+      addressLine1: ['', Validators.required],
+      addressLine2: ['', Validators.required],
+      city: ['', Validators.required],
+      state: ['', Validators.required],
+      postal: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      telephone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      type: ['', Validators.required],
+      traumaLevel: ['', Validators.required],
+      hasHelipad: [false],
 
       // Admin (Staff) Information
-      username: ['admin123', Validators.required],
-      passwordHash: ['123456', [Validators.required, Validators.minLength(6)]],
+      username: ['', Validators.required],
+      passwordHash: ['', [Validators.required, Validators.minLength(8)]],
       role: ['Super Admin'],
-      firstName: ['John', Validators.required],
-      lastName: ['Doe', Validators.required],
-      email: ['john.doe@example.com', [Validators.required, Validators.email]],
-      phone: ['2382838233', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
 
       // Admin Address
-      addressLine1Admin: ['456 Elm St', Validators.required],
-      cityAdmin: ['Los Angeles', Validators.required],
-      stateAdmin: ['CA', Validators.required],
-      postalAdmin: ['90001', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
-      country: ['United States', Validators.required],
-      dateOfBirth: ['1990-01-01', Validators.required] // Make sure date format matches what your input expects
+      addressLine1Admin: ['', Validators.required],
+      addressLine2Admin: ['', Validators.required],
+      cityAdmin: ['', Validators.required],
+      stateAdmin: ['', Validators.required],
+      postalAdmin: ['', [Validators.required, Validators.pattern('^[0-9]{5}$')]],
+      country: ['', Validators.required],
+      dateOfBirth: ['', Validators.required]
     });
   }
 
@@ -122,6 +130,7 @@ export class RegisterComponent {
       hospital: {
         name: this.registerForm.value.name,
         addressLine1: this.registerForm.value.addressLine1,
+        addressLine2: this.registerForm.value.addressLine2,
         city: this.registerForm.value.city,
         state: this.registerForm.value.state,
         postal: this.registerForm.value.postal,
@@ -139,6 +148,7 @@ export class RegisterComponent {
         email: this.registerForm.value.email,
         phone: this.registerForm.value.phone,
         addressLine1: this.registerForm.value.addressLine1Admin,
+        addressLine2:this.registerForm.value.addressLine2Admin,
         city: this.registerForm.value.cityAdmin,
         state: this.registerForm.value.stateAdmin,
         postal: this.registerForm.value.postalAdmin,
@@ -164,11 +174,14 @@ export class RegisterComponent {
         console.error('Registration error:', err);
         this.loading = false;
         this.successMessage = '';
-        this.errorMessage = err.message || 'An error occurred while processing your request.';
-      }
+        this.errorMessage = 'An error occurred while processing your request.';
+        }
     });
   }
 
+  ngOnInit() {
+    this.registerForm.reset();
+  }
 
   /**
    * Navigates back to the login page.

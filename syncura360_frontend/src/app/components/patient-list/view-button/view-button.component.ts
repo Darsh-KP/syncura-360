@@ -9,13 +9,30 @@ import { PatientDetailsDialogComponent } from '../../patient-details-dialog/pati
   standalone: true,
   imports: [CommonModule, MatDialogModule],
   template: `
-    <button class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+    <button class="view-btn"
             (click)="openDialog()">
       View
     </button>
-  `
+  `,
+  styles: [`
+    .view-btn {
+      background-color: #F4A261;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      line-height: 1;
+    }
+
+    .view-btn:hover {
+      background-color: #E76F51;
+    }
+  `]
 })
-export class ViewButtonComponent implements ICellRendererAngularComp{
+export class ViewButtonComponent implements ICellRendererAngularComp {
   params: any;
 
   constructor(private dialog: MatDialog) {}
@@ -36,3 +53,4 @@ export class ViewButtonComponent implements ICellRendererAngularComp{
     });
   }
 }
+
